@@ -1,0 +1,25 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+	<title>Mapbar 地图 JavaScript API 示例: 简单的地图</title>
+	<script type="text/javascript" src="http://open.mapbar.com/apis/maps/free?f=mapi&v=31.2&k=aCW9cItqL6QpaR0pLh8mcBEmcn4eb79hMYF5MXTrEeJsT7J6T7P9TRD7El==@7aMhs7F4s54ecLYLQpaB7T7h95MpsccQpMEMFp79W9pRs5qRp9cWphcraC0pFslFAV="></script>
+	<script type="text/javascript">
+		var maplet = null;
+		function initMap(){
+			maplet = new Maplet("mapbar");
+			maplet.centerAndZoom(new MPoint(116.38672,39.90805), 8);
+			maplet.addControl(new MStandardControl());
+			var marker = new MMarker(  
+                new MPoint(116.38672,39.90805),  
+                new MIcon("http://open.mapbar.com/apidoc/images/tb1.gif",32,32)  
+            ); 
+			maplet.addOverlay(marker);  
+		}
+	</script>
+</head>
+
+<body onload="initMap();">
+<div id="mapbar" style="width:500px;height:300px"></div>
+</body>
+</html>
