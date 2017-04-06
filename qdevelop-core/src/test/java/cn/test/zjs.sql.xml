@@ -1,0 +1,156 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<SQLConfig>
+	<property index="test_query" connect="ep_account">
+		<sql>select *,source as src from
+			mytest ep
+			where ep.source= $[source]
+			and
+			ep.`ep_user_id`
+			=
+			$[ep_user_id]
+			and $[_autoSearch]
+		</sql>
+		<formatter>
+			<date-formatter result-key="ctime,ictime"
+				date-style="yyyy-MM-dd HH:mm:ss,yyyy/MM/dd"></date-formatter>
+			<prop-formatter result-key="status" prop-key="test" />
+			
+			<key-value-formatter result-key="epuad_id"
+				format-index="test_query_formatter" format-key="epuad_id"
+				format-columns="record,ctime"></key-value-formatter>
+		</formatter>
+	</property>
+
+	<property index="test_query_formatter" connect="ep_account">
+		<sql>select * from mytest_log where $[_autoSearch]</sql>
+	</property>
+
+	<property index="ep_position_apply_interview_job!select"
+		connect="ep_biz_R">
+		<sql>
+			select eppa_id, apply_mobile, apply_name, apply_user_id, apply_time
+			from ep_position_apply epa 
+			where status = $[status] and timestampdiff(hour, apply_time, now()) = $[hour] and timestampdiff(hour, interview_time, now()) = $[hour] and $[_autoSearch]
+		</sql>
+		
+	</property>
+
+
+	<property index="mytest_insert" connect="ep_account">
+		<!-- <update-hook> <exec-debug /> </update-hook> -->
+		<sql repeat="source">insert into
+			mytest(record_id,ep_user_id,amount,type,source,status,ctime,ictime,remark)
+			value
+			($[record_id],$[ep_user_id],$[amount],$[type],$[source],$[status],'$[ctime]','$[ictime]','$[remark]')
+		</sql>
+		<sql>insert into mytest_log(epuad_id,record,ctime) value
+			({mytest.LAST_INSERT_ID},'$[record]',now())
+		</sql>
+	</property>
+	<property index="zjs_deliver_select" connect="biz_R"
+		cacheAble="false">
+		<sql>select do_id, transport_order,order_id,status,ec_id from
+			deliver_orders where transport_order='$[transport_order]' and
+			status=$[status] and ec_id &gt; $[ec_id_1] and ec_id &lt; $[ec_id_2]
+			and $[_autoSearch]
+		</sql>
+		<formatter>
+			<table-cache table="express_company" targetKey="ec_id"
+				fields="express_name"></table-cache>
+		</formatter>
+	</property>
+	<property index="deliver_falsed_batch_insert" connect="ep_biz_R">
+		<!-- <sql >insert into deliver_falsed(do_id, mail_no, status,
+			reason, ctime) values('$[doid]', '$[mailno]', 0, '$[reason]', now())
+		</sql> -->
+		<sql>update ep_balance_account_summary epbas, ep_balance_account_detail epbad set 
+    epbas.history_rebate = epbas.history_rebate + epbad.current_rebate, 
+    epbas.is_platform_amount = epbas.is_platform_amount + epbad.is_platform_amount, 
+    epbas.platform_amount = epbas.platform_amount + epbad.platform_amount, 
+    epbas.actual_debit = epbas.actual_debit + epbad.current_rebate + epbad.platform_amount, 
+    epbas.refund_amount = epbas.refund_amount + epbad.current_refund_amount, 
+    epbas.paid_account = epbas.paid_account + epbad.payable_account, 
+    epbas.cash_surplus = epbas.paid_account - epbas.actual_debit - epbas.refund_amount, 
+    epbas.recommend_history_rebate = epbas.recommend_history_rebate + epbad.recommend_current_rebate, 
+    epbas.work_days = epbad.current_work_days, 
+    epbas.is_rebate_finish = if(epbas.is_rebate_finish = 1, epbas.is_rebate_finish, epbad.is_rebate_finish), 
+    epbas.balance_count = epbas.balance_count + 1, 
+    epbas.last_time = now(), 
+    epbad.finish_time = now() 
+   where epbas.eppa_id = epbad.eppa_id and epbad.status in (1,3) and epbad.epba_id = '$[epba_id]'</sql>
+	</property>
+	<property index="deliverOrderTransportOrdersUpdate" explain="修改发货单物流单号"
+		connect="biz" depends="orderBillsNoUpdate">
+		<sql repeat="transportOrder@doId@ecName">update deliver_orders set transport_order =
+			'$[transportOrder]' where do_id = '$[doId]' and transport_order =
+			'$[transportOrder]'
+		</sql>
+		<!-- <sql repeat="doId"> -->
+		<!-- insert into -->
+		<!-- deliver_orders_log(do_id,operation,status,content,uid,ctime) -->
+		<!-- values('$[doId]',13,14,'$[content]',1,NOW()) -->
+		<!-- </sql> -->
+	</property>
+	<property index="orderBillsNoUpdate" explain="修改运单号" connect="order">
+		<sql repeat="transportOrder@doId@ecName">update order_shipments set bills_no =
+			'$[transportOrder]',ec_name = '$[ecName]' where shipment_id =
+			'$[doId]'
+		</sql>
+	</property>
+
+	<!-- 宅急送物流单号回填逻辑修改 -->
+
+	<property index="dotransferidUpdate" explain="发货单物流单号修改"
+		connect="biz" depends="orderBillsnoUpdate">
+		<param-formatter>
+			<param key="uid" value="${user.uid}"></param>
+		</param-formatter>
+
+		<update-hook>
+			<exec-debug />
+		</update-hook>
+		<sql repeat="doid@transferid">update deliver_orders set transport_order =
+			'$[transferid]',status = $[status],backfill_time = NOW() where do_id
+			= '$[doid]'
+		</sql>
+		<sql repeat="doid">update deliver_orders set transport_order =
+			'$[transferid]',status = $[status],backfill_time = NOW() where do_id
+			= '$[doid]'
+		</sql>
+	</property>
+	<property index="orderBillsnoUpdate" explain="修改订单运单号"
+		connect="order">
+		<sql repeat="transferid@doid@ecName">update order_shipments set bills_no =
+			'$[transferid]',ec_name = '$[ecName]' where shipment_id = '$[doid]'
+		</sql>
+	</property>
+
+	<!-- 物流单号回填修改完毕 -->
+
+	<property index="deliverOrdersSignInsert" explain="签收成功"
+		connect="biz">
+		<param-formatter>
+			<param key="uid" value="${user.uid}"></param>
+		</param-formatter>
+		<sql repeat="doid@orderid@signName@arrivalDate">
+			update deliver_orders set status =
+			15,sign_name='$[signName]',arrival_date='$[arrivalDate]' where do_id
+			= '$[doid]'
+		</sql>
+		<sql include="batch-insert-deliver-orders-log" repeat="doid@operation@status@content"></sql>
+	</property>
+
+	<property index="orderSignInsert" explain="订单签收成功，修改订单状态"
+		connect="order">
+		<sql repeat="doid@orderid@signName@arrivalDate">
+			update orders set order_status_id = 20 where order_id
+			= $[orderid]
+		</sql>
+		<sql repeat="doid@orderid@signName@arrivalDate">
+			insert into
+			order_transaction_logs(order_id,transaction_operator,operate_type,log_type,transaction_description,operate_date)
+			values('$[orderid]','$[signName]',20,0,'用户签收，订单完成',NOW())
+		</sql>
+	</property>
+</SQLConfig>

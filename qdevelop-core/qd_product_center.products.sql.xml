@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<SQLConfig>
+	<property index="products-select-auto" connect="qd_product_center_write" explain="products查询">
+	<!--<formatter>
+			<prop-formatter result-key="status" prop-key="products_status_dict"/>
+			<date-formatter result-key="ctime" date-style="yyyy-MM-dd HH:mm:ss"/>
+		</formatter>-->
+		<sql>select dg,price,store,status,product_name,pid,ctime from products where {DYNAMIC}</sql>
+	</property>
+	<property index="products-insert-auto" connect="qd_product_center_write" explain="products插入">
+		<sql>insert into products(dg,price,store,status,product_name,ctime) value ($[dg],$[price],$[store],$[status],'$[product_name]',$[ctime])</sql>
+		<!--<sql>insert other_table(products_id) value({products.LAST_INSERT_ID})</sql>-->
+	</property>
+	<property index="products-update-auto" connect="qd_product_center_write" explain="products修改">
+		<sql>update products set dg=$[dg],price=$[price],store=$[store],status=$[status],product_name='$[product_name]',ctime=$[ctime] where pid=$[pid]</sql>
+	</property>
+	<property index="products-delete-auto" connect="qd_product_center_write" explain="products删除">
+		<sql>delete from products where pid=$[pid]</sql>
+	</property>
+</SQLConfig>

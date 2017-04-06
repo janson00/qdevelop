@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<data-formatter>
+
+ 	<param-formatter name="param-formatter" class="cn.qdevelop.core.formatter.impl.ParamFormatter">		
+	</param-formatter>
+	
+	<!--【AOP机制】基于查询结果的结果集处理-->
+	<!--利用已配置sql模版，进行结果集关联操作，类似leftjoin功能，可轻易实现夸库查询-->
+	<result-formatter name="key-value-formatter" class="cn.qdevelop.core.formatter.impl.KeyValueFormatter">
+		<result-key>当前结果集字段名</result-key>
+		<format-index>formatter的sql配置</format-index>
+		<format-key>formatter结果集中的对应的字段名</format-key>
+ 		<format-columns>formatter结果集中的对应的字段名</format-columns>
+	</result-formatter>
+	
+	<!--利用properties配置，数据进行字典对应翻译关系-->
+	<result-formatter name="prop-formatter" class="cn.qdevelop.core.formatter.impl.PropTranFormatter">
+		<result-key>当前结果集字段名</result-key>
+		<prop-key>配置文件中的名称</prop-key>
+	</result-formatter>
+	
+	<!--日期类型的数据进行格式化，详见java中SimpleDateFormat的日期格式化配置方式 -->
+	<result-formatter name="date-formatter" class="cn.qdevelop.core.formatter.impl.DateStyleFormatter">
+		<result-key>当前结果集字段名</result-key>
+		<date-style>配置文件中的名称</date-style>
+	</result-formatter>
+	
+	<!--【AOP机制】基于数据库更新的执行过程控制-->
+	
+	<!-- 执行批次更新时，进行debug跟踪 -->
+	<update-hook name="exec-debug" class="cn.qdevelop.core.formatter.impl.SQLDebugHook"/>
+	
+	<update-hook name="check-update" class="cn.qdevelop.core.formatter.impl.CheckUpdateHook">
+		<check-sql>检查数据结果集sql语句</check-sql>
+		<check-arg>需要检查的参数key值</check-arg>
+		<check-exsit>检查是否存在（true|false）</check-exsit>
+	</update-hook>
+	
+</data-formatter>
