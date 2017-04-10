@@ -13,7 +13,7 @@ import cn.qdevelop.service.IService;
 
 @WebServlet(urlPatterns="/svr/ajax/queryCount",loadOnStartup=1,initParams={  
         @WebInitParam(name=IService.INIT_VALID_REQUIRED,value="index"),
-        @WebInitParam(name=IService.INIT_VALID_IGNORE,value="")
+        @WebInitParam(name=IService.INIT_VALID_IGNORE,value="index")
 })
 //@WebServlet("/svr/ajax/query")
 public class AjaxQueryCount extends APIControl{

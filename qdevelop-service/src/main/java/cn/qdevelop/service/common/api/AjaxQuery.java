@@ -15,7 +15,7 @@ import cn.qdevelop.service.IService;
 @WebServlet(urlPatterns="/svr/ajax/query",
 		loadOnStartup=1,initParams={  
         @WebInitParam(name=IService.INIT_VALID_REQUIRED,value="index"),
-        @WebInitParam(name=IService.INIT_VALID_IGNORE,value="")
+        @WebInitParam(name=IService.INIT_VALID_IGNORE,value="index")
 })
 //@WebServlet("/svr/ajax/query")
 public class AjaxQuery extends APIControl{
@@ -26,6 +26,13 @@ public class AjaxQuery extends APIControl{
 
 	@Override
 	protected String execute(Map<String, String> query,IOutput out) {
+		/** default pagination **/
+		if(query.get("page")==null){
+			query.put("page", "1");
+		}
+		if(query.get("limit")==null){
+			query.put("limit", "10");
+		}
 		try {
 			IDBResult rb = DatabaseFactory.getInstance().queryDatabase(query);
 			out.setData(rb);

@@ -1,6 +1,7 @@
 package cn.qdevelop.service.filter;
 
 import java.io.IOException;
+import java.util.regex.Pattern;
 
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
@@ -15,7 +16,7 @@ import javax.servlet.http.HttpServletResponse;
 import cn.qdevelop.core.QDevelopUtils;
 import cn.qdevelop.service.utils.QServiceUitls;
 
-@WebFilter(urlPatterns="/svr/*")
+@WebFilter(urlPatterns="/*")
 public class CommonFilter  implements Filter{
 //	private static Logger log = QLog.getLogger(CommonFilter.class);
 
@@ -25,20 +26,16 @@ public class CommonFilter  implements Filter{
 		QDevelopUtils.initAll();  
 	}
 
+	private  static Pattern isMark  = Pattern.compile("sid=[A-Za-z0-9-]{36};?");
 	@Override
 	public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
 			throws IOException, ServletException {
-		long s = System.currentTimeMillis();
-		request.setAttribute("__startTime", s);
+		request.setAttribute("__startTime", System.currentTimeMillis());
 		/**给每个访问打唯一标识，一年过期时间**/
-		String sid = QServiceUitls.getCookie("sid",(HttpServletRequest)request);
-		if(sid==null){
+		if(!isMark.matcher(((HttpServletRequest)request).getHeader("Cookie")).find()){
 			QServiceUitls.setCookie((HttpServletResponse)response, "sid", java.util.UUID.randomUUID().toString(), 60*60*24*365);
 		}
-		//			request.setCharacterEncoding("UTF-8");
-		//			response.setCharacterEncoding("UTF-8");
 		chain.doFilter(request,response);
-//		log
 	}
 	
 
@@ -46,5 +43,5 @@ public class CommonFilter  implements Filter{
 	@Override
 	public void destroy() {
 	}
-
+	
 }

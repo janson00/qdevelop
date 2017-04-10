@@ -75,6 +75,7 @@ public abstract class APIControl extends HttpServlet implements IService{
 			throws ServletException, IOException {
 		doGet(request,response);
 	}
+	
 	private static Pattern isInteger = Pattern.compile("^[><=&\\^\\|0-9]+?$");
 	private static Pattern isDouble = Pattern.compile("^[><=&\\^\\|\\.0-9]+?$");
 	private static Pattern isTime = Pattern.compile("^[0-9]{4}-[0-9]{2}-[0-9]{2}( [0-9]{2}:[0-9]{2}:[0-9]{2})?$");
@@ -82,7 +83,13 @@ public abstract class APIControl extends HttpServlet implements IService{
 			Pattern.compile(
 					"(?:--)|(/\\*(?:.|[\\n\\r])*?\\*/)|(\\b(select|update|delete|insert|trancate|char|substr|ascii|declare|exec|master|into|drop|execute)\\b)",
 					Pattern.CASE_INSENSITIVE);
-	public boolean validParameters(Map<String,String> args){
+	
+	/**
+	 * 进行参数进行注入检查和数值类型校验；仅当args中含有index索引值时，才会根据数据库中，数据表中字段类型和当前参数进行类型校验
+	 * @param args
+	 * @return
+	 */
+	protected boolean validParameters(Map<String,String> args){
 		if(checkColumns!=null){
 			for(String s : checkColumns){
 				if(args.get(s)==null){
@@ -125,7 +132,7 @@ public abstract class APIControl extends HttpServlet implements IService{
 						}
 						if(!isRightValue){
 							QServiceUitls.output(new StringBuffer()
-									.append("{\"tag\":1,\"errMsg\":\"请求参数[").append(itor.getKey()).append("=").append(val).append("]数据不合法或含有恶意字符\"}")
+									.append("{\"tag\":1,\"errMsg\":\"请求参数[").append(itor.getKey()).append("=").append(val).append("]数据不合法或可能含有恶意字符\"}")
 									.toString(),RETURN_OUT_JSON,request,response);
 							return false;
 						}else if(dsf.getSize() > 0 && val.length() > dsf.getSize()){
@@ -136,12 +143,25 @@ public abstract class APIControl extends HttpServlet implements IService{
 						}
 					}else if(isAttackValue.matcher(val).find()){
 						QServiceUitls.output(new StringBuffer()
-								.append("{\"tag\":1,\"errMsg\":\"请求参数[").append(itor.getKey()).append("=").append(val).append("]含有恶意字符\"}")
+								.append("{\"tag\":1,\"errMsg\":\"请求参数[").append(itor.getKey()).append("=").append(val).append("]可能含有恶意字符\"}")
 								.toString(),RETURN_OUT_JSON,request,response);
 					}
 				}
 			} catch (QDevelopException e) {
 				e.printStackTrace();
+			}
+		}else{
+			Iterator<Entry<String,String>> iter = args.entrySet().iterator();
+			while(iter.hasNext()){
+				Entry<String,String> itor = iter.next();
+				if(ArrayUtils.contains(ignoreColumns, itor.getKey())){
+					continue;
+				}
+				if(isAttackValue.matcher(itor.getValue()).find()){
+					QServiceUitls.output(new StringBuffer()
+							.append("{\"tag\":1,\"errMsg\":\"请求参数[").append(itor.getKey()).append("=").append(itor.getValue()).append("]可能含有恶意字符\"}")
+							.toString(),RETURN_OUT_JSON,request,response);
+				}
 			}
 		}
 		return true;

@@ -496,5 +496,12 @@ public class DatabaseFactory {
 		}
 	}
 
+	/**
+	 * 关闭链接
+	 * @param conn
+	 */
+	public void closeConnection(Connection conn){
+		ConnectFactory.close(conn);
+	}
 
 }

@@ -14,7 +14,7 @@ import cn.qdevelop.service.IService;
 
 @WebServlet(urlPatterns="/svr/ajax/dataTables",loadOnStartup=1,initParams={  
         @WebInitParam(name=IService.INIT_VALID_REQUIRED,value="index,page"),
-        @WebInitParam(name=IService.INIT_VALID_IGNORE,value="")
+        @WebInitParam(name=IService.INIT_VALID_IGNORE,value="index")
 })
 public class DataTables extends APIControl{
 	/**
@@ -27,7 +27,8 @@ public class DataTables extends APIControl{
 		try {
 			String draw = query.get("draw") == null ? "1" : String.valueOf(query.get("draw"));
 			int page = query.get("page") == null ? 1 : Integer.parseInt(String.valueOf(query.get("page")));
-			int pageSize = query.get("page_size") == null ? 10 : Integer.parseInt(String.valueOf(query.get("page_size")));
+			String limit = query.get("page_size") == null ? query.get("limit") : query.get("page_size");
+			int pageSize = limit == null ? 10 : Integer.parseInt(limit);
 
 			IDBResult rb = DatabaseFactory.getInstance().queryDatabase(query);
 			int recordsFiltered = rb.getSize() == pageSize ? page*pageSize+1 : (page-1)*pageSize + rb.getSize();

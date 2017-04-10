@@ -13,7 +13,7 @@ import cn.qdevelop.service.IService;
 
 @WebServlet(urlPatterns="/svr/ajax/formCommit",loadOnStartup=1,initParams={  
         @WebInitParam(name=IService.INIT_VALID_REQUIRED,value="index"),
-        @WebInitParam(name=IService.INIT_VALID_IGNORE,value="")
+        @WebInitParam(name=IService.INIT_VALID_IGNORE,value="index")
 })
 public class FormCommit  extends APIControl {
 	private static final long serialVersionUID = 5578926696733805453L;

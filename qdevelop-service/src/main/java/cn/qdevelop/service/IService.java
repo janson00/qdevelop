@@ -10,8 +10,8 @@ public interface IService {
 	/**输出css文件数据**/
 	public String RETURN_OUT_CSS = "text/css";
 	
-	/**验证必须参数**/
+	/**验证非空必填参数，多值逗号隔开**/
 	public String INIT_VALID_REQUIRED = "valid_required";
-	/**验证忽略参数**/
+	/**忽略校验参数，多值逗号隔开**/
 	public String INIT_VALID_IGNORE = "valid_ignore";
 }
