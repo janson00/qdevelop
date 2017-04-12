@@ -3,7 +3,6 @@ package cn.qdevelop.core.formatter.impl;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Map;
-import java.util.Set;
 
 import org.dom4j.Element;
 
@@ -18,12 +17,6 @@ public class DateStyleFormatter  extends AbstractResultFormatter{
 	@Override
 	public void initFormatter(Element conf) throws QDevelopException {
 		if(attrs!=null){
-			Set<String> keys = attrs.keySet();
-			for(String attr:keys){
-				if(conf.attributeValue(attr)==null){
-					throw new QDevelopException(1001,"formatter配置不全错误："+attrs.toString());
-				}
-			}
 			resultKey = conf.attributeValue("result-key").split(",");
 			
 			String style = conf.attributeValue("date-style");

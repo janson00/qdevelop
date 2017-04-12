@@ -5,7 +5,6 @@ import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
-import java.util.Set;
 
 import org.dom4j.Element;
 
@@ -32,12 +31,6 @@ public class KeyValueFormatter extends AbstractResultFormatter implements IResul
 	@Override
 	public void initFormatter(Element conf) throws QDevelopException {
 		if(attrs!=null){
-			Set<String> keys = attrs.keySet();
-			for(String attr:keys){
-				if(conf.attributeValue(attr)==null){
-					throw new QDevelopException(1001,"formatter配置不全错误："+attrs.toString());
-				}
-			}
 			formatterIndex = conf.attributeValue("format-index");
 			formatterKey = conf.attributeValue("format-key");
 			formatterColumns = conf.attributeValue("format-columns").split(",");

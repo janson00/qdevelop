@@ -61,6 +61,22 @@ public class QLog {
 			protected void disposeFileDirectory(File f) {
 			}
 		}.searchProjectFiles(logConfig);
+		
+		new SearchFileFromProject(){
+			@Override
+			protected void disposeFile(File f) {
+				System.out.println(DateUtil.getNow()+" =====> log:"+f.getAbsolutePath().substring(projectIdx));
+				try {
+					props.load(new FileInputStream(f));
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			}
+
+			@Override
+			protected void disposeFileDirectory(File f) {
+			}
+		}.searchProjectFiles("log4j.properties");
 
 		String projectName = QSource.getProjectName();
 		Iterator<?> itor = props.keySet().iterator();

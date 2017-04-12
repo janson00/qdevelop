@@ -134,6 +134,9 @@ public class SQLConfigParser {
 			if(resultFormatter == null){
 				throw new QDevelopException(1001,"result-formatter配置不存在："+item.asXML());
 			}
+			if(!resultFormatter.validConfig(item)){
+				throw new QDevelopException(1001,"result-formatter配置参数不全："+item.asXML());
+			}
 			resultFormatter.initFormatter(item);
 			resultFormatters.add(resultFormatter);
 		}
