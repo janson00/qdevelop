@@ -92,7 +92,7 @@ public class QLog {
 
 	public static boolean isDevelopEnv(){
 		String os = System.getProperty("os.name").toLowerCase();
-		if(os.indexOf("solaris") > -1 || os.indexOf("centos") > -1 || os.indexOf("sunos") > -1 || os.indexOf("freebsd") > -1){
+		if(os.indexOf("solaris") > -1 || os.indexOf("centos") > -1 || os.indexOf("sunos") > -1 || os.indexOf("freebsd") > -1 || os.indexOf("Linux") > -1){
 			return false;
 		}
 		return true;

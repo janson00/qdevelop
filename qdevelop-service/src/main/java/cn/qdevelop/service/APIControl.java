@@ -64,10 +64,20 @@ public abstract class APIControl extends HttpServlet implements IService{
 		this.request = request;
 		out = new OutputJson();
 		init(out);
+		boolean isJsonp = request.getRequestURI().endsWith(".jsonp");
+		if(isJsonp){
+			String callback =  request.getParameter("callback");
+			if(callback==null || callback.length()==0){
+				QServiceUitls.output(new StringBuffer()
+						.append("{\"tag\":1,\"errMsg\":\"请求参数[callback]不能为空\"}")
+						.toString(),RETURN_OUT_JSON,request,response);
+				return;
+			}
+		}
 		Map<String,String> args = QServiceUitls.getParameters(request);
 		if(validParameters(args)){
-			 execute(args,out);
-			QServiceUitls.output(out.toString(),RETURN_OUT_JSON,request,response);
+			execute(args,out);
+			QServiceUitls.output(isJsonp?out.wrapper(request.getParameter("callback")+"(", ");"):out.toString(),RETURN_OUT_JSON,request,response);
 		}
 	}
 
@@ -75,7 +85,7 @@ public abstract class APIControl extends HttpServlet implements IService{
 			throws ServletException, IOException {
 		doGet(request,response);
 	}
-	
+
 	private static Pattern isInteger = Pattern.compile("^[><=&\\^\\|0-9]+?$");
 	private static Pattern isDouble = Pattern.compile("^[><=&\\^\\|\\.0-9]+?$");
 	private static Pattern isTime = Pattern.compile("^[0-9]{4}-[0-9]{2}-[0-9]{2}( [0-9]{2}:[0-9]{2}:[0-9]{2})?$");
@@ -83,7 +93,7 @@ public abstract class APIControl extends HttpServlet implements IService{
 			Pattern.compile(
 					"(?:--)|(/\\*(?:.|[\\n\\r])*?\\*/)|(\\b(select|update|delete|insert|trancate|char|substr|ascii|declare|exec|master|into|drop|execute)\\b)",
 					Pattern.CASE_INSENSITIVE);
-	
+
 	/**
 	 * 进行参数进行注入检查和数值类型校验；仅当args中含有index索引值时，才会根据数据库中，数据表中字段类型和当前参数进行类型校验
 	 * @param args

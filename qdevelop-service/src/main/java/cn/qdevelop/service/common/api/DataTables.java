@@ -12,7 +12,8 @@ import cn.qdevelop.service.APIControl;
 import cn.qdevelop.service.IOutput;
 import cn.qdevelop.service.IService;
 
-@WebServlet(urlPatterns="/svr/ajax/dataTables",loadOnStartup=1,initParams={  
+@WebServlet(urlPatterns={"/svr/ajax/dataTables.json","/svr/ajax/dataTables.jsonp"},
+	loadOnStartup=1,initParams={  
         @WebInitParam(name=IService.INIT_VALID_REQUIRED,value="index,page"),
         @WebInitParam(name=IService.INIT_VALID_IGNORE,value="index")
 })

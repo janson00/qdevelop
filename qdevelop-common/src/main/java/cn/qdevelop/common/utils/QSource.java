@@ -185,7 +185,7 @@ public class QSource {
 	private final static Pattern clearProjectName = Pattern.compile("\\/bin\\/?$|\\/WEB-INF.+?$|\\/lib\\/?$|\\/target.+?$");
 	private static String projectPath = null;
 	public static String getProjectName(){
-		return regProjectName.matcher(getProjectPath()).replaceAll("");
+		return regProjectName.matcher(getProjectPath().replace("/webapps/ROOT", "")).replaceAll("");
 	}
 
 	public static String getProjectPath(){

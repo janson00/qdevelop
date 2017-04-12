@@ -61,6 +61,11 @@ public class OutputJson implements IOutput{
 		return out.append("}").toString();
 	}
 	
+	@Override
+	public String wrapper(String startString, String endString) {
+		return new StringBuilder().append(startString).append(this.toString()).append(endString).toString();
+	}
+	
 	
 
 

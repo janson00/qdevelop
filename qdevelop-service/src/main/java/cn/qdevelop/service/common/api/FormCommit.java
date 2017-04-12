@@ -11,7 +11,7 @@ import cn.qdevelop.service.APIControl;
 import cn.qdevelop.service.IOutput;
 import cn.qdevelop.service.IService;
 
-@WebServlet(urlPatterns="/svr/ajax/formCommit",loadOnStartup=1,initParams={  
+@WebServlet(urlPatterns={"/svr/ajax/formCommit.json","/svr/ajax/formCommit.jsonp"},loadOnStartup=1,initParams={  
         @WebInitParam(name=IService.INIT_VALID_REQUIRED,value="index"),
         @WebInitParam(name=IService.INIT_VALID_IGNORE,value="index")
 })

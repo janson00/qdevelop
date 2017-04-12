@@ -12,7 +12,7 @@ import cn.qdevelop.service.APIControl;
 import cn.qdevelop.service.IOutput;
 import cn.qdevelop.service.IService;
 
-@WebServlet(urlPatterns="/svr/ajax/query",
+@WebServlet(urlPatterns={"/svr/ajax/query.json","/svr/ajax/query.jsonp"},
 		loadOnStartup=1,initParams={  
         @WebInitParam(name=IService.INIT_VALID_REQUIRED,value="index"),
         @WebInitParam(name=IService.INIT_VALID_IGNORE,value="index")

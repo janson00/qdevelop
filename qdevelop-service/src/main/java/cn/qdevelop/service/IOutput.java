@@ -13,4 +13,12 @@ public interface IOutput {
 	
 	public String toString();
 	
+	/**
+	 * toString之后，前后包裹特定字符
+	 * @param startString
+	 * @param endString
+	 * @return
+	 */
+	public String wrapper(String startString,String endString);
+	
 }
