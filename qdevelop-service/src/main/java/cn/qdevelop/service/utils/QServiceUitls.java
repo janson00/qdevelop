@@ -4,13 +4,24 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Enumeration;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
+import java.util.Map.Entry;
+import java.util.regex.Pattern;
 import java.util.zip.GZIPOutputStream;
 import java.util.zip.ZipOutputStream;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
+import org.apache.commons.lang.ArrayUtils;
+
+import cn.qdevelop.common.exception.QDevelopException;
+import cn.qdevelop.core.db.SQLConfigParser;
+import cn.qdevelop.core.db.bean.DBStrutsLeaf;
+import cn.qdevelop.service.IOutput;
+import cn.qdevelop.service.bean.OutputJson;
 
 public class QServiceUitls {
 	
@@ -56,6 +67,25 @@ public class QServiceUitls {
 		}
 		return paramMap;
 	}
+	
+	public static IOutput getOutput(HttpServletRequest request,HttpServletResponse response){
+		String uri = request.getRequestURI();
+		String type = uri.lastIndexOf(".") == -1 ? "" : uri.substring(uri.lastIndexOf("."));
+		if(type.equals(".json")){
+			OutputJson oj = new OutputJson();
+			oj.setOutType("application/json");
+			return oj;
+		}else if(type.equals(".jsonp")){
+			OutputJson oj = new OutputJson();
+			String callback =  request.getParameter("callback");
+			if(callback==null || callback.length()==0){
+				oj.setErrMsg("请求参数[callback]不能为空");
+			}
+			oj.setJsonpCallback(callback);
+			return oj;
+		}
+		return new OutputJson();
+	}
 
 	/**
 	 * 输出内容
@@ -96,5 +126,90 @@ public class QServiceUitls {
 				e.printStackTrace();
 			}
 		}
+	}
+	
+
+	private static Pattern isInteger = Pattern.compile("^[><=&\\^\\|0-9]+?$");
+	private static Pattern isDouble = Pattern.compile("^[><=&\\^\\|\\.0-9]+?$");
+	private static Pattern isTime = Pattern.compile("^[0-9]{4}-[0-9]{2}-[0-9]{2}( [0-9]{2}:[0-9]{2}:[0-9]{2})?$");
+	
+	private static Pattern isAttackValue =
+			Pattern.compile(
+					"(?:--)|(/\\*(?:.|[\\n\\r])*?\\*/)|(\\b(select|update|delete|insert|trancate|char|substr|ascii|declare|exec|master|into|drop|execute)\\b)",
+					Pattern.CASE_INSENSITIVE);
+
+	/**
+	 * 进行参数进行注入检查和数值类型校验；仅当args中含有index索引值时，才会根据数据库中，数据表中字段类型和当前参数进行类型校验
+	 * @param args
+	 * @return
+	 */
+	public static boolean validParameters(Map<String,String> args,IOutput out,String[] checkColumns,String[] ignoreColumns ){
+		if(checkColumns!=null){
+			for(String s : checkColumns){
+				if(args.get(s)==null){
+					out.setErrMsg("请求参数[",s,"]不能为空");
+					return false;
+				}
+			}
+		}
+		if(args.get("index")!=null){
+			try {
+				Map<String,DBStrutsLeaf> struts = SQLConfigParser.getInstance().getDBStrutsLeafByIndex(args.get("index"));
+				Iterator<Entry<String,String>> iter = args.entrySet().iterator();
+				while(iter.hasNext()){
+					Entry<String,String> itor = iter.next();
+					if(ArrayUtils.contains(ignoreColumns, itor.getKey())){
+						continue;
+					}
+					DBStrutsLeaf dsf = struts.get(itor.getKey());
+					String val = itor.getValue();
+					if(dsf!=null){
+						boolean isRightValue = true;
+						if(dsf!=null){
+							switch(dsf.getColumnType()){
+							case 1:
+							case 6:
+								isRightValue  = isInteger.matcher(val).find();
+								break;
+							case 3:
+								isRightValue = isDouble.matcher(val).find();
+								break;
+							case 4:
+							case 5:
+								isRightValue = isTime.matcher(val).find();
+								break;
+							default:
+								isRightValue = !isAttackValue.matcher(val).find();	
+							}
+						}
+						if(!isRightValue){
+							out.setErrMsg("请求参数[",itor.getKey(),"=",val,"]数据类型不合法");
+							return false;
+						}else if(dsf.getSize() > 0 && val.length() > dsf.getSize()){
+							out.setErrMsg("请求参数[",itor.getKey(),"=",val,"]数据超长");
+							return false;
+						}
+					}else if(isAttackValue.matcher(val).find()){
+						out.setErrMsg("请求参数[",itor.getKey(),"=",val,"]可能含有恶意字符");
+						return false;
+					}
+				}
+			} catch (QDevelopException e) {
+				e.printStackTrace();
+			}
+		}else{
+			Iterator<Entry<String,String>> iter = args.entrySet().iterator();
+			while(iter.hasNext()){
+				Entry<String,String> itor = iter.next();
+				if(ArrayUtils.contains(ignoreColumns, itor.getKey())){
+					continue;
+				}
+				if(isAttackValue.matcher(itor.getValue()).find()){
+					out.setErrMsg("请求参数[",itor.getKey(),"=",itor.getValue(),"]可能含有恶意字符");
+					return false;
+				}
+			}
+		}
+		return true;
 	}
 }

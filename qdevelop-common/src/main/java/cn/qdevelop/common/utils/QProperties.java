@@ -43,11 +43,12 @@ public class QProperties {
 	public static QProperties getInstance() {
 		if (_QProperties == null) {
 			_QProperties = new QProperties();
+			_QProperties.init();
 		}
 		return _QProperties;
 	}
-	
-	public QProperties(){
+		
+	public void init(){
 		props = new Properties();
 		new SearchFileFromJars(){
 			@Override

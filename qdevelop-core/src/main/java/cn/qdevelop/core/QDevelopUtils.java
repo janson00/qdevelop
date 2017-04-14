@@ -22,4 +22,12 @@ public class QDevelopUtils {
 	public static void destoryAll(){
 		ConnectFactory.shutdown();
 	}
+	
+	/**
+	 * 系统热加载
+	 */
+	public static void hotReload(){
+		QProperties.getInstance().init();
+		SQLConfigLoader.getInstance().hotLoadConfig();
+	}
 }

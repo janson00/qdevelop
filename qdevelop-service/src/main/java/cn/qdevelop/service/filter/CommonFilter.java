@@ -26,7 +26,7 @@ public class CommonFilter  implements Filter{
 		QDevelopUtils.initAll();  
 	}
 
-	private  static Pattern isMark  = Pattern.compile("sid=[A-Za-z0-9-]{36};?");
+	private static Pattern isMark  = Pattern.compile("sid=[A-Za-z0-9-]{36};?");
 	@Override
 	public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
 			throws IOException, ServletException {

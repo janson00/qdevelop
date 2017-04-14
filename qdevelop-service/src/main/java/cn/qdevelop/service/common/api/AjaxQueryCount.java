@@ -35,4 +35,10 @@ public class AjaxQueryCount extends APIControl{
 		return IService.RETURN_OUT_JSON;
 	}
 
+	@Override
+	public void init(Map<String, String> args) {
+		// TODO Auto-generated method stub
+		
+	}
+
 }

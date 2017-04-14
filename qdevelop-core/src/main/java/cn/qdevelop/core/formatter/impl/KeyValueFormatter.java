@@ -72,7 +72,7 @@ public class KeyValueFormatter extends AbstractResultFormatter implements IResul
 			IDBQuery dbQuery = SQLConfigParser.getInstance().getDBQueryBean(query, conn);
 			IDBResult formatterResult = new DBResultBean();
 			new DatabaseImpl().queryDB(conn, dbQuery, formatterResult);
-			
+			DatabaseFactory.getInstance().formatterResult(formatterIndex, formatterResult);
 			int size  = formatterResult.getSize();
 			Map<String,Object> dataTemple = result.getResult(0);
 			HashMap<String,Map<String,Object>> tmp = new HashMap<String,Map<String,Object>>();
@@ -96,6 +96,10 @@ public class KeyValueFormatter extends AbstractResultFormatter implements IResul
 						rname = "__"+rname;
 					}
 					fr.put(rname, data.get(column));
+					Object tranVal = data.get("__"+column);
+					if(tranVal!=null){
+						fr.put("__"+rname, tranVal);
+					}
 				}
 				tmp.put(key, fr);
 			}

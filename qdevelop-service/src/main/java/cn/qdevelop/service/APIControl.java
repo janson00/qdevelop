@@ -1,10 +1,7 @@
 package cn.qdevelop.service;
 
 import java.io.IOException;
-import java.util.Iterator;
 import java.util.Map;
-import java.util.Map.Entry;
-import java.util.regex.Pattern;
 
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
@@ -12,12 +9,6 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.commons.lang.ArrayUtils;
-
-import cn.qdevelop.common.exception.QDevelopException;
-import cn.qdevelop.core.db.SQLConfigParser;
-import cn.qdevelop.core.db.bean.DBStrutsLeaf;
-import cn.qdevelop.service.bean.OutputJson;
 import cn.qdevelop.service.utils.QServiceUitls;
 
 /**
@@ -48,6 +39,11 @@ public abstract class APIControl extends HttpServlet implements IService{
 		}
 	}
 
+	/**
+	 * 自定义初始化请求参数，在执行execute方法和验证参数之前，做参数的自定义处理
+	 * @param files
+	 */
+	public abstract void init(Map<String,String> args);
 
 	/**
 	 * 统一执行入口
@@ -62,120 +58,23 @@ public abstract class APIControl extends HttpServlet implements IService{
 			throws ServletException, IOException {
 		this.response = response;
 		this.request = request;
-		out = new OutputJson();
-		init(out);
-		boolean isJsonp = request.getRequestURI().endsWith(".jsonp");
-		if(isJsonp){
-			String callback =  request.getParameter("callback");
-			if(callback==null || callback.length()==0){
-				QServiceUitls.output(new StringBuffer()
-						.append("{\"tag\":1,\"errMsg\":\"请求参数[callback]不能为空\"}")
-						.toString(),RETURN_OUT_JSON,request,response);
-				return;
+		out = QServiceUitls.getOutput(request, response);
+		if(!out.isError()){
+			Map<String,String> args = QServiceUitls.getParameters(request);
+			init(args);
+			if(QServiceUitls.validParameters(args,out,checkColumns,ignoreColumns)){
+				execute(args,out);
 			}
 		}
-		Map<String,String> args = QServiceUitls.getParameters(request);
-		if(validParameters(args)){
-			execute(args,out);
-			QServiceUitls.output(isJsonp?out.wrapper(request.getParameter("callback")+"(", ");"):out.toString(),RETURN_OUT_JSON,request,response);
-		}
+		QServiceUitls.output(out.toString(), out.getOutType(), request, response);
 	}
 
+	
 	protected void doPost(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
 		doGet(request,response);
 	}
 
-	private static Pattern isInteger = Pattern.compile("^[><=&\\^\\|0-9]+?$");
-	private static Pattern isDouble = Pattern.compile("^[><=&\\^\\|\\.0-9]+?$");
-	private static Pattern isTime = Pattern.compile("^[0-9]{4}-[0-9]{2}-[0-9]{2}( [0-9]{2}:[0-9]{2}:[0-9]{2})?$");
-	private static Pattern isAttackValue =
-			Pattern.compile(
-					"(?:--)|(/\\*(?:.|[\\n\\r])*?\\*/)|(\\b(select|update|delete|insert|trancate|char|substr|ascii|declare|exec|master|into|drop|execute)\\b)",
-					Pattern.CASE_INSENSITIVE);
-
-	/**
-	 * 进行参数进行注入检查和数值类型校验；仅当args中含有index索引值时，才会根据数据库中，数据表中字段类型和当前参数进行类型校验
-	 * @param args
-	 * @return
-	 */
-	protected boolean validParameters(Map<String,String> args){
-		if(checkColumns!=null){
-			for(String s : checkColumns){
-				if(args.get(s)==null){
-					QServiceUitls.output(new StringBuffer()
-							.append("{\"tag\":1,\"errMsg\":\"请求参数[").append(s).append("]不能为空\"}")
-							.toString(),RETURN_OUT_JSON,request,response);
-					return false;
-				}
-			}
-		}
-		if(args.get("index")!=null){
-			try {
-				Map<String,DBStrutsLeaf> struts = SQLConfigParser.getInstance().getDBStrutsLeafByIndex(args.get("index"));
-				Iterator<Entry<String,String>> iter = args.entrySet().iterator();
-				while(iter.hasNext()){
-					Entry<String,String> itor = iter.next();
-					if(ArrayUtils.contains(ignoreColumns, itor.getKey())){
-						continue;
-					}
-					DBStrutsLeaf dsf = struts.get(itor.getKey());
-					String val = itor.getValue();
-					if(dsf!=null){
-						boolean isRightValue = true;
-						if(dsf!=null){
-							switch(dsf.getColumnType()){
-							case 1:
-							case 6:
-								isRightValue  = isInteger.matcher(val).find();
-								break;
-							case 3:
-								isRightValue = isDouble.matcher(val).find();
-								break;
-							case 4:
-							case 5:
-								isRightValue = isTime.matcher(val).find();
-								break;
-							default:
-								isRightValue = !isAttackValue.matcher(val).find();	
-							}
-						}
-						if(!isRightValue){
-							QServiceUitls.output(new StringBuffer()
-									.append("{\"tag\":1,\"errMsg\":\"请求参数[").append(itor.getKey()).append("=").append(val).append("]数据不合法或可能含有恶意字符\"}")
-									.toString(),RETURN_OUT_JSON,request,response);
-							return false;
-						}else if(dsf.getSize() > 0 && val.length() > dsf.getSize()){
-							QServiceUitls.output(new StringBuffer()
-									.append("{\"tag\":1,\"errMsg\":\"请求参数[").append(itor.getKey()).append("=").append(val).append("]超长\"}")
-									.toString(),RETURN_OUT_JSON,request,response);
-							return false;
-						}
-					}else if(isAttackValue.matcher(val).find()){
-						QServiceUitls.output(new StringBuffer()
-								.append("{\"tag\":1,\"errMsg\":\"请求参数[").append(itor.getKey()).append("=").append(val).append("]可能含有恶意字符\"}")
-								.toString(),RETURN_OUT_JSON,request,response);
-					}
-				}
-			} catch (QDevelopException e) {
-				e.printStackTrace();
-			}
-		}else{
-			Iterator<Entry<String,String>> iter = args.entrySet().iterator();
-			while(iter.hasNext()){
-				Entry<String,String> itor = iter.next();
-				if(ArrayUtils.contains(ignoreColumns, itor.getKey())){
-					continue;
-				}
-				if(isAttackValue.matcher(itor.getValue()).find()){
-					QServiceUitls.output(new StringBuffer()
-							.append("{\"tag\":1,\"errMsg\":\"请求参数[").append(itor.getKey()).append("=").append(itor.getValue()).append("]可能含有恶意字符\"}")
-							.toString(),RETURN_OUT_JSON,request,response);
-				}
-			}
-		}
-		return true;
-	}
 
 	public HttpServletResponse getResponse(){
 		return response;
@@ -193,12 +92,6 @@ public abstract class APIControl extends HttpServlet implements IService{
 		return out;
 	}
 
-	/**
-	 * 初始化
-	 * @param out
-	 */
-	public void init(IOutput output){
 
-	}
 
 }

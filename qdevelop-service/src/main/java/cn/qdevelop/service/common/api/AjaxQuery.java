@@ -43,6 +43,11 @@ public class AjaxQuery extends APIControl{
 		return IService.RETURN_OUT_JSON;
 	}
 
+	@Override
+	public void init(Map<String, String> args) {
+		
+	}
+
 	
 
 }

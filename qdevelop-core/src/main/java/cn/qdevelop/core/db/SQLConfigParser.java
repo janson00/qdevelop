@@ -166,7 +166,7 @@ public class SQLConfigParser {
 				DBStrutsBean dbsb = TableColumnType.getInstance().getTableStrutsBean(conn, tableName);
 				boolean fetchZeroErr = Boolean.parseBoolean(sql.attributeValue("fetch-zero-err"));
 				String[] params = sql.attributeValue("params") == null ? null : sql.attributeValue("params").split("\\|");
-				if(repeat!=null){
+				if(repeat!=null && repeat.length()>0){
 					String[] args;
 					String repeatSplit =  sql.attributeValue("repeat-split");
 					if(repeatSplit!=null){

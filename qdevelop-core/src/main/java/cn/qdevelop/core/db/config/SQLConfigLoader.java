@@ -98,9 +98,43 @@ public class SQLConfigLoader extends HashMap<String,Element>{
 			}
 		}.searchProjectFiles("*.sql.xml$");
 	}
+	
+	/**
+	 * 热加载本地配置文件
+	 */
+	public void hotLoadConfig(){
+		final int projectIndex = QSource.getProjectPath().length();
+		new SearchFileFromProject(){
+			@SuppressWarnings("unchecked")
+			@Override
+			protected void disposeFile(File f) {
+				try {
+					Element root = new QXMLUtils().getDocument(f).getRootElement();
+					if(root.getName().equals(Contant.SQL_CONFIG_ROOT)){
+						Iterator<Element> items = root.elementIterator();
+						String fileName  = f.getAbsolutePath().substring(projectIndex);
+						log.info("load sqlConfig: "+fileName);
+						while (items.hasNext()) {
+							Element property = items.next();
+							if (property.getName().equals("property")) {
+								initProperty(property,fileName);
+							}
+						}
+					}
+				} catch (Exception e) {
+					log.error(f.getAbsolutePath(),e);
+					e.printStackTrace();
+				}
+			}
 
-	public static Pattern cleanSplit;
-	@SuppressWarnings("unchecked")
+			@Override
+			protected void disposeFileDirectory(File f) {
+			}
+		}.searchProjectFiles("*.sql.xml$");
+	}
+
+	
+	
 	private void initSqlConfig(Iterator<Element> items,String fileName,boolean isJarConfig){
 		log.info("load sqlConfig: "+fileName);
 		while (items.hasNext()) {
@@ -112,100 +146,95 @@ public class SQLConfigLoader extends HashMap<String,Element>{
 					if(isJarConfig){
 						log.warn("原文件【"+fileName+"】被当前【"+ele.attributeValue("file")+"】文件中index="+index+"的配置覆盖");
 					}else{
-						System.out.println("当前文件【"+fileName+"】\n和文件【"+ele.attributeValue("file")+"】\n存在重复索引 index : "+index+" ，系统自动退出！");
+						log.error("当前文件【"+fileName+"】\n和文件【"+ele.attributeValue("file")+"】\n存在重复索引 index : "+index+" ！");
 						System.exit(0);
 					}
 				}
-
-				/**init default values**/
-				property.addAttribute("file", fileName);
-				if(property.attributeValue("connect")==null){
-					property.addAttribute("connect", Contant.CONNECT_DEFAULT);
-				}
-				if(property.attributeValue("sql")!=null){
-					Element s = property.addElement("sql");
-					s.addText(cleanSQL(property.attributeValue("sql")));
-					property.remove(property.attribute("sql"));
-				}
-				HashSet<String> tables = new HashSet<String>();
-				Boolean isSelect = null;
-				Iterator<Element> sqls = property.elementIterator("sql");
-				while (sqls.hasNext()) {
-					Element sql = sqls.next();
-					String sqlStr = cleanSQL(sql.getText());
-					if(sqlStr== null )continue;
-
-					if(sql.attributeValue("repeat")!=null){
-						String repeat = sql.attributeValue("repeat");
-
-						try {
-							if(sql.attributeValue("repeat-split")==null){
-								String repearSplit=cleanSplit.matcher(repeat).replaceAll("");
-								if(repearSplit.length() > 0){
-									sql.addAttribute("repeat-split", repearSplit.substring(0,1));
-								}
-							}
-							if(sql.attributeValue("repeat-concat")==null){
-								sql.addAttribute("repeat-concat", "^");
-							}
-						} catch (Exception e) {
-							System.out.println("==> "+repeat);
-							e.printStackTrace();
-						}
-					}
-
-					sql.setText(sqlStr);
-					isSelect = sqlStr.length() > 6 && sqlStr.substring(0, 6).toLowerCase().equals("select") ? true: false;
-
-					//					String execSql =  prest_sql_clean.matcher(sqlStr).replaceAll("?");
-					//					if(sql.attributeValue("columns")==null){
-					//						String fields = getParamsFileds(execSql,index,fileName);
-					//						if(fields!=null){
-					//							sql.addAttribute("columns", fields );
-					//						}
-					//					}
-					String param = getParamKey(sqlStr);
-					if(param!=null){
-						sql.addAttribute("params", param);
-					}
-
-
-					//					/**兼容分析错误**/
-					//					if(sql.attributeValue("columns")==null){
-					//						sql.addAttribute("columns", sql.attributeValue("params"));
-					//					}
-
-					sql.addAttribute("is-select", isSelect.toString());
-					if(isSelect){
-						sql.addAttribute("tables", getSelectTableNames(sqlStr));
-					}else{
-						sql.addAttribute("tables", getUpdateTableName(sqlStr));
-					}
-					if(sql.attributeValue("fetch-zero-err")==null){
-						sql.addAttribute("fetch-zero-err", "true");
-					}
-					//					sql.addAttribute("execSql",execSql);
-					addTables(sql.attributeValue("tables"),property.attributeValue("connect"));
-				}
-				if(property.attributeValue("is-master")==null){
-					property.addAttribute("is-master", isSelect?"false":"true");
-				}
-				property.addAttribute("is-select", isSelect.toString());
-
-				//兼容历史配置
-				Element resultFormatter = property.element("formatter");
-				if(resultFormatter!=null){
-					Element _r = property.addElement("result-formatter");
-					xml.copyElement(resultFormatter, _r);
-					property.remove(resultFormatter);
-				}
-
-
-				tables.clear();
-				this.put(index, property);
+				initProperty(property,fileName);
 			}
 		}
 	}
+	
+	
+	public static Pattern cleanSplit;
+	private void initProperty(Element property,String fileName){
+		/**init default values**/
+		property.addAttribute("file", fileName);
+		if(property.attributeValue("connect")==null){
+			property.addAttribute("connect", Contant.CONNECT_DEFAULT);
+		}
+		if(property.attributeValue("sql")!=null){
+			Element s = property.addElement("sql");
+			s.addText(cleanSQL(property.attributeValue("sql")));
+			property.remove(property.attribute("sql"));
+		}
+		HashSet<String> tables = new HashSet<String>();
+		Boolean isSelect = null;
+		@SuppressWarnings("unchecked")
+		Iterator<Element> sqls = property.elementIterator("sql");
+		while (sqls.hasNext()) {
+			Element sql = sqls.next();
+			String sqlStr = cleanSQL(sql.getText());
+			if(sqlStr== null )continue;
+
+			if(sql.attributeValue("repeat")!=null){
+				String repeat = sql.attributeValue("repeat").trim();
+				if(repeat.length()>0){
+					try {
+						if(sql.attributeValue("repeat-split")==null){
+							String repearSplit=cleanSplit.matcher(repeat).replaceAll("");
+							if(repearSplit.length() > 0){
+								sql.addAttribute("repeat-split", repearSplit.substring(0,1));
+							}
+						}
+						if(sql.attributeValue("repeat-concat")==null){
+							sql.addAttribute("repeat-concat", "^");
+						}
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
+				}else{
+					sql.remove(sql.attribute("repeat"));
+				}
+			}
+
+			sql.setText(sqlStr);
+			isSelect = sqlStr.length() > 6 && sqlStr.substring(0, 6).toLowerCase().equals("select") ? true: false;
+
+			String param = getParamKey(sqlStr);
+			if(param!=null){
+				sql.addAttribute("params", param);
+			}
+
+			sql.addAttribute("is-select", isSelect.toString());
+			if(isSelect){
+				sql.addAttribute("tables", getSelectTableNames(sqlStr));
+			}else{
+				sql.addAttribute("tables", getUpdateTableName(sqlStr));
+			}
+			if(sql.attributeValue("fetch-zero-err")==null){
+				sql.addAttribute("fetch-zero-err", "true");
+			}
+			addTables(sql.attributeValue("tables"),property.attributeValue("connect"));
+		}
+		if(property.attributeValue("is-master")==null){
+			property.addAttribute("is-master", isSelect?"false":"true");
+		}
+		property.addAttribute("is-select", isSelect.toString());
+
+		//兼容历史配置
+		Element resultFormatter = property.element("formatter");
+		if(resultFormatter!=null){
+			Element _r = property.addElement("result-formatter");
+			xml.copyElement(resultFormatter, _r);
+			property.remove(resultFormatter);
+		}
+
+
+		tables.clear();
+		this.put(property.attributeValue("index"), property);
+	}
+	
 	QXMLUtils xml = new QXMLUtils();
 	private void storeDebugXML(){
 		Document sqlModelConfigCache = DocumentHelper.createDocument();
@@ -281,49 +310,6 @@ public class SQLConfigLoader extends HashMap<String,Element>{
 		}
 		return sb.length() > 0 ? sb.toString().substring(1) : "";
 	} 
-	//	private final Pattern fildsClear = Pattern.compile("=\\?");
-	//	private final Pattern fildsInsertClear1 = Pattern.compile("^.+\\({1}|\\)$|`|\t");
-	//	private final Pattern fildsInsertClear2 = Pattern.compile("^\\({1}|\\)$|`|\t");
-	//	private final Pattern split = Pattern.compile(" value(s)?", Pattern.CASE_INSENSITIVE);
-	//	private String getParamsFileds(String execSql,String index,String fileName){
-	//		if(execSql.indexOf("?")==-1){
-	//			return null;
-	//		}
-	//		String[] tmp;
-	//		if(execSql.toLowerCase().startsWith("insert")){
-	//			tmp =  execSql.toLowerCase().split(" ?value(s)?");
-	//			if(tmp.length == 2){
-	//				String[] filds = fildsInsertClear1.matcher(tmp[0].trim()).replaceAll("").split(",");
-	//				String[] args = fildsInsertClear2.matcher(tmp[1].trim()).replaceAll("").split(",");
-	//				if(filds.length == args.length){
-	//					StringBuffer sb = new StringBuffer();
-	//					for(int i = 0; i< filds.length ; i++){
-	//						if(args[i].trim().equals("?")){
-	//							sb.append("|").append(filds[i].trim());
-	//						}
-	//					}
-	//					return sb.substring(1);
-	//				}else{
-	//					log.error("动态分析columns参数获取错误 ["+index+"]  ["+fildsInsertClear1.matcher(tmp[0]).replaceAll("")+"] ["+fildsInsertClear2.matcher(tmp[1]).replaceAll("")+"] in "+fileName);
-	//					//					System.exit(0);
-	//				}
-	//			}else{
-	//				log.error("动态分析columns参数获取错误 ["+index+"] {"+tmp[0]+"} in "+fileName);
-	//				//				System.exit(0);
-	//			}
-	//
-	//			return null;
-	//		}
-	//		tmp = execSql.replaceAll("," , " ").split(" ");
-	//		StringBuffer sb = new StringBuffer();
-	//		for(int i=0;i<tmp.length;i++){
-	//			if(tmp[i]!=null && tmp[i].length() > 1 && tmp[i].endsWith("?")){
-	//				sb.append("|").append(fildsClear.matcher(tmp[i].trim()).replaceAll(""));
-	//			}
-	//		}
-	//		tmp = null;
-	//		return sb.length() > 0 ? sb.substring(1) : null;
-	//	}
 
 	private Pattern tablePattern = Pattern
 			.compile("^.+?INTO|^UPDATE| WHERE.+?$| SET.+?$| VALUE.+?$|\\(.+?\\)|^.+?FROM|`");

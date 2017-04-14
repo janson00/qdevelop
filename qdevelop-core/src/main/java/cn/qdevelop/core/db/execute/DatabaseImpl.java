@@ -317,7 +317,6 @@ public class DatabaseImpl {
 						java.sql.Timestamp val1=null;
 						if(values[i].getClass().equals(Date.class)){
 							val1 = new java.sql.Timestamp(((Date)values[i]).getTime());
-
 						}else if(values[i].getClass().equals(String.class)){
 							String v = String.valueOf(values[i]).replaceAll("'", "");
 							if(v.length() == 19){

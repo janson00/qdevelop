@@ -14,6 +14,9 @@ public class OutputJson implements IOutput{
 	String errMsg;
 	Object data;
 	HashMap<String,Object> attr = null;
+	String jsonpCallback = null;
+	boolean isError = false;
+	String outType;
 
 	public int getTag() {
 		return tag;
@@ -24,12 +27,23 @@ public class OutputJson implements IOutput{
 	public String getErrMsg() {
 		return errMsg==null?"":errMsg;
 	}
-	public void setErrMsg(String errMsg) {
+
+	/**
+	 * 设置错误信息
+	 * @param errMsgs
+	 */
+	public void setErrMsg(String ... errMsgs){
+		isError = true;
 		if(tag==0){//0默认为正常，如果设置错误信息，则主动变更状态为1
 			tag = 1;
 		}
-		this.errMsg = errMsg;
+		StringBuffer sb = new StringBuffer();
+		for(int i=0;i<errMsgs.length;i++){
+			sb.append(errMsgs[i]);
+		}
+		this.errMsg = sb.toString();
 	}
+	
 	public Object getData() {
 		return data;
 	}
@@ -47,7 +61,7 @@ public class OutputJson implements IOutput{
 
 
 	public String toString(){
-		StringBuffer out = new StringBuffer().append("{")
+		StringBuffer out = new StringBuffer().append(jsonpCallback==null?"":jsonpCallback+"(").append("{")
 				.append("\"tag\":").append(this.getTag()).append(",")
 				.append("\"data\":").append(JSON.toJSONString(this.getData())).append(",")
 				.append("\"errMsg\":\"").append(this.getErrMsg()).append("\"");
@@ -58,16 +72,25 @@ public class OutputJson implements IOutput{
 				out.append(",\"").append(itor.getKey()).append("\":").append(JSON.toJSONString(itor.getValue()));
 			}
 		}
-		return out.append("}").toString();
+		return out.append("}").append(jsonpCallback==null?"":");").toString();
 	}
 	
 	@Override
-	public String wrapper(String startString, String endString) {
-		return new StringBuilder().append(startString).append(this.toString()).append(endString).toString();
+	public boolean isError() {
+		return isError;
 	}
 	
+	@Override
+	public String getOutType() {
+		return outType;
+	}
 	
-
-
+	public void setOutType(String outType){
+		this.outType = outType;
+	}
+	
+	public void setJsonpCallback(String callback){
+		jsonpCallback = callback;
+	}
 
 }
