@@ -48,7 +48,13 @@ public abstract class SearchFileFromJars {
 			for(int i=0;i<fs.length;i++){
 				loopSearchJar(fs[i],all);
 			}
-			String[] jars = System.getProperty("java.class.path").split(";|:");
+			String classPath = System.getProperty("java.class.path");
+			String[] jars;
+			if(isWindows()){
+				jars = classPath.split(";");
+			}else{
+				jars = classPath.split(":");
+			}
 			for(int i=0;i<jars.length;i++){
 				if(jars[i].endsWith(".jar")){
 					all.add(clean.matcher(new File(jars[i]).getAbsolutePath()).replaceAll(""));
@@ -58,6 +64,17 @@ public abstract class SearchFileFromJars {
 			e.printStackTrace();
 		}
 		return all;
+	}
+
+	private static Boolean isWindow  ;
+	private static boolean isWindows(){
+		if(isWindow!=null)return isWindow.booleanValue();
+		if (System.getProperties().getProperty("os.name").toUpperCase().indexOf("WINDOWS") != -1) {
+			isWindow = new Boolean(true);
+		}else{
+			isWindow = new Boolean(false);
+		}
+		return isWindow.booleanValue();
 	}
 
 	private static Pattern clean = Pattern.compile("\\.\\/");
