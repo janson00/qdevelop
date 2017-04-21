@@ -12,6 +12,17 @@ import javax.servlet.http.HttpServletResponse;
 import cn.qdevelop.service.utils.QServiceUitls;
 
 /**
+ * @WebServlet(
+		//自定义接口URI，前端可直接访问；注意系统内不可重复，否则会启动报错
+		urlPatterns="/myapp/requestUri",
+		loadOnStartup=1,initParams={
+				//value内填写需要验证必须存在的参数，其他参数将自动按数据库内的格式自动校验,可将绝大部分数据验证自动处理了
+				@WebInitParam(name=IService.INIT_VALID_REQUIRED,value="page,limit"),
+				//value内填写忽略验证的参数，有些特殊参数可能会被误拦截为可疑hack字符
+				@WebInitParam(name=IService.INIT_VALID_IGNORE,value="")
+		})
+ */
+/**
  * 抽象API服务接口类
  * @author janson
  *

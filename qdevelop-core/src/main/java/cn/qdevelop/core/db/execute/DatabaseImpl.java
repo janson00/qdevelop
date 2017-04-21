@@ -122,8 +122,17 @@ public class DatabaseImpl {
 		}
 	}
 	
+	/**
+	 * 批量执行更新语句
+	 * @param conn
+	 * @param ub
+	 * @param values
+	 * @param updateHooks
+	 * @param isAutoCommit
+	 * @return
+	 * @throws QDevelopException
+	 */
 	public int singleBatchUpdate(Connection conn,UpdateBean ub,List<Object[]> values,List<IUpdateHook> updateHooks,boolean isAutoCommit) throws QDevelopException{
-//		if(!ub.isInsert())throw new QDevelopException(1001,"此方法只执行insert语句"+ub.getFullSql()); 
 		PreparedStatement pstmt = null;
 		int idx=0;
 		try {
@@ -138,6 +147,7 @@ public class DatabaseImpl {
 				if(idx%1000==0){
 					pstmt.executeBatch();
 					size += pstmt.getUpdateCount();
+					System.out.println("singleBatchUpdate:["+size+"] +1");
 				}
 			}
 			pstmt.executeBatch();

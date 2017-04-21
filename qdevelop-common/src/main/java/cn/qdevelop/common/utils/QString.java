@@ -245,5 +245,9 @@ public class QString {
 		}
 		return  null;
 	}
+	
+	public static void main(String[] args) {
+		System.out.println(QString.get64MD5("tianrongxin123"));
+	}
 
 }
