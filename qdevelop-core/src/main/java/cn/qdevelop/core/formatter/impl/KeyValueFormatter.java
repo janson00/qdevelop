@@ -65,7 +65,7 @@ public class KeyValueFormatter extends AbstractResultFormatter implements IResul
 		if(sb.length()==0)return;
 		query.put(formatterKey, sb.substring(1));
 		query.put("page", 1);
-		query.put("page_size", 1000);
+		query.put("limit", conditions.size());
 		Connection conn = null;
 		try {
 			conn = DatabaseFactory.getInstance().getConnectByQuery(query);
@@ -113,13 +113,12 @@ public class KeyValueFormatter extends AbstractResultFormatter implements IResul
 					data.putAll(fr);
 				}
 			}
-			
 			tmp = null;
 			formatterResult = null;
-			conditions.clear();
 		} catch (Exception e) {
 			throw e;
 		}finally{
+			conditions.clear();
 			try {
 				if(conn!=null)
 					conn.close();

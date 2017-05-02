@@ -129,9 +129,9 @@ public class QServiceUitls {
 	}
 	
 
-	private static Pattern isInteger = Pattern.compile("^[><=&\\^\\|0-9]+?$");
-	private static Pattern isDouble = Pattern.compile("^[><=&\\^\\|\\.0-9]+?$");
-	private static Pattern isTime = Pattern.compile("^[0-9]{4}-[0-9]{2}-[0-9]{2}( [0-9]{2}:[0-9]{2}:[0-9]{2})?$");
+	private static Pattern isInteger = Pattern.compile("^(([><=&\\^!\\|]+)?[0-9]+?)+?$");
+	private static Pattern isDouble = Pattern.compile("^(([><=&\\^!\\|]+)?[0-9]+?\\.[0-9]+?)+?$");
+	private static Pattern isTime = Pattern.compile("^(([><=&\\^!\\|]+)?[0-9]{4}-[0-9]{2}-[0-9]{2}( [0-9]{2}:[0-9]{2}:[0-9]{2})?)+?$");
 	
 	private static Pattern isAttackValue =
 			Pattern.compile(
@@ -212,4 +212,9 @@ public class QServiceUitls {
 		}
 		return true;
 	}
+//	public static void main(String[] args) {
+////		isDouble.matcher("")
+//		Pattern isDouble = Pattern.compile("^(([><=&\\^!\\|@#\\_]+)?[0-9]{4}-[0-9]{2}-[0-9]{2}( [0-9]{2}:[0-9]{2}:[0-9]{2})?)+?$");
+//		System.out.println(isDouble.matcher("2014-12-12@2014-12-12^2014-12-12@2014-12-12").find());
+//	}
 }

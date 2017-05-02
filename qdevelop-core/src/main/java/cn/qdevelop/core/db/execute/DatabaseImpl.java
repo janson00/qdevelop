@@ -18,6 +18,7 @@ import org.apache.log4j.Logger;
 
 import cn.qdevelop.common.exception.QDevelopException;
 import cn.qdevelop.common.utils.QLog;
+import cn.qdevelop.common.utils.QString;
 import cn.qdevelop.core.db.bean.DBStrutsLeaf;
 import cn.qdevelop.core.db.bean.UpdateBean;
 import cn.qdevelop.core.standard.IDBQuery;
@@ -56,8 +57,7 @@ public class DatabaseImpl {
 		return result;
 	}
 
-	final static Pattern hasAutoIncrementParam = Pattern.compile("\\{[a-zA-z0-9_]+\\.LAST_INSERT_ID\\}");
-	final static Pattern getAutoIncrementKey = Pattern.compile("^.*\\{|\\.LAST_INSERT_ID\\}.*$");
+	
 
 	/**
 	 * 插入并返回自增ID的方法
@@ -189,6 +189,9 @@ public class DatabaseImpl {
 			}
 		}
 	}
+	
+	final static Pattern hasAutoIncrementParam = Pattern.compile("\\{[a-zA-z0-9_]+\\.LAST_INSERT_ID\\}");
+	final static Pattern getAutoIncrementKey = Pattern.compile("^.*\\{|\\.LAST_INSERT_ID\\}.*$");
 
 	public boolean updateDB(Connection conn,IDBUpdate dbUpdate,List<IUpdateHook> updateHooks,boolean isAutoCommit) throws QDevelopException{
 		HashMap<String,String> autoIncrement = new HashMap<String,String>();
@@ -198,12 +201,13 @@ public class DatabaseImpl {
 			List<UpdateBean> updateBeans = dbUpdate.getUpdateBeans();
 			for(UpdateBean ub : updateBeans){
 				try {
-					if(hasAutoIncrementParam.matcher(ub.getPreparedSql()).find()){
+					while(hasAutoIncrementParam.matcher(ub.getPreparedSql()).find()){
 						String key = getAutoIncrementKey.matcher(ub.getPreparedSql()).replaceAll("");
 						if(autoIncrement.get(key) == null){
 							throw new QDevelopException(1001,"【获取自增ID出错】【"+key+"】"+ub.getFullSql());
 						}
-						ub.setPreparedSql(hasAutoIncrementParam.matcher(ub.getPreparedSql()).replaceAll(autoIncrement.get(key)));
+						ub.setPreparedSql(ub.getPreparedSql().replace(QString.append("{",key,".LAST_INSERT_ID}"), autoIncrement.get(key)));
+						ub.setFullSql(ub.getFullSql().replace(QString.append("{",key,".LAST_INSERT_ID}"), autoIncrement.get(key)));
 					}
 					if(ub.isInsert()){
 						pstmt = conn.prepareStatement(ub.getPreparedSql(),Statement.RETURN_GENERATED_KEYS);
