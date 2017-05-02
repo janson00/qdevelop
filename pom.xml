@@ -1,25 +1,45 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+
+	
+	<properties>
+		<qdevelop.version>1.0.0-SNAPSHOT</qdevelop.version>
+	</properties>
+
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>cn.qdevelop</groupId>
 	<artifactId>qdevelop</artifactId>
-	<version>1.0.0</version>
+	<version>1.0.0-SNAPSHOT</version>
 	<packaging>pom</packaging>
+	
 	<repositories>
 		<repository>
+			<id>central</id>
+			<!--阿里云maven私服，加速下载通用包 -->
+			<url>http://maven.aliyun.com/nexus/content/groups/public</url>
+		</repository>
+		<repository>
+			<id>qdevelop</id>		
+			<url>http://mvn.e-platform.cn/nexus/content/repositories/qdevelop</url>
+		</repository>
+		<repository>
 			<id>e-platform</id>
-			<name>central</name>
 			<url>http://mvn.e-platform.cn/nexus/content/repositories/e-platform</url>
 		</repository>
 	</repositories>
 
 	<distributionManagement>
+		<snapshotRepository>
+			<id>qdevelop</id>
+			<url>http://mvn.e-platform.cn/nexus/content/repositories/qdevelop</url>
+		</snapshotRepository>
 		<repository>
 			<id>e-platform</id>
 			<url>http://mvn.e-platform.cn/nexus/content/repositories/e-platform</url>
 		</repository>
 	</distributionManagement>
+	
 	<build>
 		<resources>
 			<resource>
@@ -110,5 +130,6 @@
 		<module>qdevelop-core</module>
 		<module>qdevelop-service</module>
 		<module>qdevelop-dubbo</module>
+		<module>qdevelop-mq-rabbit</module>
 	</modules>
 </project>
