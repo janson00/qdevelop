@@ -75,6 +75,7 @@ public class MQProductor  extends ConcurrentLinkedQueue<MQBean>{
   private void aync(){
     if(isRunning.get() || this.isEmpty())return;
     isRunning.set(true);
+//    factory.isAutomaticRecoveryEnabled()
     if(factory==null){
       initFactory();
     }

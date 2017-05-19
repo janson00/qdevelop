@@ -4,6 +4,16 @@
  	<param-formatter name="param-formatter" class="cn.qdevelop.core.formatter.impl.ParamFormatter">		
 	</param-formatter>
 	
+	<!-- 对数值参数加密存储，例手机号，身份证，银行卡号等敏感信息 -->
+	<param-formatter name="encrypt-num" class="cn.qdevelop.core.formatter.impl.EncryptNumberFormatter">	
+		<param-key>需要加密的参数key</param-key>	
+	</param-formatter>
+	
+	<!-- 对数值加密数值进行解密，例手机号，身份证，银行卡号等敏感信息 -->
+	<result-formatter name="decrypt-num-formatter" class="cn.qdevelop.core.formatter.impl.DecryptNumberFormatter">
+		<result-key>需要解密的结果集字段名</result-key>
+	</result-formatter>
+	
 	<!--【AOP机制】基于查询结果的结果集处理-->
 	<!--利用已配置sql模版，进行结果集关联操作，类似leftjoin功能，可轻易实现夸库查询-->
 	<result-formatter name="key-value-formatter" class="cn.qdevelop.core.formatter.impl.KeyValueFormatter">

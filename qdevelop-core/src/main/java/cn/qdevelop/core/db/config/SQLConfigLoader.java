@@ -39,6 +39,7 @@ public class SQLConfigLoader extends HashMap<String,Element>{
 
 	public SQLConfigLoader(){
 		cleanSplit = Pattern.compile("[0-9a-zA-Z\\_]+");
+		tableArgs = Pattern.compile("\\$\\[.+\\]");
 		tablesIndex = new HashSet<String>();
 		long s = System.currentTimeMillis();
 		loadConfigFromJars();
@@ -98,7 +99,7 @@ public class SQLConfigLoader extends HashMap<String,Element>{
 			}
 		}.searchProjectFiles("*.sql.xml$");
 	}
-	
+
 	/**
 	 * 热加载本地配置文件
 	 */
@@ -133,8 +134,8 @@ public class SQLConfigLoader extends HashMap<String,Element>{
 		}.searchProjectFiles("*.sql.xml$");
 	}
 
-	
-	
+
+
 	private void initSqlConfig(Iterator<Element> items,String fileName,boolean isJarConfig){
 		log.info("load sqlConfig: "+fileName);
 		while (items.hasNext()) {
@@ -154,9 +155,9 @@ public class SQLConfigLoader extends HashMap<String,Element>{
 			}
 		}
 	}
-	
-	
-	public static Pattern cleanSplit;
+
+
+	public static Pattern cleanSplit,tableArgs;
 	private void initProperty(Element property,String fileName){
 		/**init default values**/
 		property.addAttribute("file", fileName);
@@ -207,10 +208,17 @@ public class SQLConfigLoader extends HashMap<String,Element>{
 			}
 
 			sql.addAttribute("is-select", isSelect.toString());
-			if(isSelect){
-				sql.addAttribute("tables", getSelectTableNames(sqlStr));
-			}else{
-				sql.addAttribute("tables", getUpdateTableName(sqlStr));
+			if(sql.attributeValue("tables")==null){
+				if(isSelect){
+					sql.addAttribute("tables", getSelectTableNames(sqlStr));
+				}else{
+					sql.addAttribute("tables", getUpdateTableName(sqlStr));
+				}
+				if(tableArgs.matcher(sql.attributeValue("tables")).find()){
+					System.err.println("【配置错误系统退出】 文件："+fileName+" 中\r\n	index="+property.attributeValue("index")
+					+"含有动态表名，请在sql中指定参考表结构的表名，\r\n	例：<sql tables=\""+tableArgs.matcher(sql.attributeValue("tables")).replaceAll("")+"\">...</sql>");
+					System.exit(0);
+				}
 			}
 			if(sql.attributeValue("fetch-zero-err")==null){
 				sql.addAttribute("fetch-zero-err", "true");
@@ -234,7 +242,7 @@ public class SQLConfigLoader extends HashMap<String,Element>{
 		tables.clear();
 		this.put(property.attributeValue("index"), property);
 	}
-	
+
 	QXMLUtils xml = new QXMLUtils();
 	private void storeDebugXML(){
 		Document sqlModelConfigCache = DocumentHelper.createDocument();
@@ -329,7 +337,7 @@ public class SQLConfigLoader extends HashMap<String,Element>{
 		String[] tbs = sql.replaceAll("`", "").toUpperCase().split("FROM | JOIN ");
 		for (String tb : tbs) {
 			tb =tb.replaceAll(" WHERE .+| ORDER.+| GROUP.+|\\(.+", "").trim()
-					.replaceAll(" .+,$|\\$\\[.+?\\]", "");
+					.replaceAll(" .+,$", "");
 			if (tb.length() > 1 && !tb.startsWith("SELECT") && !tb.startsWith("(")) {
 				if (tb.indexOf(",") == -1) {
 					tables.add(cleanTableName.matcher(tb).replaceAll(""));
@@ -342,6 +350,18 @@ public class SQLConfigLoader extends HashMap<String,Element>{
 		}
 		return append(tables,"|").toLowerCase();
 	}
+	
+//	private static Pattern selectTableName = Pattern.compile(" (from|join) .+ ?",Pattern.CASE_INSENSITIVE);
+//	private static  String parseSelectTableNames(String sql) {
+//		Set<String> tables = new HashSet<String>();
+//		Matcher rs = selectTableName.matcher(sql);
+//		while(rs.find()){
+//			System.out.println(rs.group(2));
+//		}
+//		return null;// append(tables,"|");
+//	}
+	
+	
 
 	private void addTables(String tables,String connect){
 		if(tables==null||connect==null)return;
@@ -351,7 +371,9 @@ public class SQLConfigLoader extends HashMap<String,Element>{
 		}
 	}
 
-	//	public static void main(String[] args) {
+//		public static void main(String[] args) {
+//			parseSelectTableNames(" select customer_inventory_id,1,inventory_quantity,'签收入库',now(),0    from customer_inventory t left join custsdad cs on ");
+//		}
 	//		//		Pattern cleanTableName = Pattern.compile("\\)| .+$|`");
 	//		//		System.out.println(cleanTableName.matcher("customer_inventory_log    select customer_inventory_id,1,inventory_quantity,'签收入库',now(),0    from customer_inventory").replaceAll(""));
 	//		Pattern o = Pattern.compile("\n|\t| +");

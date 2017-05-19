@@ -94,7 +94,6 @@ public class QServiceUitls {
 	public static void output(String out,String outType,HttpServletRequest request,HttpServletResponse response){
 		response.setCharacterEncoding("utf-8");
 		response.setContentType(outType==null?"application/json":outType);
-		
 		OutputStream stream = null ;
 		try {
 			String encoding = request.getHeader("Accept-Encoding");

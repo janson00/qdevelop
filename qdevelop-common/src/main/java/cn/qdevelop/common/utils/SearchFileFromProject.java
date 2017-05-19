@@ -6,7 +6,7 @@ import java.util.regex.Pattern;
 public  abstract class SearchFileFromProject {
 	private static Boolean isFindClassPath ;
 	public void searchProjectFiles(String filter){
-		Pattern search = Pattern.compile(filter.replace(".", "\\.").replace("*", ".+"));
+		Pattern search = Pattern.compile(filter.replaceAll("\\*", ".+"));
 		File root = new File(QSource.getProjectPath());
 		if(isFindClassPath==null){
 			isClassSupport(root);
@@ -70,5 +70,6 @@ public  abstract class SearchFileFromProject {
 	 * 遍历文件后，处理文件夹
 	 */
 	protected abstract void disposeFileDirectory(File f);
+	
 
 }

@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<data-formatter>
+
+ 
+	
+	<!--【AOP机制】基于查询结果的结果集处理-->
+	<!--对结果集中的手机号进行中间四位的加密处理-->
+	<param-formatter name="id-generate" class="cn.qdevelop.id.client.formatter.IDGenerateFormatter">
+		<param-key>参数名</param-key>
+		<app-id-name>应用ID名称</app-id-name>
+		<!-- 非必填参数
+		<wrapper>自定义内容，例WX-开头： WX-{ID}</wrapper>
+		<digit>需要几位数字，默认6位</digit>
+		<buffer>一次性从服务端获取数量，默认一次取5条</buffer> 
+		-->
+	</param-formatter>
+	
+	
+	
+</data-formatter>

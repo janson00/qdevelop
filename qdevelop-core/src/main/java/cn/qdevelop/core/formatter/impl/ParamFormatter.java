@@ -5,33 +5,14 @@ import java.util.Map;
 import org.dom4j.Element;
 
 import cn.qdevelop.common.exception.QDevelopException;
-import cn.qdevelop.core.standard.IParamFormatter;
+import cn.qdevelop.core.formatter.AbstractParamFormatter;
 
-public class ParamFormatter implements IParamFormatter{
-
-	@Override
-	public IParamFormatter clone() {
-		try {
-			return (IParamFormatter)super.clone();
-		} catch (CloneNotSupportedException e) {
-			e.printStackTrace();
-		}
-		return null;
-	}
-
-	@Override
-	public void setConfigAttrs(Map<String, String> attrs) {
-		
-	}
+public class ParamFormatter extends AbstractParamFormatter{
 
 	@Override
 	public void initFormatter(Element conf) throws QDevelopException {
+		// TODO Auto-generated method stub
 		
-	}
-
-	@Override
-	public Map<String, Object> formatter(Map<String, ?> query) {
-		return null;
 	}
 
 	@Override
@@ -39,6 +20,13 @@ public class ParamFormatter implements IParamFormatter{
 		// TODO Auto-generated method stub
 		
 	}
+
+	@Override
+	public Map<String, Object> formatter(Map<String,  Object> query) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 
 	
 

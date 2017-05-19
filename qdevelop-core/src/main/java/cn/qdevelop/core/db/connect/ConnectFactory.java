@@ -20,16 +20,18 @@ import org.dom4j.Element;
 import cn.qdevelop.common.exception.QDevelopException;
 import cn.qdevelop.common.utils.QLog;
 import cn.qdevelop.common.utils.QSource;
+import cn.qdevelop.common.utils.QString;
 import cn.qdevelop.common.utils.QXMLUtils;
 import cn.qdevelop.common.utils.SearchFileFromJars;
+import cn.qdevelop.common.utils.SearchFileFromProject;
 import cn.qdevelop.core.Contant;
 
 public class ConnectFactory {
 
 	private final static Logger log  = QLog.getLogger(ConnectFactory.class);
-	
+
 	final static ConcurrentHashMap<String,IConnect> connCache = new  ConcurrentHashMap<String,IConnect>();
-	
+
 	private static ConnectFactory _ConnectFactory = new ConnectFactory();
 	private Lock lock = new ReentrantLock();
 	private static byte[] locker = new byte[0];
@@ -75,15 +77,29 @@ public class ConnectFactory {
 			databaseConfig= DocumentHelper.createDocument();
 			final Element root = databaseConfig.addElement("database-config");
 			final QXMLUtils xmlUtils = new QXMLUtils();
-			File configFile = QSource.getResourceAsFile("qdevelop-database.xml");
-			log.info(configFile.getAbsolutePath());
-			copyConfigNode(xmlUtils.getDocument(configFile,"UTF-8"),root,xmlUtils);
+			final int projectIndex = QSource.getProjectPath().length();
+			new SearchFileFromProject() {
+				@Override
+				protected void disposeFileDirectory(File f) {
+					
+				}
+				@Override
+				protected void disposeFile(File f) {
+					log.info(QString.append("load database : ",f.getAbsolutePath().substring(projectIndex)));
+					try {
+						copyConfigNode(xmlUtils.getDocument(f,"UTF-8"),root,xmlUtils);
+					} catch (DocumentException e) {
+						e.printStackTrace();
+					}
+				}
+			}.searchProjectFiles("qdevelop-database.xml");
+			
 			new SearchFileFromJars(){
 				@Override
 				public void desposeFile(String jarName,String fileName, InputStream is) {
 					try {
 						if(root.getName().equals(Contant.CONNECT_CONFIG_ROOT)){
-							log.debug("load config :"+jarName+"!"+fileName);
+							log.info(QString.append("load database : ",jarName,"!",fileName));
 							copyConfigNode(xmlUtils.getDocument(is, "UTF-8"),root,xmlUtils);
 						}
 					} catch (Exception e) {
@@ -92,17 +108,15 @@ public class ConnectFactory {
 					}
 				}
 			}.searchAllJarsFiles("qdevelop-database.xml");
-		} catch (DocumentException e) {
-			e.printStackTrace();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 		Runtime.getRuntime().addShutdownHook(new Thread(){
-	        public void run() {
-	        	log.info("shutdown all connects!");
-	        	ConnectFactory.shutdown();
-	        }
-	    });
+			public void run() {
+				log.info("shutdown all connects!");
+				ConnectFactory.shutdown();
+			}
+		});
 	}
 	private synchronized  IConnect init(final String config) throws QDevelopException{
 		lock.lock();
@@ -175,7 +189,7 @@ public class ConnectFactory {
 		connCache.clear();
 
 	}
-	
+
 	public static void close(Connection conn){
 		try {
 			if(conn!=null){

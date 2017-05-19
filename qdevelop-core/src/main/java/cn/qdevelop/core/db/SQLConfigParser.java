@@ -43,6 +43,12 @@ public class SQLConfigParser {
 	private final static Map<String,Map<String,DBStrutsLeaf>> dbStrutsLeafByIndex = new ConcurrentHashMap<String,Map<String,DBStrutsLeaf>>();
 
 	private final static Pattern isNumber = Pattern.compile("^[0-9]+?$");
+	
+	public boolean isSelectByIndex(String index) throws QDevelopException{
+		Element config = SQLConfigLoader.getInstance().getSQLConfig(index);
+		if(config==null)throw new QDevelopException(1002,"请求没有index");
+		return Boolean.parseBoolean(config.attributeValue("is-select"));
+	}
 
 	/**
 	 * 获取配置的paramformatter
@@ -71,6 +77,9 @@ public class SQLConfigParser {
 			IParamFormatter paramFormatter = FormatterLoader.getInstance().getParamFormatter(name);
 			if(paramFormatter == null){
 				throw new QDevelopException(1001,"param-formatter配置不存在："+item.asXML());
+			}
+			if(!paramFormatter.validConfig(item)){
+				throw new QDevelopException(1001,"param-formatter配置参数不全："+item.asXML());
 			}
 			paramFormatter.initFormatter(item);
 			paramFormatters.add(paramFormatter);

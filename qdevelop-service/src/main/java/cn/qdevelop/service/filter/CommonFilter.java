@@ -31,10 +31,16 @@ public class CommonFilter  implements Filter{
 	public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
 			throws IOException, ServletException {
 		request.setAttribute("__startTime", System.currentTimeMillis());
+		HttpServletRequest req = (HttpServletRequest)request;
+		String cookie = req.getHeader("Cookie");
 		/**给每个访问打唯一标识，一年过期时间**/
-		if(!isMark.matcher(((HttpServletRequest)request).getHeader("Cookie")).find()){
+		if(cookie == null || !isMark.matcher(cookie).find()){
 			QServiceUitls.setCookie((HttpServletResponse)response, "sid", java.util.UUID.randomUUID().toString(), 60*60*24*365);
 		}
+		System.out.println(req.getRequestURI()+"||"+req.getContextPath());
+//		if(req.getRequestURI().equals(req.getContextPath())){
+//			
+//		}
 		chain.doFilter(request,response);
 	}
 	

@@ -11,6 +11,8 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 
+import org.apache.log4j.Logger;
+
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 
@@ -23,6 +25,7 @@ import com.alibaba.fastjson.JSONObject;
  * @date 2013-9-4 下午12:23:38
  */
 public class QProperties {
+	private final static Logger log  = QLog.getLogger(QProperties.class);
 
 	/**
 	 * @Fields serialVersionUID : TODO
@@ -49,11 +52,12 @@ public class QProperties {
 	}
 		
 	public void init(){
+		final int projectIndex = QSource.getProjectPath().length();
 		props = new Properties();
 		new SearchFileFromJars(){
 			@Override
 			public void desposeFile(String jarName,String fileName, InputStream is) {
-				System.out.println(DateUtil.getNow()+" =====> prop:"+fileName);
+				log.info(QString.append("load properties : ",jarName,"!",fileName));
 				try {
 					BufferedReader bf = new BufferedReader(new InputStreamReader(is));
 					props.load(bf);
@@ -61,12 +65,12 @@ public class QProperties {
 					e.printStackTrace();
 				}
 			}
-		}.searchAllJarsFiles("qdevelop-prop.properties$");
-		final int projectIdx = QSource.getProjectPath().length();
+		}.searchAllJarsFiles("props/.+\\.properties$");
+		
 		new SearchFileFromProject(){
 			@Override
 			protected void disposeFile(File f) {
-				System.out.println(DateUtil.getNow()+" =====> prop:"+f.getAbsolutePath().substring(projectIdx));
+				System.out.println(QString.append("load properties : ",f.getAbsolutePath().substring(projectIndex)));
 				try {
 					BufferedReader bf = new BufferedReader(new InputStreamReader(new FileInputStream(f)));
 					props.load(bf);
@@ -78,7 +82,7 @@ public class QProperties {
 			@Override
 			protected void disposeFileDirectory(File f) {
 			}
-		}.searchProjectFiles("/props/*.properties|qdevelop-prop.properties$");
+		}.searchProjectFiles("props/.+\\.properties$");
 	}
 
 

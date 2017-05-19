@@ -14,5 +14,12 @@ public interface IParamFormatter  extends Cloneable {
 	public void init();
 	public void setConfigAttrs(Map<String,String> attrs);
 	
-	public Map<String,Object> formatter( Map<String,?> query);
+	public Map<String,Object> formatter( Map<String,Object> query);
+	
+	/**
+	 * 加载时，检查参数是否配置完整（自动执行）
+	 * @param conf
+	 * @return
+	 */
+	public boolean validConfig(Element conf);
 }

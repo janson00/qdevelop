@@ -37,7 +37,7 @@ public class QLog {
 		new SearchFileFromJars(){
 			@Override
 			public void desposeFile(String jarName,String fileName, InputStream is) {
-				System.out.println(DateUtil.getNow()+" =====> log:"+fileName);
+				System.out.println(QString.append(DateUtil.getNow()," load log4j : ",jarName,"!",fileName));
 				try {
 					props.load(is);
 				} catch (IOException e) {
@@ -49,7 +49,7 @@ public class QLog {
 		new SearchFileFromProject(){
 			@Override
 			protected void disposeFile(File f) {
-				System.out.println(DateUtil.getNow()+" =====> log:"+f.getAbsolutePath().substring(projectIdx));
+				System.out.println(QString.append(DateUtil.getNow()," load log4j : ",f.getAbsolutePath().substring(projectIdx)));
 				try {
 					props.load(new FileInputStream(f));
 				} catch (IOException e) {

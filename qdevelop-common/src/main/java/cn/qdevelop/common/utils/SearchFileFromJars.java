@@ -13,7 +13,7 @@ public abstract class SearchFileFromJars {
 	File _f;
 	public void searchAllJarsFiles(String filter){
 		HashSet<String> libs = getEnvironmentJars();
-		Pattern search = Pattern.compile(filter.replace(".", "\\.").replace("*", ""));
+		Pattern search = Pattern.compile(filter.replaceAll("\\*", ".+"));
 		for(String f:libs){
 			_f = new File(f);
 			if(_f.isFile()){

@@ -66,7 +66,9 @@ public class DatabaseFactory {
 		long s = System.currentTimeMillis();
 		String index = String.valueOf(query.get("index"));
 		Connection conn = getConnectByQuery(query);
+		
 		try {
+			formatterParameters(query);
 			for(int i=0;i<countClearArgs.length;i++){
 				query.remove(countClearArgs[i]);
 			}
@@ -96,13 +98,7 @@ public class DatabaseFactory {
 			throw e; 
 		}finally{
 			query.clear();
-			try {
-				if(conn!=null){
-					conn.close();
-				}
-			} catch (SQLException e) {
-				e.printStackTrace();
-			}
+			ConnectFactory.close(conn);
 			log.info("queryDatabaseCount:"+index+" use:"+(System.currentTimeMillis()-s)+"ms");
 		}
 	}
@@ -142,13 +138,7 @@ public class DatabaseFactory {
 			throw e;
 		}finally{
 			query.clear();
-			try {
-				if(conn!=null){
-					conn.close();
-				}
-			} catch (SQLException e) {
-				e.printStackTrace();
-			}
+			ConnectFactory.close(conn);
 			log.info("queryDatabase:"+index+" use:"+(System.currentTimeMillis()-s)+"ms");
 		}
 	}
@@ -220,13 +210,7 @@ public class DatabaseFactory {
 			throw e;
 		}finally{
 			query.clear();
-			try {
-				if(conn!=null){
-					conn.close();
-				}
-			} catch (SQLException e) {
-				e.printStackTrace();
-			}
+			ConnectFactory.close(conn);
 			log.info("updateDatabase:"+index+" use:"+(System.currentTimeMillis()-s)+"ms");
 		}
 	}
@@ -274,30 +258,46 @@ public class DatabaseFactory {
 			throw e;
 		}finally{
 			query.clear();
-			try {
-				if(conn!=null){
-					conn.close();
-				}
-			} catch (SQLException e) {
-				e.printStackTrace();
-			}
+			ConnectFactory.close(conn);
 			log.info("insertDBReturnAutoID:"+index+" use:"+(System.currentTimeMillis()-s)+"ms");
 
 		}
 	}
 	
+	public int updateBatch(Map<String,?> query,List<Object[]> values) throws QDevelopException{
+		Connection conn = null;
+		try {
+			conn = this.getConnectByQuery(query);
+			conn.setAutoCommit(false);
+			return updateBatch(query,values,conn);
+		} catch (Exception e) {
+			try {
+				conn.rollback();
+			} catch (SQLException e1) {
+				e1.printStackTrace();
+			}
+		}finally{
+			try {
+				conn.setAutoCommit(true);
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+			this.closeConnection(conn);
+		}
+		return 0;
+	}
+	
 	/**
-	 * 单sql模版批量更新数据库操作
+	 * 单sql模版批量更新数据库操作,需要自己控制rollback
 	 * @param query
 	 * @param values
 	 * @param conn
 	 * @return
 	 * @throws QDevelopException
 	 */
-	public int updateBatch(Map<String,?> query,List<Object[]> values) throws QDevelopException{
+	public int updateBatch(Map<String,?> query,List<Object[]> values,Connection conn) throws QDevelopException{
 		long s = System.currentTimeMillis();
 		String index = String.valueOf(query.get("index"));
-		Connection conn = getConnectByQuery(query);
 		try {
 			formatterParameters(query);
 			List<IUpdateHook> updateHooks = SQLConfigParser.getInstance().getUpdateHooks((String)query.get("index"));
@@ -307,7 +307,7 @@ public class DatabaseFactory {
 				}
 			}
 			IDBUpdate dbUpdate = SQLConfigParser.getInstance().getDBUpdateBean(query, conn);
-			int r =  new DatabaseImpl().singleBatchUpdate(conn, dbUpdate.getUpdateBeans().get(0),values,updateHooks, true);
+			int r =  new DatabaseImpl().singleBatchUpdate(conn, dbUpdate.getUpdateBeans().get(0),values,updateHooks, false);
 			if(updateHooks!=null){
 				for(IUpdateHook iuh : updateHooks){
 					iuh.flush(conn,query, dbUpdate);
@@ -321,15 +321,7 @@ public class DatabaseFactory {
 			throw e;
 		}finally{
 			query.clear();
-			try {
-				if(conn!=null){
-					conn.close();
-				}
-			} catch (SQLException e) {
-				e.printStackTrace();
-			}
 			log.info("updateBatch:"+index+" use:"+(System.currentTimeMillis()-s)+"ms");
-
 		}
 	}
 
@@ -464,13 +456,14 @@ public class DatabaseFactory {
 
 
 
-	public void formatterParameters(Map<String,?> query) throws QDevelopException{
+	@SuppressWarnings("unchecked")
+	public void formatterParameters(Map<String,? extends Object> query) throws QDevelopException{
 		String index = (String)query.get("index");
 		List<IParamFormatter> paraFormatter = SQLConfigParser.getInstance().getParamFormatter(index) ;
 		if(paraFormatter!=null && paraFormatter.size()>0){
 			for(IParamFormatter formatter : paraFormatter){
 				formatter.init();
-				formatter.formatter(query);
+				formatter.formatter((Map<String,Object>)query);
 			}
 			paraFormatter.clear();
 		}

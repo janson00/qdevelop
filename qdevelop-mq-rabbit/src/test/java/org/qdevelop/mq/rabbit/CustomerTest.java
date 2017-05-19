@@ -16,7 +16,8 @@ public class CustomerTest {
 			@Override
 			public boolean handleDelivery(String consumerTag, Envelope envelope,
 					BasicProperties properties, Serializable body) {
-				System.out.println(body);
+				Object[] v = (Object[])body;
+				System.out.println(v[1]);
 				return true;
 			}
 		});

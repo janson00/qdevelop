@@ -8,6 +8,8 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import cn.qdevelop.common.utils.QString;
+
 @WebServlet(urlPatterns={"*.htmlx"})
 public class AdaptorControl extends HttpServlet{
 	
@@ -20,7 +22,7 @@ public class AdaptorControl extends HttpServlet{
 		if(webPathIdx == null){
 			webPathIdx = request.getContextPath().length();
 		}
-		request.getRequestDispatcher(uri.substring(webPathIdx, uri.length()-5)+"jsp").forward(request, response);
+		request.getRequestDispatcher(QString.append("/jsp/",uri.substring(webPathIdx, uri.length()-5),"jsp")).forward(request, response);
 	}
 	
 	protected void doPost(HttpServletRequest request, HttpServletResponse response)
