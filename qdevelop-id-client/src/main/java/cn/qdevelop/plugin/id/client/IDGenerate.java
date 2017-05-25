@@ -1,7 +1,6 @@
-package cn.qdevelop.id.client;
+package cn.qdevelop.plugin.id.client;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.ObjectInputStream;
 import java.io.PrintWriter;
 import java.net.Socket;
@@ -16,16 +15,16 @@ import java.util.concurrent.TimeUnit;
 
 import cn.qdevelop.common.utils.QSource;
 
-public class IDClient {
-	private static IDClient _IDClient = new IDClient();
+public class IDGenerate {
+	private static IDGenerate _IDClient = new IDGenerate();
 	private static String SERVER_IP;
 	private static int SERVER_PORT;
 
-	public IDClient(){
+	public IDGenerate(){
 		init();
 	}
 
-	public static IDClient getInstance() {
+	public static IDGenerate getInstance() {
 		return _IDClient;
 	}
 
@@ -285,23 +284,26 @@ public class IDClient {
 	}
 	
 	private void init(){
-		try {
-			InputStream idSvrConfig =  QSource.getInstance().getSourceAsStream("id-generate-svr.properties");
-			if(idSvrConfig!=null){
-				Properties prop = new Properties();
-				prop.load(idSvrConfig);
-				SERVER_IP = prop.getProperty("server_ip") == null ? "127.0.0.1" : prop.getProperty("server_ip");
-				SERVER_PORT = prop.getProperty("server_port") == null ? 10701 : Integer.parseInt(prop.getProperty("server_port"));
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
-		}  
+		Properties prop = QSource.getInstance().loadProperties("plugin-config/qdevelop-id-client.properties");
+		if(prop!=null){
+			SERVER_IP = prop.getProperty("server_ip") == null ? "127.0.0.1" : prop.getProperty("server_ip");
+			SERVER_PORT = prop.getProperty("server_port") == null ? 10701 : Integer.parseInt(prop.getProperty("server_port"));
+		}
 
 		Runtime.getRuntime().addShutdownHook(new Thread(){
 			public void run(){
-				IDClient.getInstance().shutdown();
+				IDGenerate.getInstance().shutdown();
 			}
 		});
+	}
+	public static void main(String[] args) {
+		try {
+long id = IDGenerate.getInstance().getRandomID();
+System.out.println(id);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
 }

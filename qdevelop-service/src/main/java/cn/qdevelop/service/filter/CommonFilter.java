@@ -37,7 +37,7 @@ public class CommonFilter  implements Filter{
 		if(cookie == null || !isMark.matcher(cookie).find()){
 			QServiceUitls.setCookie((HttpServletResponse)response, "sid", java.util.UUID.randomUUID().toString(), 60*60*24*365);
 		}
-		System.out.println(req.getRequestURI()+"||"+req.getContextPath());
+//		System.out.println(req.getRequestURI()+"||"+req.getContextPath());
 //		if(req.getRequestURI().equals(req.getContextPath())){
 //			
 //		}

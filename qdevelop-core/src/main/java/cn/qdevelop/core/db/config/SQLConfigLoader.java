@@ -40,6 +40,7 @@ public class SQLConfigLoader extends HashMap<String,Element>{
 	public SQLConfigLoader(){
 		cleanSplit = Pattern.compile("[0-9a-zA-Z\\_]+");
 		tableArgs = Pattern.compile("\\$\\[.+\\]");
+		isOpenReg = Pattern.compile("\\/(api|open)\\/");
 		tablesIndex = new HashSet<String>();
 		long s = System.currentTimeMillis();
 		loadConfigFromJars();
@@ -86,7 +87,7 @@ public class SQLConfigLoader extends HashMap<String,Element>{
 				try {
 					Element root = new QXMLUtils().getDocument(f).getRootElement();
 					if(root.getName().equals(Contant.SQL_CONFIG_ROOT)){
-						initSqlConfig(root.elementIterator(),f.getAbsolutePath().substring(projectIndex),false);
+						initSqlConfig(root.elementIterator(),f.getAbsolutePath().substring(projectIndex).replaceAll("\\\\", "/"),false);
 					}
 				} catch (Exception e) {
 					log.error(f.getAbsolutePath(),e);
@@ -118,7 +119,7 @@ public class SQLConfigLoader extends HashMap<String,Element>{
 						while (items.hasNext()) {
 							Element property = items.next();
 							if (property.getName().equals("property")) {
-								initProperty(property,fileName);
+								initProperty(property,fileName.replaceAll("\\\\", "/"));
 							}
 						}
 					}
@@ -157,12 +158,15 @@ public class SQLConfigLoader extends HashMap<String,Element>{
 	}
 
 
-	public static Pattern cleanSplit,tableArgs;
+	public static Pattern cleanSplit,tableArgs,isOpenReg;
 	private void initProperty(Element property,String fileName){
 		/**init default values**/
 		property.addAttribute("file", fileName);
 		if(property.attributeValue("connect")==null){
 			property.addAttribute("connect", Contant.CONNECT_DEFAULT);
+		}
+		if(property.attributeValue("is-open")==null){
+			property.addAttribute("is-open", String.valueOf(isOpenReg.matcher(fileName).find()));
 		}
 		if(property.attributeValue("sql")!=null){
 			Element s = property.addElement("sql");

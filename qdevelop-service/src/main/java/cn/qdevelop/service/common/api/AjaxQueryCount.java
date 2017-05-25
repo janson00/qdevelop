@@ -11,7 +11,7 @@ import cn.qdevelop.service.APIControl;
 import cn.qdevelop.service.IOutput;
 import cn.qdevelop.service.IService;
 
-@WebServlet(urlPatterns={"/svr/ajax/queryCount.json","/svr/ajax/queryCount.jsonp"},
+@WebServlet(urlPatterns={"/svr/sys/ajax/queryCount.json","/svr/sys/ajax/queryCount.jsonp"},
 	loadOnStartup=1,initParams={  
         @WebInitParam(name=IService.INIT_VALID_REQUIRED,value="index"),
         @WebInitParam(name=IService.INIT_VALID_IGNORE,value="index")

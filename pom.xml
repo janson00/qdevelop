@@ -18,33 +18,33 @@
 			<!--阿里云maven私服，加速下载通用包 -->
 			<url>http://maven.aliyun.com/nexus/content/groups/public</url>
 		</repository>
-		<!-- <repository>
+		<repository>
 			<id>develop</id>		
 			<url>http://192.168.6.8:8081/nexus/content/repositories/develop/</url>
-		</repository> -->
+		</repository>
 		 
-		<repository>
+		<!-- <repository>
 			<id>qdevelop</id>
 			<url>http://mvn.e-platform.cn/nexus/content/repositories/qdevelop</url>
-		</repository> 
+		</repository>  -->
 		 
 	</repositories>
 
 	<distributionManagement>
 		
-	<!-- 	<snapshotRepository>
+		<snapshotRepository>
 			<id>develop</id>		
 			<url>http://192.168.6.8:8081/nexus/content/repositories/develop/</url>
-		</snapshotRepository> -->
+		</snapshotRepository>
 		
-		 <snapshotRepository>
+		 <!-- <snapshotRepository>
 			<id>qdevelop</id>
 			<url>http://mvn.e-platform.cn/nexus/content/repositories/qdevelop</url>
 		</snapshotRepository>
 		<repository>
 			<id>e-platform</id>
 			<url>http://mvn.e-platform.cn/nexus/content/repositories/e-platform</url>
-		</repository> 
+		</repository>  -->
 	</distributionManagement>
 	
 	<build>
@@ -140,5 +140,8 @@
 		<module>qdevelop-dubbo</module>
 		<module>qdevelop-mq-rabbit</module>
     <module>qdevelop-id-client</module>
+    <module>qdevelop-sensitive-word-filter</module>
+    <module>qdevelop-link-wrapper</module>
+    <module>qdevelop-redis</module>
   </modules>
 </project>

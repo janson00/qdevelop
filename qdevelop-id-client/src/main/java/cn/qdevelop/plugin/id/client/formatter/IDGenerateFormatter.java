@@ -1,4 +1,4 @@
-package cn.qdevelop.id.client.formatter;
+package cn.qdevelop.plugin.id.client.formatter;
 
 import java.util.Map;
 
@@ -6,7 +6,7 @@ import org.dom4j.Element;
 
 import cn.qdevelop.common.exception.QDevelopException;
 import cn.qdevelop.core.formatter.AbstractParamFormatter;
-import cn.qdevelop.id.client.IDClient;
+import cn.qdevelop.plugin.id.client.IDGenerate;
 
 public class IDGenerateFormatter extends AbstractParamFormatter{
 	String paramKey,appIdName,wrapper;
@@ -33,7 +33,7 @@ public class IDGenerateFormatter extends AbstractParamFormatter{
 	@Override
 	public Map<String, Object> formatter(Map<String, Object> query) {
 		try {
-			String id = IDClient.getInstance().getIDStr(appIdName, digit, buffer);
+			String id = IDGenerate.getInstance().getIDStr(appIdName, digit, buffer);
 			if(wrapper!=null&&wrapper.indexOf("{ID}")>-1){
 				query.put(paramKey, wrapper.replace("{ID}", id));
 			}else{

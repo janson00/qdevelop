@@ -14,6 +14,7 @@ import org.dom4j.Element;
 
 import cn.qdevelop.common.exception.QDevelopException;
 import cn.qdevelop.common.utils.QLog;
+import cn.qdevelop.common.utils.QString;
 import cn.qdevelop.core.bean.DBResultBean;
 import cn.qdevelop.core.db.SQLConfigParser;
 import cn.qdevelop.core.db.config.SQLConfigLoader;
@@ -372,7 +373,6 @@ public class DatabaseFactory {
 		HashMap<String,Connection> cache = new HashMap<String,Connection>(query.length);
 		HashMap<String,List<IUpdateHook>> hooks = new HashMap<String,List<IUpdateHook>>(query.length);
 		HashMap<String,IDBUpdate> IDBUpdates = new HashMap<String,IDBUpdate>(query.length);
-		boolean r=false;
 		try {
 			for(Map<String,?> q : query){
 				String index = (String)q.get("index");
@@ -400,8 +400,9 @@ public class DatabaseFactory {
 				hooks.put(index, updateHooks);
 				IDBUpdate dbUpdate = SQLConfigParser.getInstance().getDBUpdateBean(q, conn);
 				IDBUpdates.put(index, dbUpdate);
-				boolean s =  new DatabaseImpl().updateDB(conn, dbUpdate , updateHooks, false);
-				r = r && s;
+				if(!new DatabaseImpl().updateDB(conn, dbUpdate , updateHooks, false)){
+					throw new QDevelopException(10001,QString.append(q.toString(),"更新失败！"));
+				}
 			}
 			Collection<Connection> itors = cache.values();
 			for(Connection conn : itors){
@@ -451,7 +452,7 @@ public class DatabaseFactory {
 			IDBUpdates.clear();
 			log.info("updateDataBaseMulti:"+indexs.toString()+" use:"+(System.currentTimeMillis()-start)+"ms");
 		}
-		return r;
+		return true;
 	}
 
 

@@ -5,6 +5,8 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
+import cn.qdevelop.plugin.id.client.IDGenerate;
+
 public class IDClientTest implements Runnable {
 	public static double BMI(double weight,double hight){
 		return weight/(hight*hight);
@@ -61,7 +63,7 @@ public class IDClientTest implements Runnable {
 	@Override
 	public void run() {
 		try {
-			String id = IDClient.getInstance().getIDStr(names[r.nextInt(7)], 6, 5);
+			String id = IDGenerate.getInstance().getIDStr(names[r.nextInt(7)], 6, 5);
 //			System.out.println(id);
 		} catch (Exception e) {
 			e.printStackTrace();

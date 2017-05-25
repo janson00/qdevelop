@@ -8,6 +8,7 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.List;
+import java.util.Properties;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 import java.util.regex.Pattern;
@@ -167,6 +168,25 @@ public class QSource {
 			}
 		}
 		return result;
+	}
+	
+	/**
+	 * 加载配置文件
+	 * @param configName
+	 * @return
+	 */
+	public Properties loadProperties(String configName){
+		try {
+			InputStream idSvrConfig = getSourceAsStream(configName);
+			if(idSvrConfig!=null){
+				Properties prop = new Properties();
+				prop.load(idSvrConfig);
+				return prop;
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		} 
+		return null;
 	}
 
 	/**

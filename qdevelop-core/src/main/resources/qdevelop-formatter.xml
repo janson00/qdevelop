@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <data-formatter>
 
- 	<param-formatter name="param-formatter" class="cn.qdevelop.core.formatter.impl.ParamFormatter">		
+ 	<param-formatter name="param-parameter" class="cn.qdevelop.core.formatter.impl.ParamFormatter">		
 	</param-formatter>
 	
 	<!-- 对数值参数加密存储，例手机号，身份证，银行卡号等敏感信息 -->
-	<param-formatter name="encrypt-num" class="cn.qdevelop.core.formatter.impl.EncryptNumberFormatter">	
+	<param-formatter name="encrypt-num-parameter" class="cn.qdevelop.core.formatter.impl.EncryptNumberFormatter">	
 		<param-key>需要加密的参数key</param-key>	
 	</param-formatter>
 	
@@ -23,6 +23,14 @@
  		<format-columns>formatter结果集中的对应的字段名</format-columns>
 	</result-formatter>
 	
+	<!--利用已配置sql模版，进行结果集关联操作，类似leftjoin功能，可轻易实现夸库查询-->
+	<result-formatter name="left-join-formatter" class="cn.qdevelop.core.formatter.impl.LeftJoinFormatter">
+		<result-key>当前结果集字段名</result-key>
+		<left-join>sqlConfig中定义的其他结果集index</left-join>
+		<on-key>结果集中的对应关联的字段名</on-key>
+	 	<columns>获取结果集中的对应的字段名</columns>
+	</result-formatter>
+	
 	<!--利用properties配置，数据进行字典对应翻译关系-->
 	<result-formatter name="prop-formatter" class="cn.qdevelop.core.formatter.impl.PropTranFormatter">
 		<result-key>当前结果集字段名</result-key>
@@ -38,9 +46,8 @@
 	<!--【AOP机制】基于数据库更新的执行过程控制-->
 	
 	<!-- 执行批次更新时，进行debug跟踪 -->
-	<update-hook name="exec-debug" class="cn.qdevelop.core.formatter.impl.SQLDebugHook"/>
-	
-	<update-hook name="check-update" class="cn.qdevelop.core.formatter.impl.CheckUpdateHook">
+	<update-hook name="exec-debug-hook" class="cn.qdevelop.core.formatter.impl.SQLDebugHook"/>	
+	<update-hook name="check-update-hook" class="cn.qdevelop.core.formatter.impl.CheckUpdateHook">
 		<check-sql>检查数据结果集sql语句</check-sql>
 		<check-arg>需要检查的参数key值</check-arg>
 		<check-exsit>检查是否存在（true|false）</check-exsit>

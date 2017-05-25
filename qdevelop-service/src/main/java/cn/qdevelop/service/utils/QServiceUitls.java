@@ -24,7 +24,7 @@ import cn.qdevelop.service.IOutput;
 import cn.qdevelop.service.bean.OutputJson;
 
 public class QServiceUitls {
-	
+
 	public static String getCookie(String key,HttpServletRequest request){
 		String val = request.getHeader("Cookie");
 		if(val == null || val.indexOf(key+"=")==-1){
@@ -34,17 +34,17 @@ public class QServiceUitls {
 		if(val.indexOf(";")>-1){
 			val = val.substring(0, val.indexOf(";"));
 		}
-		
+
 		return val;
 	}
-	
+
 	public static void setCookie(HttpServletResponse response,String key,String value,int maxAge){
 		Cookie cookie = new Cookie(key,value);
 		cookie.setMaxAge(maxAge);
 		cookie.setPath("/");
 		response.addCookie(cookie);
 	}
-	
+
 	public static Map<String,String> getParameters(HttpServletRequest request){
 		Map<String,String> paramMap = new HashMap<String,String>();
 		Enumeration<?> paramNames = request.getParameterNames();
@@ -67,7 +67,7 @@ public class QServiceUitls {
 		}
 		return paramMap;
 	}
-	
+
 	public static IOutput getOutput(HttpServletRequest request,HttpServletResponse response){
 		String uri = request.getRequestURI();
 		String type = uri.lastIndexOf(".") == -1 ? "" : uri.substring(uri.lastIndexOf("."));
@@ -107,12 +107,12 @@ public class QServiceUitls {
 				stream = response.getOutputStream();  
 			}
 			stream.write(out.getBytes("utf-8"));
-			
+
 			if(request.getAttribute("__startTime")!=null){
 				Long s = (Long)request.getAttribute("__startTime");
 				response.setHeader("ops", String.valueOf(System.currentTimeMillis()-s));
 			}
-			
+
 			stream.flush();
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -126,12 +126,12 @@ public class QServiceUitls {
 			}
 		}
 	}
-	
+
 
 	private static Pattern isInteger = Pattern.compile("^(([><=&\\^!\\|]+)?[0-9]+?)+?$");
 	private static Pattern isDouble = Pattern.compile("^(([><=&\\^!\\|]+)?[0-9]+?\\.[0-9]+?)+?$");
 	private static Pattern isTime = Pattern.compile("^(([><=&\\^!\\|]+)?[0-9]{4}-[0-9]{2}-[0-9]{2}( [0-9]{2}:[0-9]{2}:[0-9]{2})?)+?$");
-	
+
 	private static Pattern isAttackValue =
 			Pattern.compile(
 					"(?:--)|(/\\*(?:.|[\\n\\r])*?\\*/)|(\\b(select|update|delete|insert|trancate|char|substr|ascii|declare|exec|master|into|drop|execute)\\b)",
@@ -211,9 +211,31 @@ public class QServiceUitls {
 		}
 		return true;
 	}
-//	public static void main(String[] args) {
-////		isDouble.matcher("")
-//		Pattern isDouble = Pattern.compile("^(([><=&\\^!\\|@#\\_]+)?[0-9]{4}-[0-9]{2}-[0-9]{2}( [0-9]{2}:[0-9]{2}:[0-9]{2})?)+?$");
-//		System.out.println(isDouble.matcher("2014-12-12@2014-12-12^2014-12-12@2014-12-12").find());
-//	}
+
+	static Pattern isIP = Pattern.compile("^[0-9]+?\\.[0-9]+?\\.[0-9]+?\\.[0-9]+?$");
+	public static String getUserIP(HttpServletRequest request){
+		String ip = request.getHeader("X-Real-IP"); 
+		if(ip != null && isIP.matcher(ip).find() & !"127.0.0.1".equals(ip)){
+			return ip;
+		}
+		ip =  request.getHeader("X-Forwarded-For");
+		if(ip != null && isIP.matcher(ip).find() & !"127.0.0.1".equals(ip)){
+			return ip;
+		}
+		ip =  request.getHeader("Proxy-Client-IP");
+		if(ip != null && isIP.matcher(ip).find() & !"127.0.0.1".equals(ip)){
+			return ip;
+		}
+		ip =   request.getHeader("WL-Proxy-Client-IP");
+		if(ip != null && isIP.matcher(ip).find() & !"127.0.0.1".equals(ip)){
+			return ip;
+		}
+		ip =   request.getRemoteAddr();
+		return ip;
+	}
+	//	public static void main(String[] args) {
+	////		isDouble.matcher("")
+	//		Pattern isDouble = Pattern.compile("^(([><=&\\^!\\|@#\\_]+)?[0-9]{4}-[0-9]{2}-[0-9]{2}( [0-9]{2}:[0-9]{2}:[0-9]{2})?)+?$");
+	//		System.out.println(isDouble.matcher("2014-12-12@2014-12-12^2014-12-12@2014-12-12").find());
+	//	}
 }

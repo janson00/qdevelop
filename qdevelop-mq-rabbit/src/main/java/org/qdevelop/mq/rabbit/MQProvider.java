@@ -16,14 +16,14 @@ import com.rabbitmq.client.Connection;
 import com.rabbitmq.client.ConnectionFactory;
 import com.rabbitmq.client.MessageProperties;
 
-public class MQProductor  extends ConcurrentLinkedQueue<MQBean>{
+public class MQProvider  extends ConcurrentLinkedQueue<MQBean>{
   /**
    * 
    */
   private static final long serialVersionUID = -2312239022403219259L;
   private  AtomicBoolean isRunning = new AtomicBoolean(false);
-  private static MQProductor _MQPublisher = new MQProductor();
-  public static MQProductor getInstance(){return _MQPublisher;}
+  private static MQProvider _MQPublisher = new MQProvider();
+  public static MQProvider getInstance(){return _MQPublisher;}
   ConnectionFactory factory;
   
   /**
@@ -36,7 +36,7 @@ public class MQProductor  extends ConcurrentLinkedQueue<MQBean>{
     if(!isRunning.get()){
       new Thread(){
         public void run(){
-          MQProductor.getInstance().aync();
+          MQProvider.getInstance().aync();
         }
       }.start();
     }

@@ -74,14 +74,14 @@ public class AppTest
 //        assertTrue( true );
         
      
-        MQProductor.getInstance().publish(nodeKey, "TEST");
+        MQProvider.getInstance().publish(nodeKey, "TEST");
         
         try {
           Thread.sleep(500);
         } catch (InterruptedException e) {
           e.printStackTrace();
         }
-        MQProductor.getInstance().publish(nodeKey, "TEST");
+        MQProvider.getInstance().publish(nodeKey, "TEST");
         try {
           Thread.sleep(500);
         } catch (InterruptedException e) {

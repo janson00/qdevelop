@@ -14,7 +14,7 @@ import cn.qdevelop.service.APIControl;
 import cn.qdevelop.service.IOutput;
 import cn.qdevelop.service.IService;
 
-@WebServlet(urlPatterns="/svr/common/*",
+@WebServlet(urlPatterns="/svr/sys/common/*",
 loadOnStartup=1,initParams={  
 @WebInitParam(name=IService.INIT_VALID_REQUIRED , value="index"),
 @WebInitParam(name=IService.INIT_VALID_IGNORE , value="")

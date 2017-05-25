@@ -5,7 +5,7 @@
 	
 	<!--【AOP机制】基于查询结果的结果集处理-->
 	<!--对结果集中的手机号进行中间四位的加密处理-->
-	<param-formatter name="id-generate" class="cn.qdevelop.id.client.formatter.IDGenerateFormatter">
+	<param-formatter name="id-generate-parameter" class="cn.qdevelop.plugin.id.client.formatter.IDGenerateFormatter">
 		<param-key>参数名</param-key>
 		<app-id-name>应用ID名称</app-id-name>
 		<!-- 非必填参数

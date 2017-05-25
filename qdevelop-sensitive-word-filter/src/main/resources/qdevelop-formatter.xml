@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<data-formatter>
+	
+	<!--对文本中还有敏感词时，将参数中某一字段设定成预期值-->
+	<param-formatter name="sensitive-wd-parameter" class="cn.qdevelop.plugin.sensitiveword.formatter.SensitiveWordFilter">
+		<param-key>内容参数名</param-key>
+		<status-key>状态参数名</status-key>
+		<status-expect>状态预期值，确认触发敏感词之后的状态值</status-expect>
+	</param-formatter>
+	
+	<!--将读出来的数据含有敏感词时，替换成**-->
+	<result-formatter name="sensitive-wd-formatter" class="cn.qdevelop.plugin.sensitiveword.formatter.SensitiveFilterFormatter">
+		<result-key>当前结果集字段名</result-key>
+	</result-formatter>
+	
+</data-formatter>

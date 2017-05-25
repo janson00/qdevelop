@@ -11,7 +11,7 @@ import cn.qdevelop.service.UploadControl;
 
 
 //使用@WebServlet配置UploadServlet的访问路径
-@WebServlet(name="SaveImageServlet",urlPatterns={"/svr/ajax/imageUpload.json","/svr/ajax/imageUpload.jsonp"})
+@WebServlet(urlPatterns={"/svr/sys/ajax/imageUpload.json","/svr/sys/ajax/imageUpload.jsonp"})
 //使用注解@MultipartConfig将一个Servlet标识为支持文件上传
 @MultipartConfig//标识Servlet支持文件上传
 public class ImageUpload extends UploadControl{

@@ -41,14 +41,29 @@ public class SQLConfigParser {
 	private final static Map<String,ArrayList<IParamFormatter>> paramFormatterByIndex = new ConcurrentHashMap<String,ArrayList<IParamFormatter>>();
 	private final static Map<String,ArrayList<IUpdateHook>> resultHookByIndex = new ConcurrentHashMap<String,ArrayList<IUpdateHook>>();
 	private final static Map<String,Map<String,DBStrutsLeaf>> dbStrutsLeafByIndex = new ConcurrentHashMap<String,Map<String,DBStrutsLeaf>>();
-
 	private final static Pattern isNumber = Pattern.compile("^[0-9]+?$");
 	
+	/**
+	 * 判断是否是查询
+	 */
 	public boolean isSelectByIndex(String index) throws QDevelopException{
 		Element config = SQLConfigLoader.getInstance().getSQLConfig(index);
 		if(config==null)throw new QDevelopException(1002,"请求没有index");
 		return Boolean.parseBoolean(config.attributeValue("is-select"));
 	}
+	
+	/**
+	 * 判断是否可以对外提供服务
+	 * @param index
+	 * @return
+	 * @throws QDevelopException
+	 */
+	public boolean isOpen(String index) throws QDevelopException{
+		Element config = SQLConfigLoader.getInstance().getSQLConfig(index);
+		if(config==null)throw new QDevelopException(1002,"请求没有index");
+		return Boolean.parseBoolean(config.attributeValue("is-open"));
+	}
+	
 
 	/**
 	 * 获取配置的paramformatter
@@ -532,7 +547,7 @@ public class SQLConfigParser {
 	public Map<String,DBStrutsLeaf> getDBStrutsLeafByIndex(String index) throws QDevelopException {
 		Element config = SQLConfigLoader.getInstance().getSQLConfig(index);
 		if(config == null){
-			throw new QDevelopException(1002,"请求没有index");
+			throw new QDevelopException(1002,"请求index【"+index+"】配置不存在");
 		}
 		Map<String,DBStrutsLeaf> temp = dbStrutsLeafByIndex.get(index);
 		if(temp!=null){
