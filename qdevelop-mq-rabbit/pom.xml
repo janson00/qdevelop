@@ -28,5 +28,10 @@
 			<artifactId>amqp-client</artifactId>
 			<version>3.3.1</version>
 		</dependency>
+		<dependency>
+			<groupId>cn.qdevelop</groupId>
+			<artifactId>qdevelop-core</artifactId>
+			<version>1.0.0-SNAPSHOT</version>
+		</dependency>
 	</dependencies>
 </project>

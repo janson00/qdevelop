@@ -31,13 +31,21 @@ public class IDClientTest implements Runnable {
 	}
 
 	public static void main(String[] args) {
-		
-		ThreadPoolExecutor threadPool = (ThreadPoolExecutor) Executors
-				.newFixedThreadPool(20);
-		for(int i=0;i<100;i++){
-			threadPool.execute(new IDClientTest());
+//		
+//		ThreadPoolExecutor threadPool = (ThreadPoolExecutor) Executors
+//				.newFixedThreadPool(50);
+//		for(int i=0;i<1000;i++){
+//			threadPool.execute(new IDClientTest());
+//		}
+//		threadPool.shutdown();
+		for(int i=0;i<10000;i++){
+			try {
+				System.out.println(IDGenerate.getInstance().getIDStr("random_test",3,100));
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
 		}
-		threadPool.shutdown();
+//		IDGenerate.getInstance().shutdown();
 //		try {
 //			threadPool.awaitTermination(30000, TimeUnit.MILLISECONDS);
 //		} catch (InterruptedException e) {
@@ -64,7 +72,7 @@ public class IDClientTest implements Runnable {
 	public void run() {
 		try {
 			String id = IDGenerate.getInstance().getIDStr(names[r.nextInt(7)], 6, 5);
-//			System.out.println(id);
+			System.out.println(id);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

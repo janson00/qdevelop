@@ -12,6 +12,7 @@ import java.util.Properties;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import cn.qdevelop.common.utils.QSource;
 
@@ -32,7 +33,13 @@ public class IDGenerate {
 	//  private int continuousHit = 1;
 
 	private ConcurrentHashMap<String, ArrayBlockingQueue<Long>> queue = new ConcurrentHashMap<String, ArrayBlockingQueue<Long>>();
+	private ConcurrentHashMap<String, AtomicBoolean> queueRunning = new ConcurrentHashMap<String, AtomicBoolean>();
+
 	private HashMap<String,Integer> buffers = new HashMap<String,Integer>();
+//		private ReadWriteLock lock = new ReentrantReadWriteLock();
+//	private static Lock locker = new ReentrantLock();
+//	private AtomicBoolean isRunning = new AtomicBoolean();
+
 
 	/**
 	 * 获取用户ID
@@ -128,17 +135,33 @@ public class IDGenerate {
 					}
 				}
 			}
-			int size = _q.size();
-			if(size < buffer/2){
-				synchronized (queue) {
+			double size = _q.size();
+			double rangeLeft =  buffer*0.5 < 3 ? 2 : buffer*0.5;
+			if(size < rangeLeft){
+				synchronized (queueRunning) {
+					AtomicBoolean _run = queueRunning.get(name);
+					if(_run==null){
+						_run = new AtomicBoolean();
+						queueRunning.put(name,_run);
+					}
 					if (size < 2) {
+						if(_run.get()){
+							try {
+								Thread.sleep(100);
+							} catch (Exception e) {
+							}finally{
+								_run.set(false);
+							}
+						}
 						sync(name, digit, buffer);
 					}else{
-						new Thread(){
-							public void run(){
-								sync(name, digit, buffer);
-							}
-						}.start();
+						if(!_run.get()){
+							new Thread(){
+								public void run(){
+									sync(name, digit, buffer);
+								}
+							}.start();
+						}
 					}
 				}
 			}
@@ -153,10 +176,10 @@ public class IDGenerate {
 
 	Socket server = null;
 	private void sync(String name, final int digit, final int buffer) {
+		AtomicBoolean _run = queueRunning.get(name);
+		if(_run.get())return;
+		_run.set(true);
 		ArrayBlockingQueue<Long> _q = queue.get(name);
-		if (_q.size() > 2) {
-			return;
-		}
 		long startTime = System.currentTimeMillis();
 		Object rv = socketSender(new StringBuilder().append(name).append(":").append(digit).append(":")
 				.append(buffer).toString());
@@ -170,9 +193,10 @@ public class IDGenerate {
 			}
 		}
 		long consumeTime = System.currentTimeMillis() - startTime;
-		if (consumeTime > 500) {
+		if (consumeTime > 50) {
 			System.out.println("队列服务名称："+name+";耗时："+consumeTime);
 		}
+		_run.set(false);
 	}
 
 	private Object socketSender(String cmd) {
@@ -282,7 +306,7 @@ public class IDGenerate {
 			}
 		}
 	}
-	
+
 	private void init(){
 		Properties prop = QSource.getInstance().loadProperties("plugin-config/qdevelop-id-client.properties");
 		if(prop!=null){
@@ -298,8 +322,8 @@ public class IDGenerate {
 	}
 	public static void main(String[] args) {
 		try {
-long id = IDGenerate.getInstance().getRandomID();
-System.out.println(id);
+			long id = IDGenerate.getInstance().getRandomID();
+			System.out.println(id);
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
