@@ -31,12 +31,10 @@ public class SessionCache implements ICache<String,Object>{
 
 	@Override
 	public void remove(String key) {
-		
 	}
 
 	@Override
 	public void reload() {
-		// TODO Auto-generated method stub
 		
 	}
 

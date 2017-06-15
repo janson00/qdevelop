@@ -1,9 +1,9 @@
 <?xml version='1.0' encoding='utf-8'?>
 <database-config>
 	
-	<connect index="qd_product_center_write">
+	<connect index="default">
 		<driver-class>com.mysql.jdbc.Driver</driver-class>
-		<driver-url>jdbc:mysql://127.0.0.1:3306/qd_product_center?useUnicode=true&amp;characterEncoding=utf8&amp;autoReconnect=true&amp;zeroDateTimeBehavior=convertToNull
+		<driver-url>jdbc:mysql://127.0.0.1:3306/demo_product_center?useUnicode=true&amp;characterEncoding=utf8&amp;autoReconnect=true&amp;zeroDateTimeBehavior=convertToNull
 		</driver-url>
 		<user-name>root</user-name>
 		<password>janson</password>

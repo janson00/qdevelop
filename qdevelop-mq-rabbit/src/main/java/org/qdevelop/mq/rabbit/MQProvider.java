@@ -107,7 +107,7 @@ public class MQProvider  extends ConcurrentLinkedQueue<MQBean>{
   private void initFactory() {
     Properties props = new Properties();
     try {
-      props.load(new MQConfig().getSourceAsStream("rabbit-mq.properties"));
+      props.load(new MQConfig().getSourceAsStream("plugin-config/rabbit-mq.properties"));
       factory = new ConnectionFactory();  
       factory.setHost(props.getProperty("mq_server_host"));
       factory.setPort(Integer.parseInt(props.getProperty("mq_server_port")));

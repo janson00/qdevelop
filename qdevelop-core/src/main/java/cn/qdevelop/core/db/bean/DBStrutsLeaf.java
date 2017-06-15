@@ -26,8 +26,10 @@ public class DBStrutsLeaf {
 			type = 4;
 		}else if(columnTypeName.equalsIgnoreCase("datetime")){
 			type = 5;
-		}else if(columnTypeName.equalsIgnoreCase("bigint") || columnTypeName.equalsIgnoreCase("float")){
+		}else if(columnTypeName.equalsIgnoreCase("bigint")){
 			type = 6;
+		}else if( columnTypeName.equalsIgnoreCase("float")){
+			type = 7;
 		}
 	}
 	public int getSize() {

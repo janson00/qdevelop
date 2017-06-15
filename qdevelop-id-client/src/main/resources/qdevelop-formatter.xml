@@ -8,7 +8,8 @@
   <!-- 指定唯一应用名称，一般写成表名即可 -->
   <app-id-name>应用ID名称</app-id-name>
   <!-- 非必填参数
-  <wrapper>自定义内容，例WX-开头： WX-{ID}</wrapper>
+  <wrapper>自定义内容模版，支持时间变量和ID变量；例： WX-{DATE}-{ID}</wrapper>
+  <date-format>wrapper变量中{DATE}的时间格式化样式，默认：yyMMdd</date-format>
   <digit>需要几位数字，默认6位</digit>
   <buffer>一次性从服务端获取数量，默认一次取5条</buffer> 
   -->

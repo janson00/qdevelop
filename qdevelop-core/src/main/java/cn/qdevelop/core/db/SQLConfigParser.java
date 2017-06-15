@@ -42,7 +42,7 @@ public class SQLConfigParser {
 	private final static Map<String,ArrayList<IUpdateHook>> resultHookByIndex = new ConcurrentHashMap<String,ArrayList<IUpdateHook>>();
 	private final static Map<String,Map<String,DBStrutsLeaf>> dbStrutsLeafByIndex = new ConcurrentHashMap<String,Map<String,DBStrutsLeaf>>();
 	private final static Pattern isNumber = Pattern.compile("^[0-9]+?$");
-	
+
 	/**
 	 * 判断是否是查询
 	 */
@@ -51,19 +51,20 @@ public class SQLConfigParser {
 		if(config==null)throw new QDevelopException(1002,"请求没有index");
 		return Boolean.parseBoolean(config.attributeValue("is-select"));
 	}
-	
+
 	/**
-	 * 判断是否可以对外提供服务
+	 * 获取配置内容
 	 * @param index
+	 * @param attrName
 	 * @return
 	 * @throws QDevelopException
 	 */
-	public boolean isOpen(String index) throws QDevelopException{
+	public String getAttrValue(String index,String attrName) throws QDevelopException{
 		Element config = SQLConfigLoader.getInstance().getSQLConfig(index);
 		if(config==null)throw new QDevelopException(1002,"请求没有index");
-		return Boolean.parseBoolean(config.attributeValue("is-open"));
+		return config.attributeValue(attrName);
 	}
-	
+
 
 	/**
 	 * 获取配置的paramformatter
@@ -122,6 +123,9 @@ public class SQLConfigParser {
 			IUpdateHook updateHook = FormatterLoader.getInstance().getUpdateHook(name);
 			if(updateHook == null){
 				throw new QDevelopException(1001,"update-hook配置不存在："+item.asXML());
+			}
+			if(!updateHook.validConfig(item)){
+				throw new QDevelopException(1001,"update-hook配置参数不全："+item.asXML());
 			}
 			updateHook.initHook(item);
 			updateHooks.add(updateHook);
@@ -190,6 +194,7 @@ public class SQLConfigParser {
 				DBStrutsBean dbsb = TableColumnType.getInstance().getTableStrutsBean(conn, tableName);
 				boolean fetchZeroErr = Boolean.parseBoolean(sql.attributeValue("fetch-zero-err"));
 				String[] params = sql.attributeValue("params") == null ? null : sql.attributeValue("params").split("\\|");
+				boolean isFullParam = sql.attributeValue("is-full-param").equals("true");
 				if(repeat!=null && repeat.length()>0){
 					String[] args;
 					String repeatSplit =  sql.attributeValue("repeat-split");
@@ -218,7 +223,7 @@ public class SQLConfigParser {
 						for(int i=0;i<args.length;i++){
 							data.put(args[i], tmp[i]);
 						}
-						UpdateBean ub = getUpdateBean(data,sqlStr,params,dbsb);
+						UpdateBean ub = getUpdateBean(data,sqlStr,params,dbsb,isFullParam);
 						ub.setIndex(index);
 						ub.setConnName(connName);
 						ub.setFetchZeroError(fetchZeroErr);
@@ -227,7 +232,7 @@ public class SQLConfigParser {
 					}
 				}else{
 					HashMap<String,Object> data = new HashMap<String,Object>(query);
-					UpdateBean ub = getUpdateBean(data,sqlStr,params,dbsb);
+					UpdateBean ub = getUpdateBean(data,sqlStr,params,dbsb,isFullParam);
 					ub.setIndex(index);
 					ub.setConnName(connName);
 					ub.setFetchZeroError(fetchZeroErr);
@@ -242,11 +247,12 @@ public class SQLConfigParser {
 			throw ex;
 		}catch (Exception e) {
 			log.error(e.getMessage());
+			e.printStackTrace();
 			throw new QDevelopException(1001,"获取更新SQL报错",e);
 		}
 	}
 
-	private UpdateBean getUpdateBean(HashMap<String,Object> data,String sql,String[] params,DBStrutsBean dbsb) throws QDevelopException{
+	private UpdateBean getUpdateBean(HashMap<String,Object> data,String sql,String[] params,DBStrutsBean dbsb,boolean isFullParam) throws QDevelopException{
 		UpdateBean ub = new UpdateBean();
 		ub.setDbsb(dbsb);
 		ub.setInsert(sql.substring(0, 6).equalsIgnoreCase("insert"));
@@ -257,7 +263,13 @@ public class SQLConfigParser {
 			for(String arg : params){
 				Object val = data.get(arg);
 				if(val==null){
-					throw new QDevelopException(1001,"["+data.get("index")+"] 请求参数不全,请求需要参数："+arg+" 不能为空");
+					if(isFullParam){
+						throw new QDevelopException(1001,"["+data.get("index")+"] 请求参数不全,请求需要参数："+arg+" 不能为空");
+					}else{
+						preparedSql = cleanNULLArgs(preparedSql,arg);
+						sql = cleanNULLArgs(sql,arg);
+						continue;
+					}
 				}
 				if(dbsb.get(arg)!=null){
 					columns.add(arg);
@@ -297,13 +309,22 @@ public class SQLConfigParser {
 			} catch (SQLException e) {
 				throw new QDevelopException(1001,"["+index+"] 获取表结构错误",e);
 			}
-
 			if(params!=null){
+				boolean isFullParam = sql.attributeValue("is-full-param").equals("true");
+				ArrayList<String> paramsTemp = new ArrayList<String>(params.length);
 				for(String arg : params){
+					paramsTemp.add(arg);
 					if(query.get(arg)==null){
-						throw new QDevelopException(1001,"["+index+"] 参数不足，请确保所有变量参数数据均存在："+sql.attributeValue("params")+" "+query.toString());
+						if(isFullParam){
+							throw new QDevelopException(1001,"["+index+"] 参数不足，请确保所有变量参数数据均存在："+sql.attributeValue("params")+" "+query.toString());
+						}else{
+							dbQuery.setSql(cleanNULLArgs(dbQuery.getSql(), arg));
+							paramsTemp.remove(paramsTemp.size()-1);
+						}
 					}
 				}
+				params = paramsTemp.toArray(new String[]{});
+				paramsTemp.clear();
 			}
 
 			reBuildPreparedSql(dbQuery,query,params==null?new String[]{}:params);
@@ -344,6 +365,7 @@ public class SQLConfigParser {
 
 	private static final Pattern isSpecilKeys = Pattern.compile("^(index|page|page\\_size|order)$");
 	private static final Pattern isComplexValue = Pattern.compile("%|&|>|<|!|\\||\\*|=");
+	private static final Pattern isFunctionValue = Pattern.compile(".+\\(.+?\\)|.+\\(\\)");
 	private static final Pattern clearPreparedSql = Pattern.compile("'\\?'");
 	private void reBuildPreparedSql(DBQueryBean dbQuery ,Map<String,?> query,String[] params) throws QDevelopException{
 		Map<String, DBStrutsLeaf> tableStruts = dbQuery.getTableStruts() ;
@@ -354,8 +376,8 @@ public class SQLConfigParser {
 
 		for(String key : params){
 			String val = String.valueOf(query.get(key));
-			boolean isDBColumn = tableStruts!=null && tableStruts.get(clearColumnName.matcher(key).replaceAll(""))!=null;
-			if(isComplexValue.matcher(val).find()){
+			boolean isDBColumn = tableStruts!=null && tableStruts.get(clearColumnName.matcher(key).replaceAll(""))!=null && !isFunctionValue.matcher(val).find();
+			if(isComplexValue.matcher(val).find() && !isFunctionValue.matcher(val).find() ){
 				ComplexParserBean cpb = parserComplexVales(getSQLkey(key,sqlModel),val,isDBColumn);
 				if(cpb.getColumn()!=null){
 					for(int i=0;i<cpb.getColumn().length;i++){
@@ -543,7 +565,7 @@ public class SQLConfigParser {
 		tmp = tmp.substring(tmp.lastIndexOf(" ")+1,tmp.lastIndexOf("="));
 		return tmp;
 	}
-	
+
 	public Map<String,DBStrutsLeaf> getDBStrutsLeafByIndex(String index) throws QDevelopException {
 		Element config = SQLConfigLoader.getInstance().getSQLConfig(index);
 		if(config == null){
@@ -572,7 +594,59 @@ public class SQLConfigParser {
 		return temp;
 	}
 
-	//	public static void main(String[] args) {
+
+	private final static Map<String,Pattern> patternSelectCache = new ConcurrentHashMap<String,Pattern>();
+	private final static Map<String,Pattern> patternInsertCache = new ConcurrentHashMap<String,Pattern>();
+	private final static Pattern clearWhere = Pattern.compile("where +?and",Pattern.CASE_INSENSITIVE);
+	private final static Pattern clearSet = Pattern.compile("set +?,",Pattern.CASE_INSENSITIVE);
+	private final static Pattern clearPrefix = Pattern.compile("\\( +?,",Pattern.CASE_INSENSITIVE);
+	private final static Pattern isSelect = Pattern.compile("^select ",Pattern.CASE_INSENSITIVE);
+	private final static Pattern isInsert = Pattern.compile("^insert ",Pattern.CASE_INSENSITIVE);
+	private final static Pattern wherePrefix = Pattern.compile("^.+ where ",Pattern.CASE_INSENSITIVE);
+	private final static Pattern whereSubfix = Pattern.compile(" where .+$",Pattern.CASE_INSENSITIVE);
+	/**
+	 * 根据参数动态清理sql语句中对应的变量
+	 * @param sqlTemplate
+	 * @param argsName
+	 * @param isInsert
+	 * @return
+	 */
+	public static String cleanNULLArgs(String sqlTemplate,String argsName){
+		if(isInsert.matcher(sqlTemplate).find()){
+			Pattern clear = patternInsertCache.get(argsName);
+			if(clear==null){
+				clear = Pattern.compile(",?`?'?\\$?\\[?\\b("+argsName+")\\b\\]?'?`?",Pattern.CASE_INSENSITIVE);
+				patternInsertCache.put(argsName, clear);
+			}
+			return clearPrefix.matcher(clear.matcher(sqlTemplate).replaceAll(" ")).replaceAll("(");
+		}else if(isSelect.matcher(sqlTemplate).find()){
+			Pattern clear = patternSelectCache.get(argsName);
+			if(clear == null){
+				clear = Pattern.compile("(and|,)?( +)?\\b("+argsName+")\\b ?= ?'?\\$\\[\\b("+argsName+")\\b\\]'?",Pattern.CASE_INSENSITIVE);
+				patternSelectCache.put(argsName, clear);
+			}
+			return clearWhere.matcher(clear.matcher(sqlTemplate).replaceAll(" ")).replaceAll("where ");
+		}else{
+			Pattern clear = patternSelectCache.get(argsName);
+			if(clear == null){
+				clear = Pattern.compile("(and|,)?( +)?\\b("+argsName+")\\b ?= ?'?\\$\\[\\b("+argsName+")\\b\\]'?",Pattern.CASE_INSENSITIVE);
+				patternSelectCache.put(argsName, clear);
+			}
+			return new StringBuffer().append(clearSet.matcher(clear.matcher(whereSubfix.matcher(sqlTemplate).replaceAll("")).replaceAll(" ")).replaceAll("set "))
+					.append(" where ").append(wherePrefix.matcher(sqlTemplate).replaceAll("")).toString();
+		}
+	}
+
+//	public static void main(String[] args) {
+////		System.out.println(cleanNULLArgs("select * from AAA where id =$[id] and name= '$[name]' and userName= '$[userName]'","id"));
+////		System.out.println(cleanNULLArgs("select * from AAA where id =$[id] And name='$[name]' and user_Name= '$[user_Name]'","name"));
+//		System.out.println(cleanNULLArgs("update aa set Id=$[id],Name='$[name]',userName= '$[userName]' where id =$[id] and name= '$[name]' and userName= '$[userName]'","id"));
+//		System.out.println(cleanNULLArgs("update aa set Id=$[id],Name='$[name]',userName= '$[userName]' where id =$[id] and name= '$[name]' and user_Name= '$[user_Name]'","name"));
+//		System.out.println(cleanNULLArgs("update aa set Id=$[id],Name='$[name]',   user_Name= '$[user_Name]' where id =$[id] and name= '$[name]' and user_Name= '$[user_Name]'","user_Name"));
+//
+//		//		System.out.println(cleanNULLArgs("insert into AA(id,name,user_Name) values($[id],'$[name]','$[user_Name]')","name"));
+////		System.out.println(cleanNULLArgs("insert into AA(id,name,user_Name) values($[id],'$[name]','$[user_Name]')","id"));
+//	}
 	//		SQLConfigParser scp = 	new SQLConfigParser();
 	//		String sql = "select * from mytest e where e.source='$[source]' and e.ep_user_id=$[ep_user_id] and 9=9";
 	//		String key = "ep_user_id";

@@ -15,7 +15,7 @@ public class DataBaseFactoryTest extends TestCase {
 	
 	public void testQuery(){
 		Map<String,Object> query = new HashMap<String,Object>();
-		query.put("index", "ep_position_apply_interview_job!select");
+		query.put("index", "users-query-action");
 		query.put("hour", "24");
 		query.put("epa.is_viewed", "1|2");
 		query.put("status", "0|1");
@@ -47,16 +47,16 @@ public class DataBaseFactoryTest extends TestCase {
 	
 	public void testUpdate(){
 		Map<String,Object> query = new HashMap<String,Object>();
-		query.put("index", "deliver_falsed_batch_insert");
-		query.put("doid", "1");
-		query.put("mailno", "1");
-		query.put("reason", "1");
-		query.put("epba_id", "1");
+		query.put("index", "users-add-action");
+		query.put("uid", "1");
+		query.put("utime", System.currentTimeMillis());
+//		query.put("reason", "1");
+//		query.put("epba_id", "1");
 		try {
 			Connection conn = DatabaseFactory.getInstance().getConnectByQuery(query);
 			IDBUpdate dbUpdate = SQLConfigParser.getInstance().getDBUpdateBean(query, conn);
 			for(UpdateBean ub : dbUpdate.getUpdateBeans()){
-				System.out.println(ub.getPreparedSql());
+				System.out.println(ub.getPreparedSql()+" => "+ub.getFullSql());
 			}
 		} catch (QDevelopException e) {
 			// TODO Auto-generated catch block

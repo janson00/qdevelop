@@ -1,6 +1,9 @@
 package cn.qdevelop.plugin.id.client.formatter;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.Map;
+import java.util.regex.Pattern;
 
 import org.dom4j.Element;
 
@@ -9,7 +12,7 @@ import cn.qdevelop.core.formatter.AbstractParamFormatter;
 import cn.qdevelop.plugin.id.client.IDGenerate;
 
 public class IDGenerateFormatter extends AbstractParamFormatter{
-	String paramKey,appIdName,wrapper;
+	String paramKey,appIdName,wrapper,dateStyle;
 	int digit,buffer;
 	@Override
 	public void initFormatter(Element conf) throws QDevelopException {
@@ -18,6 +21,8 @@ public class IDGenerateFormatter extends AbstractParamFormatter{
 		wrapper = conf.attributeValue("wrapper");
 		digit = conf.attributeValue("digit") == null ? 6 : Integer.parseInt(conf.attributeValue("digit"));
 		buffer = conf.attributeValue("buffer") == null ? 5 : Integer.parseInt(conf.attributeValue("buffer"));
+		dateStyle = conf.attributeValue("date-format") == null ? "yyMMdd" : conf.attributeValue("date-format");
+
 	}
 
 	@Override
@@ -29,13 +34,21 @@ public class IDGenerateFormatter extends AbstractParamFormatter{
 	public void setConfigAttrs(Map<String, String> attrs) {
 
 	}
+	
+	private static Pattern isTemplate = Pattern.compile("\\{.+\\}");
 
 	@Override
 	public Map<String, Object> formatter(Map<String, Object> query) {
 		try {
 			String id = IDGenerate.getInstance().getIDStr(appIdName, digit, buffer);
-			if(wrapper!=null&&wrapper.indexOf("{ID}")>-1){
-				query.put(paramKey, wrapper.replace("{ID}", id));
+			if(wrapper!=null&&isTemplate.matcher(wrapper).find()){
+				if(wrapper.indexOf("{ID}") > -1){
+					wrapper =  wrapper.replace("{ID}", id);
+				}
+				if(wrapper.indexOf("{DATE}") > -1){
+					wrapper =  wrapper.replace("{DATE}",  new SimpleDateFormat(dateStyle).format(new Date()));
+				}
+				query.put(paramKey, wrapper);
 			}else{
 				query.put(paramKey, id);
 			}
@@ -45,6 +58,5 @@ public class IDGenerateFormatter extends AbstractParamFormatter{
 		}
 		return null;
 	}
-
 
 }

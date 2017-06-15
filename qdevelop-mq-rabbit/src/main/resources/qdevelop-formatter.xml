@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<data-formatter>
+	
+	<!-- 更新后同步发送请求到MQ消息队列 -->
+	<update-hook name="mq-provider-hook" class="org.qdevelop.mq.rabbit.formatter.MQAfterUpdateHook">
+		<queue-name>注册消息队列的名称</queue-name>
+	</update-hook>
+	
+</data-formatter>

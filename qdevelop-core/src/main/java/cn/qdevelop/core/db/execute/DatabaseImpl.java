@@ -1,12 +1,12 @@
 package cn.qdevelop.core.db.execute;
 
+import java.math.BigDecimal;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
@@ -57,7 +57,7 @@ public class DatabaseImpl {
 		return result;
 	}
 
-	
+
 
 	/**
 	 * 插入并返回自增ID的方法
@@ -121,7 +121,11 @@ public class DatabaseImpl {
 			}
 		}
 	}
-	
+
+	private static Pattern isCaseBatchInsert = Pattern.compile("^insert .+ values ",Pattern.CASE_INSENSITIVE);
+	private static Pattern isCaseBatchInsertHeadClean = Pattern.compile(" values .+$",Pattern.CASE_INSENSITIVE);
+	private static Pattern isCaseBatchInsertLastClean = Pattern.compile("^.+ values ",Pattern.CASE_INSENSITIVE);
+
 	/**
 	 * 批量执行更新语句
 	 * @param conn
@@ -137,21 +141,64 @@ public class DatabaseImpl {
 		int idx=0;
 		try {
 			if(isAutoCommit)conn.setAutoCommit(false);
-			pstmt = conn.prepareStatement(ub.getPreparedSql());
+
 			int size=0;
-			for(idx=0;idx<values.size();idx++){
-				ub.setValues(values.get(idx));
-				setValue(ub.getPreparedSql(),ub.getDbsb(),pstmt,ub.getColumns(),ub.getValues());
-				log.info("[batch] "+ub.getFullSql());
-				pstmt.addBatch();
-				if(idx%1000==0){
+			int MAX_SPLIT = 200;
+			if(isCaseBatchInsert.matcher(ub.getPreparedSql()).find() && values.size() > MAX_SPLIT){//只有 insert & values时，动态改变批次插入的方法,并且数据超过100时，开启动态改变插入方法
+				StringBuffer _sql = new StringBuffer();
+				_sql.append(isCaseBatchInsertHeadClean.matcher(ub.getPreparedSql()).replaceAll("")).append(" values ");
+				String insertModule = isCaseBatchInsertLastClean.matcher(ub.getPreparedSql()).replaceAll("");
+				for(int i=0;i<MAX_SPLIT;i++){
+					_sql.append(i==0?"":",").append(insertModule);
+				}
+				pstmt = conn.prepareStatement(_sql.toString());
+				int pages = (int)(values.size()/MAX_SPLIT);
+				for(int i=0;i<pages;i++){
+					for(int j=0;j<MAX_SPLIT;j++){
+						setValue(ub.getPreparedSql(),ub.getDbsb(),pstmt,ub.getColumns(),values.get(MAX_SPLIT*i+j),j*ub.getColumns().length+1);
+//						System.out.println(pages+" : "+(MAX_SPLIT*i+j)+" vals "+(j*ub.getColumns().length+1));
+					}
+					pstmt.addBatch();
+					if(++idx%500==0){
+						pstmt.executeBatch();
+						size += pstmt.getUpdateCount();
+						System.out.println("singleInsertBatchUpdate:["+size+"] +1");
+					}
+				}
+				pstmt.executeBatch();
+				size += pstmt.getUpdateCount();
+				int left = values.size()%MAX_SPLIT;
+				if(left > 0){
+					_sql = new StringBuffer();
+					_sql.append(isCaseBatchInsertHeadClean.matcher(ub.getPreparedSql()).replaceAll("")).append(" values ");
+					insertModule = isCaseBatchInsertLastClean.matcher(ub.getPreparedSql()).replaceAll("");
+					for(int i=0;i<left;i++){
+						_sql.append(i==0?"":",").append(insertModule);
+					}
+					pstmt = conn.prepareStatement(_sql.toString());
+					for(int j=0;j<left;j++){
+						setValue(ub.getPreparedSql(),ub.getDbsb(),pstmt,ub.getColumns(),values.get(pages*MAX_SPLIT+j),j*ub.getColumns().length+1);
+					}
+					pstmt.addBatch();
 					pstmt.executeBatch();
 					size += pstmt.getUpdateCount();
-					System.out.println("singleBatchUpdate:["+size+"] +1");
 				}
+			}else{
+				pstmt = conn.prepareStatement(ub.getPreparedSql());
+				for(int i=0;i<values.size();i++){
+					ub.setValues(values.get(i));
+					setValue(ub.getPreparedSql(),ub.getDbsb(),pstmt,ub.getColumns(),ub.getValues());
+					log.info("[batch] "+ub.getFullSql());
+					pstmt.addBatch();
+					if(++idx%1000==0){
+						pstmt.executeBatch();
+						size += pstmt.getUpdateCount();
+						System.out.println("singleBatchUpdate:["+size+"] +1");
+					}
+				}
+				pstmt.executeBatch();
+				size += pstmt.getUpdateCount();
 			}
-			pstmt.executeBatch();
-			size += pstmt.getUpdateCount();
 			if(isAutoCommit)conn.commit();
 			return size;
 		} catch (Exception e) {
@@ -189,7 +236,7 @@ public class DatabaseImpl {
 			}
 		}
 	}
-	
+
 	final static Pattern hasAutoIncrementParam = Pattern.compile("\\{[a-zA-z0-9_]+\\.LAST_INSERT_ID\\}");
 	final static Pattern getAutoIncrementKey = Pattern.compile("^.*\\{|\\.LAST_INSERT_ID\\}.*$");
 
@@ -289,6 +336,10 @@ public class DatabaseImpl {
 	}
 
 	public void setValue(String sql,Map<String,DBStrutsLeaf> dbsb,PreparedStatement pstmt,String[] columns,Object[] values) throws QDevelopException{
+		setValue( sql, dbsb, pstmt,columns,values,1);
+	}
+
+	public void setValue(String sql,Map<String,DBStrutsLeaf> dbsb,PreparedStatement pstmt,String[] columns,Object[] values,int start) throws QDevelopException{
 		try {
 			for(int i=0;i<columns.length;i++){
 				DBStrutsLeaf sl = dbsb.get(columns[i]);
@@ -297,19 +348,19 @@ public class DatabaseImpl {
 					switch(type){
 					case 1:
 						if(values[i].getClass().equals(Integer.class)){
-							pstmt.setInt(i+1, (Integer)values[i]);
+							pstmt.setInt(i+start, (Integer)values[i]);
 						}else{
-							pstmt.setInt(i+1, Integer.parseInt(String.valueOf(values[i]).replaceAll("'", "")));
+							pstmt.setInt(i+start, Integer.parseInt(String.valueOf(values[i]).replaceAll("'", "")));
 						}
 						break;
 					case 2:
-						pstmt.setString(i+1, String.valueOf(values[i]));
+						pstmt.setString(i+start, String.valueOf(values[i]));
 						break;
 					case 3:
 						if(values[i].getClass().equals(Double.class)){
-							pstmt.setDouble(i+1, (Double)values[i]);
+							pstmt.setDouble(i+start, (Double)values[i]);
 						}else{
-							pstmt.setDouble(i+1, Double.parseDouble(String.valueOf(values[i]).replaceAll("'", "")));
+							pstmt.setDouble(i+start, Double.parseDouble(String.valueOf(values[i]).replaceAll("'", "")));
 						}
 						break;
 					case 4:
@@ -325,7 +376,7 @@ public class DatabaseImpl {
 								val = new java.sql.Date(new SimpleDateFormat("yyyy-MM-dd").parse(v).getTime());
 							}
 						}
-						pstmt.setDate(i+1, val);
+						pstmt.setDate(i+start, val);
 						break;
 					case 5:
 						java.sql.Timestamp val1=null;
@@ -339,22 +390,30 @@ public class DatabaseImpl {
 								val1 = new java.sql.Timestamp(new SimpleDateFormat("yyyy-MM-dd").parse(v).getTime());
 							}
 						}
-						pstmt.setTimestamp(i+1, val1);
+						pstmt.setTimestamp(i+start, val1);
 						break;
 					case 6:
-						if(values[i].getClass().equals(Long.class)){
-							pstmt.setLong(i+1, (Long)values[i]);
+						if(values[i].getClass().equals(BigDecimal.class)){
+							pstmt.setBigDecimal(i+start, (BigDecimal)values[i]);
 						}else{
-							pstmt.setLong(i+1, Long.parseLong(String.valueOf(values[i]).replaceAll("'", "")));
+							pstmt.setBigDecimal(i+start, new BigDecimal(String.valueOf(values[i]).replaceAll("'", "")));
+						}
+						break;
+					case 7:
+						if(values[i].getClass().equals(Float.class)){
+							pstmt.setFloat(i+start, (Float)values[i]);
+						}else{
+							pstmt.setFloat(i+start, Float.parseFloat(String.valueOf(values[i]).replaceAll("'", "")));
 						}
 						break;
 					default :
-						pstmt.setObject(i+1, values[i]);
+						pstmt.setObject(i+start, values[i]);
 						break;
 					}
 				}
 			}
-		} catch (NumberFormatException e) {
+		} /*catch (NumberFormatException e) {
+			e.printStackTrace();
 			log.error("预编译SQL："+sql);
 			log.error(toDebugInfo(dbsb,columns,values));
 			throw new QDevelopException(1003,"数字格式转换错误",e);
@@ -362,12 +421,11 @@ public class DatabaseImpl {
 			log.error("预编译SQL："+sql);
 			log.error(toDebugInfo(dbsb,columns,values));
 			throw new QDevelopException(1003,"SQL预编译错误",e);
-		} catch (ParseException e) {
+		} */catch (Exception e) {
 			log.error("预编译SQL："+sql);
 			log.error(toDebugInfo(dbsb,columns,values));
-			throw new QDevelopException(1003,"日期格式转换错误",e);
+			throw new QDevelopException(1003,"预编译SQL错误",e);
 		}
-
 	}
 
 	private String toDebugInfo(Map<String,DBStrutsLeaf> dbsb,String[] columns,Object[] values){

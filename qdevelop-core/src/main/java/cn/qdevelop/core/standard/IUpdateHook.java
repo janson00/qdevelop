@@ -16,6 +16,8 @@ public interface IUpdateHook extends Cloneable{
 	
 	public void initHook(Element conf) throws QDevelopException;
 	
+	public boolean validConfig(Element conf) throws QDevelopException;
+	
 	public void init(Connection conn,Map<String,?> query) throws QDevelopException;
 	/**
 	 * hook执行，每执行一条sql时就执行一次,

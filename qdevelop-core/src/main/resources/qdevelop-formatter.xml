@@ -31,6 +31,15 @@
 	 	<columns>获取结果集中的对应的字段名</columns>
 	</result-formatter>
 	
+	<!--利用已配置sql模版，进行结果集一对多关联查询操作，类似leftjoin功能，可轻易实现夸库查询-->
+	<result-formatter name="left-join-multi-formatter" class="cn.qdevelop.core.formatter.impl.LeftJoinMultiFormatter">
+		<result-key>当前结果集字段名</result-key>
+		<left-join>sqlConfig中定义的其他结果集index</left-join>
+		<on-key>结果集中的对应关联的字段名</on-key>
+	 	<columns>获取结果集中的对应的字段名</columns>
+	 	<!-- <node-name>节点名称，非必填，defalut：child</node-name> -->
+	</result-formatter>
+	
 	<!--利用properties配置，数据进行字典对应翻译关系-->
 	<result-formatter name="prop-formatter" class="cn.qdevelop.core.formatter.impl.PropTranFormatter">
 		<result-key>当前结果集字段名</result-key>

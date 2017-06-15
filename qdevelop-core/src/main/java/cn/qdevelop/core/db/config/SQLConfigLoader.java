@@ -228,11 +228,15 @@ public class SQLConfigLoader extends HashMap<String,Element>{
 				sql.addAttribute("fetch-zero-err", "true");
 			}
 			addTables(sql.attributeValue("tables"),property.attributeValue("connect"));
+			if(sql.attributeValue("is-full-param")==null){
+				sql.addAttribute("is-full-param", isSelect?"false":"true");
+			}
 		}
 		if(property.attributeValue("is-master")==null){
 			property.addAttribute("is-master", isSelect?"false":"true");
 		}
 		property.addAttribute("is-select", isSelect.toString());
+		
 
 		//兼容历史配置
 		Element resultFormatter = property.element("formatter");

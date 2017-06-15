@@ -13,8 +13,8 @@ import junit.framework.TestCase;
 public class ConnectTest extends TestCase{
 	public void testConnect(){
 		try {
-			String s = ConnectFactory.getInstance("ep_user").getDataBase();
-			Connection conn = ConnectFactory.getInstance("ep_user").getConnection();
+			String s = ConnectFactory.getInstance("default").getDataBase();
+			Connection conn = ConnectFactory.getInstance("default").getConnection();
 			System.out.println(">>"+conn.getMetaData().getIdentifierQuoteString());
 			System.out.println("<<"+conn.getCatalog());
 //			ConnectFactory.initAllConnect();
@@ -31,14 +31,14 @@ public class ConnectTest extends TestCase{
 	
 	public void testDatabaseFactoryConnect(){
 		try {
-			Connection con = DatabaseFactory.getInstance().getConnectByQuery("mytest_insert");
+			Connection con = DatabaseFactory.getInstance().getConnectByQuery("default");
 			System.out.println(con.toString());
 			Map<String,Object> query = new HashMap();
-			query.put("index", "mytest_insert");
+			query.put("index", "users-add-action");
 			con = DatabaseFactory.getInstance().getConnectByQuery(query);
 			System.out.println(con.toString());
 			HashMap<String,Object> query2 = new HashMap();
-			query2.put("index", "mytest_insert");
+			query2.put("index", "users-add-action");
 			con = DatabaseFactory.getInstance().getConnectByQuery(query2);
 			System.out.println(con.toString());
 		} catch (QDevelopException e) {

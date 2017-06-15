@@ -26,6 +26,7 @@ public class QDevelopHelper {
 	public static void createSQLConfig(String connName,String tableName){
 		//		StringBuffer xml = new StringBuffer();
 		StringBuffer selectSQL = new StringBuffer();
+		StringBuffer selectDirect = new StringBuffer();
 		StringBuffer insertSQL = new StringBuffer();
 		StringBuffer updateSQL = new StringBuffer();
 		StringBuffer deleteSQL = new StringBuffer();
@@ -35,6 +36,7 @@ public class QDevelopHelper {
 		String autoIncrementName="";
 		try {
 			selectSQL.append("select ");
+			selectDirect.append("select ");
 			insertSQL.append("insert into ").append(tableName).append("(");
 			updateSQL.append("update ").append(tableName).append(" set ");
 
@@ -46,15 +48,18 @@ public class QDevelopHelper {
 			StringBuffer v = new StringBuffer();
 			StringBuffer i = new StringBuffer();
 			StringBuffer s = new StringBuffer();
+			StringBuffer w = new StringBuffer();
 			while(iter.hasNext()){
 				DBStrutsLeaf sl = iter.next();
-				//				sl.isAutoIncrement();
 				selectSQL.append(idx>0?",":"").append(sl.getColumnName());
+				selectDirect.append(idx>0?",":"").append(sl.getColumnName());
 				if(!sl.isAutoIncrement()){
 					c.append(c.length()>0?",":"").append(sl.getColumnName());
 					v.append(v.length()>0?",":"").append(sl.getColumnType()==2?"'":"").append("$[").append(sl.getColumnName()).append("]").append(sl.getColumnType()==2?"'":"");
 					s.append(s.length()>0?",":"").append(sl.getColumnName()).append("=").append(sl.getColumnType()==2?"'":"").append("$[").append(sl.getColumnName()).append("]").append(sl.getColumnType()==2?"'":"");
+					w.append(" and ").append(sl.getColumnName()).append("=").append(sl.getColumnType()==2?"'":"").append("$[").append(sl.getColumnName()).append("]").append(sl.getColumnType()==2?"'":"").append(++idx%3==0?"\r\n			":"");
 				}else{
+					++idx;
 					autoIncrementName = sl.getColumnName();
 					i.append(sl.getColumnName()).append("=$[").append(sl.getColumnName()).append("]");
 				}
@@ -63,8 +68,8 @@ public class QDevelopHelper {
 				}else if(sl.getColumnTypeName().equalsIgnoreCase("date") || sl.getColumnTypeName().equalsIgnoreCase("datetime")){
 					formatter.add("<date-formatter result-key=\""+sl.getColumnName()+"\" date-style=\"yyyy-MM-dd HH:mm:ss\"/>");
 				}
-				idx++;
 			}
+			selectDirect.append(" from ").append(tableName).append(" where \r\n			 ").append(i).append(w);
 			selectSQL.append(" from ").append(tableName).append(" where {DYNAMIC}");
 			updateSQL.append(s).append(" where ").append(i);
 			insertSQL.append(c).append(") value (").append(v).append(")");
@@ -95,7 +100,8 @@ public class QDevelopHelper {
 			fw.write("<?xml version=\"1.0\" encoding=\"utf-8\"?>");
 			fw.write("\r\n");fw.write("<!-- xml中常用转义符写法： （ &  &amp; ）（ <  &lt; ） （ >  &gt; ）-->");
 			fw.write("\r\n");fw.write("<SQLConfig>");
-			fw.write("\r\n");fw.write("	<property index=\""+tableName+"-select-auto\" connect=\""+connName+"\" explain=\""+tableName+"查询\">");
+			
+			fw.write("\r\n");fw.write("	<property index=\""+tableName+"-search-action\" connect=\""+connName+"\" explain=\""+tableName+"查询\">");
 			if(formatter.size()>0){
 				fw.write("\r\n");fw.write("		<!--");
 				fw.write("\r\n");fw.write("		<formatter>");
@@ -108,9 +114,24 @@ public class QDevelopHelper {
 			fw.write("\r\n");fw.write("		<sql>"+selectSQL.toString()+"</sql>");
 			fw.write("\r\n");fw.write("	</property>");
 			fw.write("\r\n");
-			fw.write("\r\n");fw.write("	<property index=\""+tableName+"-insert-auto\" connect=\""+connName+"\" explain=\""+tableName+"插入\">");
+			
+			fw.write("\r\n");fw.write("	<property index=\""+tableName+"-query-action\" connect=\""+connName+"\" explain=\""+tableName+"查询\">");
+			if(formatter.size()>0){
+				fw.write("\r\n");fw.write("		<!--");
+				fw.write("\r\n");fw.write("		<formatter>");
+				for(String fs : formatter){
+					fw.write("\r\n");fw.write("			"+fs);
+				}
+				fw.write("\r\n");fw.write("		</formatter>");
+				fw.write("\r\n");fw.write("		-->");
+			}
+			fw.write("\r\n");fw.write("		<sql>"+selectDirect.toString()+"</sql>");
+			fw.write("\r\n");fw.write("	</property>");
+			fw.write("\r\n");
+			
+			fw.write("\r\n");fw.write("	<property index=\""+tableName+"-add-action\" connect=\""+connName+"\" explain=\""+tableName+"插入\">");
 			fw.write("\r\n");fw.write("		<sql repeat=\"\"  repeat-concat=\"^\" fetch-zero-err=\"true\">");
-			fw.write("\r\n");fw.write("		"+insertSQL.toString());
+			fw.write("\r\n");fw.write("			"+insertSQL.toString());
 			fw.write("\r\n");fw.write("		</sql>");
 			//			fw.write("\r\n");fw.write("		<sql>"+insertSQL.toString()+"</sql>");
 			if(autoIncrementName.length()>0){
@@ -118,19 +139,22 @@ public class QDevelopHelper {
 			}
 			fw.write("\r\n");fw.write("	</property>");
 			fw.write("\r\n");
-			fw.write("\r\n");fw.write("	<property index=\""+tableName+"-update-auto\" connect=\""+connName+"\" explain=\""+tableName+"修改\">");
+			fw.write("\r\n");fw.write("	<property index=\""+tableName+"-store-action\" connect=\""+connName+"\" explain=\""+tableName+"修改\">");
 			fw.write("\r\n");fw.write("		<sql  repeat=\"\"  repeat-concat=\"^\" fetch-zero-err=\"true\">");
-			fw.write("\r\n");fw.write("		"+updateSQL.toString());
+			fw.write("\r\n");fw.write("			"+updateSQL.toString());
 			fw.write("\r\n");fw.write("		</sql>");
 			//			fw.write("\r\n");fw.write("		<sql fetch-zero-err=\"true\">"+updateSQL.toString()+"</sql>");
 			fw.write("\r\n");fw.write("	</property>");
 			fw.write("\r\n");
-			fw.write("\r\n");fw.write("	<property index=\""+tableName+"-delete-auto\" connect=\""+connName+"\" explain=\""+tableName+"删除\">");
+			fw.write("\r\n");fw.write("	<!--");
+			fw.write("\r\n");fw.write("	<property index=\""+tableName+"-remove-action\" connect=\""+connName+"\" explain=\""+tableName+"删除\">");
 			fw.write("\r\n");fw.write("		<sql  repeat=\"\" repeat-concat=\"^\" fetch-zero-err=\"true\">");
-			fw.write("\r\n");fw.write("		"+deleteSQL.toString());
+			fw.write("\r\n");fw.write("			"+deleteSQL.toString());
 			fw.write("\r\n");fw.write("		</sql>");
 			//			fw.write("\r\n");fw.write("		<sql fetch-zero-err=\"true\">"+deleteSQL.toString()+"</sql>");
 			fw.write("\r\n");fw.write("	</property>");
+			fw.write("\r\n");fw.write("	-->");
+			
 			fw.write("\r\n");fw.write("</SQLConfig>");
 			fw.flush();
 			System.out.println("生成SQL配置文件："+store.getAbsolutePath());
@@ -144,6 +168,10 @@ public class QDevelopHelper {
 			}
 		}
 	}
+	
+//	public static void createDocByConfig(String index){
+//		
+//	}
 
 
 }

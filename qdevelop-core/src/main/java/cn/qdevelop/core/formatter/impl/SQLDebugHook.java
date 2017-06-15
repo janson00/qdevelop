@@ -11,20 +11,12 @@ import org.dom4j.Element;
 
 import cn.qdevelop.common.exception.QDevelopException;
 import cn.qdevelop.core.db.bean.UpdateBean;
+import cn.qdevelop.core.formatter.AbstractUpdateHook;
 import cn.qdevelop.core.standard.IDBUpdate;
-import cn.qdevelop.core.standard.IUpdateHook;
 
-public class SQLDebugHook implements IUpdateHook{
+public class SQLDebugHook extends AbstractUpdateHook{
 	private static SimpleDateFormat sdf;
-	@Override
-	public IUpdateHook clone() {
-		try {
-			return (IUpdateHook)super.clone();
-		} catch (CloneNotSupportedException e) {
-			e.printStackTrace();
-		}
-		return null;
-	}
+	
 	int idx = 1;
 	@Override
 	public void execHook(Connection conn, UpdateBean ub, int fetchSize, int lastInsertId) throws SQLException{
@@ -67,15 +59,12 @@ public class SQLDebugHook implements IUpdateHook{
 	}
 
 	@Override
-	public void setConfigAttrs(Map<String, String> conf) {
-		
-	}
-
-	@Override
 	public void initHook(Element conf) throws QDevelopException {
 		// TODO Auto-generated method stub
 		
 	}
+
+	
 	
 
 }

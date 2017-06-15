@@ -20,7 +20,7 @@
 		</repository>
 		<repository>
 			<id>develop</id>		
-			<url>http://192.168.6.8:8081/nexus/content/repositories/develop/</url>
+			<url>http://192.168.86.8:8081/nexus/content/repositories/develop/</url>
 		</repository>
 		 
 		<!-- <repository>
@@ -34,7 +34,7 @@
 		
 		<snapshotRepository>
 			<id>develop</id>		
-			<url>http://192.168.6.8:8081/nexus/content/repositories/develop/</url>
+			<url>http://192.168.86.8:8081/nexus/content/repositories/develop/</url>
 		</snapshotRepository>
 		
 		 <!-- <snapshotRepository>
