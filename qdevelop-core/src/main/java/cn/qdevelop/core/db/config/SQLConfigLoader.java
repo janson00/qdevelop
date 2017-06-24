@@ -229,7 +229,7 @@ public class SQLConfigLoader extends HashMap<String,Element>{
 			}
 			addTables(sql.attributeValue("tables"),property.attributeValue("connect"));
 			if(sql.attributeValue("is-full-param")==null){
-				sql.addAttribute("is-full-param", isSelect?"false":"true");
+				sql.addAttribute("is-full-param", "false");
 			}
 		}
 		if(property.attributeValue("is-master")==null){

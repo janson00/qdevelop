@@ -63,8 +63,7 @@ public class OutputJson implements IOutput{
 	public String toString(){
 		StringBuffer out = new StringBuffer().append(jsonpCallback==null?"":jsonpCallback+"(").append("{")
 				.append("\"tag\":").append(this.getTag()).append(",")
-				.append("\"data\":").append(JSON.toJSONString(this.getData())).append(",")
-				.append("\"errMsg\":\"").append(this.getErrMsg()).append("\"");
+				.append("\"data\":{\"result\":").append(JSON.toJSONString(this.getData()));
 		if(attr!=null){
 			Iterator<Entry<String,Object>> iter = attr.entrySet().iterator();
 			while(iter.hasNext()){
@@ -72,7 +71,7 @@ public class OutputJson implements IOutput{
 				out.append(",\"").append(itor.getKey()).append("\":").append(JSON.toJSONString(itor.getValue()));
 			}
 		}
-		return out.append("}").append(jsonpCallback==null?"":");").toString();
+		return out.append("},\"errMsg\":\"").append(this.getErrMsg()).append("\"").append("}").append(jsonpCallback==null?"":");").toString();
 	}
 	
 	@Override

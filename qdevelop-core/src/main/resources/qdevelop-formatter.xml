@@ -4,6 +4,13 @@
  	<param-formatter name="param-parameter" class="cn.qdevelop.core.formatter.impl.ParamFormatter">		
 	</param-formatter>
 	
+	<!-- 根据条件，查询数据表中一条记录中的某些字段数据值，作为参数去请求其他操作 -->
+	<param-formatter name="query-data-parameter" class="cn.qdevelop.core.formatter.impl.QueryDataParametter">	
+		<index>需要请求数据的index索引</index>
+		<columns>需要将数据记录中哪些字段作为参数使用，支持as用法</columns>
+		<where-key>当前请求中哪些参数作为条件请求</where-key>	
+	</param-formatter>
+	
 	<!-- 对数值参数加密存储，例手机号，身份证，银行卡号等敏感信息 -->
 	<param-formatter name="encrypt-num-parameter" class="cn.qdevelop.core.formatter.impl.EncryptNumberFormatter">	
 		<param-key>需要加密的参数key</param-key>	

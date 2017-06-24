@@ -1,6 +1,10 @@
 package cn.qdevelop.service.filter;
 
 import java.io.IOException;
+import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Properties;
 import java.util.regex.Pattern;
 
 import javax.servlet.Filter;
@@ -13,7 +17,9 @@ import javax.servlet.annotation.WebFilter;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import cn.qdevelop.common.utils.QSource;
 import cn.qdevelop.core.QDevelopUtils;
+import cn.qdevelop.service.IService;
 import cn.qdevelop.service.utils.QServiceUitls;
 
 @WebFilter(urlPatterns="/*")
@@ -23,7 +29,8 @@ public class CommonFilter  implements Filter{
 	@Override
 	public void init(FilterConfig filterConfig) throws ServletException {
 		System.out.println("system load on init!");
-		QDevelopUtils.initAll();  
+		QDevelopUtils.initAll(); 
+		initApiData();
 	}
 
 	private static Pattern isMark  = Pattern.compile("sid=[A-Za-z0-9-]{36};?");
@@ -37,17 +44,50 @@ public class CommonFilter  implements Filter{
 		if(cookie == null || !isMark.matcher(cookie).find()){
 			QServiceUitls.setCookie((HttpServletResponse)response, "sid", java.util.UUID.randomUUID().toString(), 60*60*24*365);
 		}
-//		System.out.println(req.getRequestURI()+"||"+req.getContextPath());
-//		if(req.getRequestURI().equals(req.getContextPath())){
-//			
-//		}
+		
+		/*当有假结果数据时，优先使用假结果数据集*/
+		if(apiDatas!=null){
+			if(idx == null){
+				idx = req.getContextPath().length();
+			}
+			String val = apiDatas.get(clean.matcher(req.getRequestURI().substring(idx)).replaceAll(""));
+			if(val!=null){
+				HttpServletResponse rpo = (HttpServletResponse)response;
+				StringBuffer out = new StringBuffer().append("{")
+						.append("\"tag\":0").append(",")
+						.append("\"data\":").append(val).append(",")
+						.append("\"errMsg\":\"").append("").append("\"");
+				
+				out.append("}").toString();
+				QServiceUitls.output(out.toString(), IService.RETURN_OUT_JSON, req, rpo);
+				return;
+			}
+		}
+		
 		chain.doFilter(request,response);
 	}
 	
-
+	private static Integer idx ;
 
 	@Override
 	public void destroy() {
+	}
+	private static Pattern clean = Pattern.compile("^\\/");
+	Map<String,String> apiDatas = null;
+	private void initApiData(){
+		Properties prop = QSource.getInstance().loadProperties("plugin-config/api-demo-datas.properties");
+		if(prop!=null && prop.size()>0){
+			apiDatas = new HashMap<String,String>();
+			Enumeration<?> enu = prop.propertyNames();  
+	        while (enu.hasMoreElements()) {  
+	            String key = (String)enu.nextElement();  
+	            apiDatas.put(clean.matcher(key).replaceAll(""), prop.getProperty(key));
+	        }  
+		}
+		if(apiDatas.size()==0){
+			apiDatas.clear();
+			apiDatas = null;
+		}
 	}
 	
 }

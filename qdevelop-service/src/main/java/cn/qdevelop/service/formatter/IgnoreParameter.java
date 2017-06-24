@@ -1,4 +1,4 @@
-package cn.qdevelop.core.formatter.impl;
+package cn.qdevelop.service.formatter;
 
 import java.util.Map;
 
@@ -7,33 +7,26 @@ import org.dom4j.Element;
 import cn.qdevelop.common.exception.QDevelopException;
 import cn.qdevelop.core.formatter.AbstractParamFormatter;
 
-public class ParamFormatter extends AbstractParamFormatter{
-
+public class IgnoreParameter extends AbstractParamFormatter{
+	String[] ignoreArgs;
 	@Override
 	public void initFormatter(Element conf) throws QDevelopException {
-		// TODO Auto-generated method stub
-		
+		ignoreArgs = conf.attributeValue("param-key").split(",");
 	}
 
 	@Override
 	public void init() {
-		// TODO Auto-generated method stub
 		
 	}
 
 	@Override
-	public Map<String, Object> formatter(Map<String,  Object> query) {
-		// TODO Auto-generated method stub
-		return null;
+	public Map<String, Object> formatter(Map<String, Object> query) {
+		return query;
 	}
 
 	@Override
 	public String[] getncreaseKeys() {
-		// TODO Auto-generated method stub
-		return null;
+		return ignoreArgs;
 	}
-
-
-	
 
 }

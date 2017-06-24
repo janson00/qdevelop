@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<data-formatter>
+
+ 
+	
+	<!-- 接口中定义忽略非空判断的参数名 -->
+	<param-formatter name="ignore-parameter" class="cn.qdevelop.service.formatter.IgnoreParameter">	
+		<param-key>需要忽略的参数key</param-key>	
+	</param-formatter>
+	
+	
+</data-formatter>

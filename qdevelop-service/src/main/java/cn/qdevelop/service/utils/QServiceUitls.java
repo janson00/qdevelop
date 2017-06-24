@@ -2,11 +2,16 @@ package cn.qdevelop.service.utils;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.sql.Connection;
+import java.sql.SQLException;
 import java.util.Enumeration;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.regex.Pattern;
 import java.util.zip.GZIPOutputStream;
 import java.util.zip.ZipOutputStream;
@@ -16,10 +21,15 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang.ArrayUtils;
+import org.dom4j.Element;
 
 import cn.qdevelop.common.exception.QDevelopException;
 import cn.qdevelop.core.db.SQLConfigParser;
 import cn.qdevelop.core.db.bean.DBStrutsLeaf;
+import cn.qdevelop.core.db.config.SQLConfigLoader;
+import cn.qdevelop.core.db.connect.ConnectFactory;
+import cn.qdevelop.core.db.execute.TableColumnType;
+import cn.qdevelop.core.standard.IParamFormatter;
 import cn.qdevelop.service.IOutput;
 import cn.qdevelop.service.bean.OutputJson;
 
@@ -54,7 +64,7 @@ public class QServiceUitls {
 			key = (String) paramNames.nextElement();
 			value = request.getParameterValues(key);
 			if(value!=null&&value.length==1){
-				paramMap.put(key, value[0]);
+				paramMap.put(key, value[0].trim());
 			}else {
 				StringBuffer tmp = new StringBuffer();
 				int len = value.length;
@@ -62,7 +72,7 @@ public class QServiceUitls {
 					if(i>0)tmp.append("&");
 					tmp.append(value[i]);
 				}
-				paramMap.put(key, tmp.toString());
+				paramMap.put(key, tmp.toString().trim());
 			}
 		}
 		return paramMap;
@@ -142,18 +152,29 @@ public class QServiceUitls {
 	 * @param args
 	 * @return
 	 */
-	public static boolean validParameters(Map<String,String> args,IOutput out,String[] checkColumns,String[] ignoreColumns ){
+	public  boolean validParameters(Map<String,String> args,IOutput out,String[] checkColumns,String[] ignoreColumns ){
 		if(checkColumns!=null){
 			for(String s : checkColumns){
-				if(args.get(s)==null){
+				String v = args.get(s);
+				if(v==null||v.length()==0){
 					out.setErrMsg("请求参数[",s,"]不能为空");
 					return false;
 				}
 			}
 		}
-		if(args.get("index")!=null){
+		String index = args.get("index");
+		if(index!=null){
 			try {
-				Map<String,DBStrutsLeaf> struts = SQLConfigParser.getInstance().getDBStrutsLeafByIndex(args.get("index"));
+				String[] nullArgsKey = getCheckArgsByIndex(index);
+				for(int i=0;i<nullArgsKey.length;i++){
+					String v = args.get(nullArgsKey[i]);
+					if(v==null||v.length()==0){
+						out.setErrMsg("请求参数[",nullArgsKey[i],"]不能为空");
+						return false;
+					}
+				}
+
+				Map<String,DBStrutsLeaf> struts = getDBStrutsLeafByIndex(index);
 				Iterator<Entry<String,String>> iter = args.entrySet().iterator();
 				while(iter.hasNext()){
 					Entry<String,String> itor = iter.next();
@@ -233,9 +254,73 @@ public class QServiceUitls {
 		ip =   request.getRemoteAddr();
 		return ip;
 	}
-	//	public static void main(String[] args) {
-	////		isDouble.matcher("")
-	//		Pattern isDouble = Pattern.compile("^(([><=&\\^!\\|@#\\_]+)?[0-9]{4}-[0-9]{2}-[0-9]{2}( [0-9]{2}:[0-9]{2}:[0-9]{2})?)+?$");
-	//		System.out.println(isDouble.matcher("2014-12-12@2014-12-12^2014-12-12@2014-12-12").find());
-	//	}
+
+	private final static Map<String,Map<String,DBStrutsLeaf>> dbStrutsLeafByIndex = new ConcurrentHashMap<String,Map<String,DBStrutsLeaf>>();
+	private final static Map<String,String[]> getCheckArgsByIndexCache = new ConcurrentHashMap<String,String[]>();
+
+
+	public Map<String,DBStrutsLeaf> getDBStrutsLeafByIndex(String index) throws QDevelopException {
+		Element config = SQLConfigLoader.getInstance().getSQLConfig(index);
+		if(config == null){
+			throw new QDevelopException(1002,"请求index【"+index+"】配置不存在");
+		}
+		Map<String,DBStrutsLeaf> temp = dbStrutsLeafByIndex.get(index);
+		if(temp!=null){
+			return temp;
+		}
+		temp = new HashMap<String,DBStrutsLeaf>();
+		Connection conn = null;
+		try {
+			conn = ConnectFactory.getInstance(config.attributeValue("connect")).getConnection();
+			@SuppressWarnings("unchecked")
+			List<Element> sqls = config.elements("sql");
+			for(Element sql : sqls){
+				String[] tableName = sql.attributeValue("tables").split("\\|");
+				temp.putAll(TableColumnType.getInstance().getTablesStrutsBean(conn, tableName));
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}finally{
+			ConnectFactory.close(conn);
+		}
+		dbStrutsLeafByIndex.put(index, temp);
+		return temp;
+	}
+
+	public String[] getCheckArgsByIndex(String index) throws QDevelopException {
+		String[] r = getCheckArgsByIndexCache.get(index);
+		if(r!=null){
+			return r;
+		}
+
+		Element config = SQLConfigLoader.getInstance().getSQLConfig(index);
+		if(config==null)throw new QDevelopException(1002,"请求index【"+index+"】配置不存在");
+		@SuppressWarnings("unchecked")
+		List<Element> sqls = config.elements("sql");
+		HashSet<String> args = new HashSet<String>();
+		for(int i=0;i<sqls.size();i++){
+			Element ele = sqls.get(i);
+			String params = ele.attributeValue("params");
+			if(params!=null&&params.length()>0){
+				String[] tmp = params.split("\\|");
+				for(int j=0;j<tmp.length;j++){
+					args.add(tmp[j]);
+				}
+			}
+		}
+		List<IParamFormatter> paramFormatter = SQLConfigParser.getInstance().getParamFormatter(index);
+		if(paramFormatter!=null){
+			for(IParamFormatter pf : paramFormatter){
+				String[] ignore = pf.getncreaseKeys();
+				if(ignore!=null){
+					for(String key : ignore){
+						args.remove(key);
+					}
+				}
+			}
+		}
+		r = args.toArray(new String[]{});
+		getCheckArgsByIndexCache.put(index, r);
+		return r;
+	}
 }

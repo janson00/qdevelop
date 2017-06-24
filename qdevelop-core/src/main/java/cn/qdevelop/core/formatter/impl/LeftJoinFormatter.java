@@ -66,6 +66,7 @@ public class LeftJoinFormatter extends AbstractResultFormatter implements IResul
 			IDBQuery dbQuery = SQLConfigParser.getInstance().getDBQueryBean(query, conn);
 			IDBResult formatterResult = new DBResultBean();
 			new DatabaseImpl().queryDB(conn, dbQuery, formatterResult);
+			if(formatterResult.getSize()==0)return;
 			DatabaseFactory.getInstance().formatterResult(formatterIndex, formatterResult);
 			int size  = formatterResult.getSize();
 			Map<String,Object> dataTemple = result.getResult(0);

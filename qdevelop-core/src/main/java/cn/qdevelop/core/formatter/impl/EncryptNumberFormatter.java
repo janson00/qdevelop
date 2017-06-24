@@ -81,6 +81,12 @@ public class EncryptNumberFormatter  extends AbstractParamFormatter{
 		encrypt_number = String.valueOf(s);
 		return Long.parseLong(encrypt_number) + head;
 	}
+
+	@Override
+	public String[] getncreaseKeys() {
+		// TODO Auto-generated method stub
+		return null;
+	}
 	
 	
 

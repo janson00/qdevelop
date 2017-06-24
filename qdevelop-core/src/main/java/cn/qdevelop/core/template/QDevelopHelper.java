@@ -101,19 +101,19 @@ public class QDevelopHelper {
 			fw.write("\r\n");fw.write("<!-- xml中常用转义符写法： （ &  &amp; ）（ <  &lt; ） （ >  &gt; ）-->");
 			fw.write("\r\n");fw.write("<SQLConfig>");
 			
-			fw.write("\r\n");fw.write("	<property index=\""+tableName+"-search-action\" connect=\""+connName+"\" explain=\""+tableName+"查询\">");
-			if(formatter.size()>0){
-				fw.write("\r\n");fw.write("		<!--");
-				fw.write("\r\n");fw.write("		<formatter>");
-				for(String fs : formatter){
-					fw.write("\r\n");fw.write("			"+fs);
-				}
-				fw.write("\r\n");fw.write("		</formatter>");
-				fw.write("\r\n");fw.write("		-->");
-			}
-			fw.write("\r\n");fw.write("		<sql>"+selectSQL.toString()+"</sql>");
-			fw.write("\r\n");fw.write("	</property>");
-			fw.write("\r\n");
+//			fw.write("\r\n");fw.write("	<!--<property index=\""+tableName+"-search-action\" connect=\""+connName+"\" explain=\""+tableName+"查询\">");
+//			if(formatter.size()>0){
+//				fw.write("\r\n");fw.write("		<!--");
+//				fw.write("\r\n");fw.write("		<formatter>");
+//				for(String fs : formatter){
+//					fw.write("\r\n");fw.write("			"+fs);
+//				}
+//				fw.write("\r\n");fw.write("		</formatter>");
+//				fw.write("\r\n");fw.write("		-->");
+//			}
+//			fw.write("\r\n");fw.write("		<sql>"+selectSQL.toString()+"</sql>");
+//			fw.write("\r\n");fw.write("	</property>-->");
+//			fw.write("\r\n");
 			
 			fw.write("\r\n");fw.write("	<property index=\""+tableName+"-query-action\" connect=\""+connName+"\" explain=\""+tableName+"查询\">");
 			if(formatter.size()>0){
@@ -125,6 +125,7 @@ public class QDevelopHelper {
 				fw.write("\r\n");fw.write("		</formatter>");
 				fw.write("\r\n");fw.write("		-->");
 			}
+			fw.write("\r\n");fw.write("		<!--<sql>"+selectSQL.toString()+"</sql>-->");
 			fw.write("\r\n");fw.write("		<sql>"+selectDirect.toString()+"</sql>");
 			fw.write("\r\n");fw.write("	</property>");
 			fw.write("\r\n");

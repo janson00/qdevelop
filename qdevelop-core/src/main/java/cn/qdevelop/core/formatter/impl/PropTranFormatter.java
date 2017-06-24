@@ -42,6 +42,7 @@ public class PropTranFormatter   extends AbstractResultFormatter{
 			}
 		}
 	}
+	
 
 	@Override
 	public void flush(IDBResult result) throws QDevelopException {

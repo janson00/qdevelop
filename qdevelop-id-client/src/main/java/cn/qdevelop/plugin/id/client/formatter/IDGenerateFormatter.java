@@ -59,4 +59,10 @@ public class IDGenerateFormatter extends AbstractParamFormatter{
 		return null;
 	}
 
+	@Override
+	public String[] getncreaseKeys() {
+		// TODO Auto-generated method stub
+		return new String[]{paramKey};
+	}
+
 }

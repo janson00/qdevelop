@@ -24,7 +24,6 @@ import cn.qdevelop.core.db.bean.DBStrutsBean;
 import cn.qdevelop.core.db.bean.DBStrutsLeaf;
 import cn.qdevelop.core.db.bean.UpdateBean;
 import cn.qdevelop.core.db.config.SQLConfigLoader;
-import cn.qdevelop.core.db.connect.ConnectFactory;
 import cn.qdevelop.core.db.execute.TableColumnType;
 import cn.qdevelop.core.formatter.FormatterLoader;
 import cn.qdevelop.core.standard.IDBQuery;
@@ -40,7 +39,7 @@ public class SQLConfigParser {
 	private final static Map<String,ArrayList<IResultFormatter>> resultFormatterByIndex = new ConcurrentHashMap<String,ArrayList<IResultFormatter>>();
 	private final static Map<String,ArrayList<IParamFormatter>> paramFormatterByIndex = new ConcurrentHashMap<String,ArrayList<IParamFormatter>>();
 	private final static Map<String,ArrayList<IUpdateHook>> resultHookByIndex = new ConcurrentHashMap<String,ArrayList<IUpdateHook>>();
-	private final static Map<String,Map<String,DBStrutsLeaf>> dbStrutsLeafByIndex = new ConcurrentHashMap<String,Map<String,DBStrutsLeaf>>();
+
 	private final static Pattern isNumber = Pattern.compile("^[0-9]+?$");
 
 	/**
@@ -64,7 +63,7 @@ public class SQLConfigParser {
 		if(config==null)throw new QDevelopException(1002,"请求没有index");
 		return config.attributeValue(attrName);
 	}
-
+	
 
 	/**
 	 * 获取配置的paramformatter
@@ -509,7 +508,7 @@ public class SQLConfigParser {
 				}
 			}else if(e.length() > 1){
 				if(isLike.matcher(e).find()){
-					cv = v.substring(1).replaceAll("\\*", "%");
+					cv = v.replaceAll("\\*", "%");
 					if(isDBColumn){
 						parserVale.append(key).append(e.startsWith("!")?" not":"").append(" like ").append("?");
 					}else{
@@ -566,33 +565,7 @@ public class SQLConfigParser {
 		return tmp;
 	}
 
-	public Map<String,DBStrutsLeaf> getDBStrutsLeafByIndex(String index) throws QDevelopException {
-		Element config = SQLConfigLoader.getInstance().getSQLConfig(index);
-		if(config == null){
-			throw new QDevelopException(1002,"请求index【"+index+"】配置不存在");
-		}
-		Map<String,DBStrutsLeaf> temp = dbStrutsLeafByIndex.get(index);
-		if(temp!=null){
-			return temp;
-		}
-		temp = new HashMap<String,DBStrutsLeaf>();
-		Connection conn = null;
-		try {
-			conn = ConnectFactory.getInstance(config.attributeValue("connect")).getConnection();
-			@SuppressWarnings("unchecked")
-			List<Element> sqls = config.elements("sql");
-			for(Element sql : sqls){
-				String[] tableName = sql.attributeValue("tables").split("\\|");
-				temp.putAll(TableColumnType.getInstance().getTablesStrutsBean(conn, tableName));
-			}
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}finally{
-			ConnectFactory.close(conn);
-		}
-		dbStrutsLeafByIndex.put(index, temp);
-		return temp;
-	}
+	
 
 
 	private final static Map<String,Pattern> patternSelectCache = new ConcurrentHashMap<String,Pattern>();
@@ -637,7 +610,15 @@ public class SQLConfigParser {
 		}
 	}
 
-//	public static void main(String[] args) {
+	public static void main(String[] args) {
+		SQLConfigParser scp = 	new SQLConfigParser();
+		try {
+			scp.parserComplexVales("t.text","*aa*",true);
+		} catch (QDevelopException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
 ////		System.out.println(cleanNULLArgs("select * from AAA where id =$[id] and name= '$[name]' and userName= '$[userName]'","id"));
 ////		System.out.println(cleanNULLArgs("select * from AAA where id =$[id] And name='$[name]' and user_Name= '$[user_Name]'","name"));
 //		System.out.println(cleanNULLArgs("update aa set Id=$[id],Name='$[name]',userName= '$[userName]' where id =$[id] and name= '$[name]' and userName= '$[userName]'","id"));

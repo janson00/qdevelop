@@ -40,4 +40,7 @@ public abstract class AbstractParamFormatter implements IParamFormatter{
 		return true;
 	}
 
+//	public String[] getncreaseKeys(){
+//		return null;
+//	}
 }

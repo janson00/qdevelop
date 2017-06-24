@@ -23,6 +23,7 @@ import cn.qdevelop.core.standard.IResultFormatter;
 public class LeftJoinMultiFormatter extends AbstractResultFormatter implements IResultFormatter{
 	String formatterIndex,formatterKey,resultKey,nodeName="child";
 	String[] formatterColumns;
+	Integer limit = null;
 	
 	@Override
 	public void initFormatter(Element conf) throws QDevelopException {
@@ -33,6 +34,9 @@ public class LeftJoinMultiFormatter extends AbstractResultFormatter implements I
 			resultKey =  conf.attributeValue("result-key");
 			if(conf.attributeValue("node-name")!=null){
 				nodeName = conf.attributeValue("node-name");
+			}
+			if(conf.attributeValue("limit")!=null){
+				limit = Integer.parseInt(conf.attributeValue("limit"));
 			}
 		}
 	}
@@ -71,9 +75,9 @@ public class LeftJoinMultiFormatter extends AbstractResultFormatter implements I
 			IDBQuery dbQuery = SQLConfigParser.getInstance().getDBQueryBean(query, conn);
 			IDBResult formatterResult = new DBResultBean();
 			new DatabaseImpl().queryDB(conn, dbQuery, formatterResult);
-			DatabaseFactory.getInstance().formatterResult(formatterIndex, formatterResult);
 			int size  = formatterResult.getSize();
-			Map<String,Object> dataTemple = result.getResult(0);
+			if(size==0)return;
+			DatabaseFactory.getInstance().formatterResult(formatterIndex, formatterResult);
 			HashMap<String,List<Map<String,Object>>> tmp = new HashMap<String,List<Map<String,Object>>>();
 			for(int i=0;i<size;i++){
 				Map<String,Object> data = formatterResult.getResult(i);
@@ -83,9 +87,14 @@ public class LeftJoinMultiFormatter extends AbstractResultFormatter implements I
 					array = new ArrayList<Map<String,Object>>();
 					tmp.put(key, array);
 				}
+				
+				if(limit!=null && array.size() >= limit){
+					continue;
+				}
+				
 				Map<String,Object> fr = new HashMap<String,Object>();
 				for(String k : formatterColumns){
-					String[] _t = k.split(" as ");//XXX 兼容配置中加“|”和“>”来自定义格式化之后的别名
+					String[] _t = k.split(" as ");
 					String column, rname;
 					if(_t.length==1){
 						column = _t[0].trim();
@@ -95,9 +104,6 @@ public class LeftJoinMultiFormatter extends AbstractResultFormatter implements I
 						rname = _t[1].trim();
 					}else{
 						throw new QDevelopException(10001, "key-value-formatter 参数设置错误："+k);
-					}
-					if(dataTemple.get(rname)!=null){
-						rname = "__"+rname;
 					}
 					fr.put(rname, data.get(column));
 					Object tranVal = data.get("__"+column);

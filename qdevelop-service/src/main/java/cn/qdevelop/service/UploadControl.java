@@ -93,7 +93,7 @@ public abstract class UploadControl extends HttpServlet  implements IService{
 		if(!out.isError()){
 			Map<String,String> args = QServiceUitls.getParameters(request);
 			init(args);
-			if(QServiceUitls.validParameters(args,out,checkColumns,ignoreColumns)){
+			if(new QServiceUitls().validParameters(args,out,checkColumns,ignoreColumns)){
 				Collection<Part> parts = request.getParts();
 				String[] storeNames = new String[parts.size()];
 				int idx = 0;

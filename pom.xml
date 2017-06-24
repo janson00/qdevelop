@@ -143,5 +143,6 @@
     <module>qdevelop-sensitive-word-filter</module>
     <module>qdevelop-link-wrapper</module>
     <module>qdevelop-redis</module>
+    <module>qdevelop-words</module>
   </modules>
 </project>

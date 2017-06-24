@@ -51,24 +51,24 @@ public class CommonSvrService  extends APIControl{
 				}
 				int limit = Integer.parseInt(args.get("limit"));
 				int page = Integer.parseInt(args.get("page"));
-				int totle;
-				Map<String,String> totleQuery =  null ;
-				if(args.get("is-need-totle")!=null && args.get("is-need-totle").equals("true")){
-					totleQuery = new HashMap<String,String>(args);
+				int total;
+				Map<String,String> totalQuery =  null ;
+				if(args.get("is-need-total")!=null && args.get("is-need-total").equals("true")){
+					totalQuery = new HashMap<String,String>(args);
 				}
 				
 				
 				IDBResult rb = DatabaseFactory.getInstance().queryDatabase(args);
 				output.setData(rb);
-				if(totleQuery != null){
-					totle = DatabaseFactory.getInstance().queryDatabaseCount(totleQuery);
+				if(totalQuery != null){
+					total = DatabaseFactory.getInstance().queryDatabaseCount(totalQuery);
 				}else{
-					totle = rb.getSize() < limit ? (page-1)*limit+rb.getSize() : page*limit+1;  
+					total = rb.getSize() < limit ? (page-1)*limit+rb.getSize() : page*limit+1;  
 				}
 				output.addAttr("page", page);
 				output.addAttr("limit", limit);
-				output.addAttr("next", totle > limit*page ? page+1 : page);
-				output.addAttr("totle", totle);
+				output.addAttr("next", total > limit*page ? page+1 : page);
+				output.addAttr("total", total);
 			}else{
 				boolean r = DatabaseFactory.getInstance().updateDatabase(args);
 				output.setData(r);

@@ -34,4 +34,9 @@ public class SensitiveWordParameter extends AbstractParamFormatter{
 		return query;
 	}
 
+	@Override
+	public String[] getncreaseKeys() {
+		return null;
+	}
+
 }

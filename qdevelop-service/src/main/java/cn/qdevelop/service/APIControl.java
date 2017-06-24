@@ -64,6 +64,14 @@ public abstract class APIControl extends HttpServlet implements IService{
 	 */
 	protected abstract String execute(Map<String,String> args,IOutput output);
 
+	/**
+	 * 关闭参数校验
+	 */
+	protected void closeValidate(){
+		this.jumpValidate = true;
+	}
+	
+	private boolean jumpValidate = false;
 	private IOutput out ;
 	protected void doGet(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
@@ -73,14 +81,14 @@ public abstract class APIControl extends HttpServlet implements IService{
 		if(!out.isError()){
 			Map<String,String> args = QServiceUitls.getParameters(request);
 			init(args);
-			if(QServiceUitls.validParameters(args,out,checkColumns,ignoreColumns)){
+			if(jumpValidate || new QServiceUitls().validParameters(args,out,checkColumns,ignoreColumns)){
 				execute(args,out);
 			}
 		}
 		QServiceUitls.output(out.toString(), out.getOutType(), request, response);
 	}
 
-	
+
 	protected void doPost(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
 		doGet(request,response);
