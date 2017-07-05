@@ -8,6 +8,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.apache.log4j.Logger;
@@ -41,6 +42,8 @@ public class SQLConfigLoader extends HashMap<String,Element>{
 		cleanSplit = Pattern.compile("[0-9a-zA-Z\\_]+");
 		tableArgs = Pattern.compile("\\$\\[.+\\]");
 		isOpenReg = Pattern.compile("\\/(api|open)\\/");
+		nameSpaceClean = Pattern.compile("\\-[0-9]+?\\..+$");
+		isJarFile = Pattern.compile("\\.jar\\!");
 		tablesIndex = new HashSet<String>();
 		long s = System.currentTimeMillis();
 		loadConfigFromJars();
@@ -158,7 +161,7 @@ public class SQLConfigLoader extends HashMap<String,Element>{
 	}
 
 
-	public static Pattern cleanSplit,tableArgs,isOpenReg;
+	public static Pattern cleanSplit,tableArgs,isOpenReg,nameSpaceClean,isJarFile;
 	private void initProperty(Element property,String fileName){
 		/**init default values**/
 		property.addAttribute("file", fileName);
@@ -168,6 +171,7 @@ public class SQLConfigLoader extends HashMap<String,Element>{
 		if(property.attributeValue("is-open")==null){
 			property.addAttribute("is-open", String.valueOf(isOpenReg.matcher(fileName).find()));
 		}
+		property.addAttribute("name-space", isJarFile.matcher(fileName).find()?nameSpaceClean.matcher(fileName).replaceAll(""):"");
 		if(property.attributeValue("sql")!=null){
 			Element s = property.addElement("sql");
 			s.addText(cleanSQL(property.attributeValue("sql")));
@@ -229,14 +233,14 @@ public class SQLConfigLoader extends HashMap<String,Element>{
 			}
 			addTables(sql.attributeValue("tables"),property.attributeValue("connect"));
 			if(sql.attributeValue("is-full-param")==null){
-				sql.addAttribute("is-full-param", "false");
+				sql.addAttribute("is-full-param", "true");
 			}
 		}
 		if(property.attributeValue("is-master")==null){
 			property.addAttribute("is-master", isSelect?"false":"true");
 		}
 		property.addAttribute("is-select", isSelect.toString());
-		
+
 
 		//兼容历史配置
 		Element resultFormatter = property.element("formatter");
@@ -328,48 +332,63 @@ public class SQLConfigLoader extends HashMap<String,Element>{
 	} 
 
 	private Pattern tablePattern = Pattern
-			.compile("^.+?INTO|^UPDATE| WHERE.+?$| SET.+?$| VALUE.+?$|\\(.+?\\)|^.+?FROM|`");
+			.compile("^.+?into|^update| where.+?$| set.+?$| value.+?$|\\(.+?\\)|^.+?from ",Pattern.CASE_INSENSITIVE);
 
 	private String getUpdateTableName(String... sqls) {
-		if (sqls.length == 1) return tablePattern.matcher(sqls[0].toUpperCase()).replaceAll("").trim().toLowerCase();
+		if (sqls.length == 1) return tablePattern.matcher(sqls[0]).replaceAll("").trim();
 		Set<String> tables = new HashSet<String>();
 		for (String sql : sqls) {
-			tables.add(cleanTableName.matcher(tablePattern.matcher(sql.toUpperCase()).replaceAll("").trim()).replaceAll(""));
+			tables.add(cleanTableName.matcher(tablePattern.matcher(sql).replaceAll("").trim()).replaceAll(""));
 		}
-		return append(tables, "|").toLowerCase();
+		return append(tables, "|");
 	}
 
 	private Pattern cleanTableName = Pattern.compile("\\)| .+$|`");
+
+	Pattern selectAnalsys = Pattern.compile(" from | join ",Pattern.CASE_INSENSITIVE);
+	Pattern isRightName = Pattern.compile("^[0-9a-zA-Z_]+$");
+
 	private  String getSelectTableNames(String sql) {
 		Set<String> tables = new HashSet<String>(); 
-		String[] tbs = sql.replaceAll("`", "").toUpperCase().split("FROM | JOIN ");
-		for (String tb : tbs) {
-			tb =tb.replaceAll(" WHERE .+| ORDER.+| GROUP.+|\\(.+", "").trim()
-					.replaceAll(" .+,$", "");
-			if (tb.length() > 1 && !tb.startsWith("SELECT") && !tb.startsWith("(")) {
-				if (tb.indexOf(",") == -1) {
-					tables.add(cleanTableName.matcher(tb).replaceAll(""));
-				} else {
-					for (String ss : tb.split(",")) {
-						tables.add(cleanTableName.matcher(ss).replaceAll(""));
-					}
-				}
+		Matcher matcher = selectAnalsys.matcher(sql);
+		while (matcher.find()) {
+			String t = sql.substring(matcher.end()).trim();
+			if(t.indexOf(" ")>-1){
+				t = t.substring(0, t.indexOf(" "));
+			}
+			if(isRightName.matcher(t).find()){
+				tables.add(t);
 			}
 		}
-		return append(tables,"|").toLowerCase();
+		//		
+		//		String[] tbs = sql.replaceAll("`", "").toUpperCase().split("FROM | JOIN ");
+		//		for (String tb : tbs) {
+		//			tb =tb.replaceAll(" WHERE .+| ORDER.+| GROUP.+|\\(.+", "").trim()
+		//					.replaceAll(" .+,$", "");
+		//			if (tb.length() > 1 && !tb.startsWith("SELECT") && !tb.startsWith("(")) {
+		//				if (tb.indexOf(",") == -1) {
+		//					tables.add(cleanTableName.matcher(tb).replaceAll(""));
+		//				} else {
+		//					for (String ss : tb.split(",")) {
+		//						tables.add(cleanTableName.matcher(ss).replaceAll(""));
+		//					}
+		//				}
+		//			}
+		//		}
+		return append(tables,"|");
 	}
-	
-//	private static Pattern selectTableName = Pattern.compile(" (from|join) .+ ?",Pattern.CASE_INSENSITIVE);
-//	private static  String parseSelectTableNames(String sql) {
-//		Set<String> tables = new HashSet<String>();
-//		Matcher rs = selectTableName.matcher(sql);
-//		while(rs.find()){
-//			System.out.println(rs.group(2));
-//		}
-//		return null;// append(tables,"|");
-//	}
-	
-	
+
+	//	private static Pattern selectTableName = Pattern.compile(" (from|join) .+ ?",Pattern.CASE_INSENSITIVE);
+	//	private static  String parseSelectTableNames(String sql) {
+	//		Set<String> tables = new HashSet<String>();
+	//		Matcher rs = selectTableName.matcher(sql);
+	//		while(rs.find()){
+	//			System.out.println(rs.group(2));
+	//		}
+	//		return null;// append(tables,"|");
+	//	}
+
+
 
 	private void addTables(String tables,String connect){
 		if(tables==null||connect==null)return;
@@ -379,9 +398,9 @@ public class SQLConfigLoader extends HashMap<String,Element>{
 		}
 	}
 
-//		public static void main(String[] args) {
-//			parseSelectTableNames(" select customer_inventory_id,1,inventory_quantity,'签收入库',now(),0    from customer_inventory t left join custsdad cs on ");
-//		}
+	//		public static void main(String[] args) {
+	//			parseSelectTableNames(" select customer_inventory_id,1,inventory_quantity,'签收入库',now(),0    from customer_inventory t left join custsdad cs on ");
+	//		}
 	//		//		Pattern cleanTableName = Pattern.compile("\\)| .+$|`");
 	//		//		System.out.println(cleanTableName.matcher("customer_inventory_log    select customer_inventory_id,1,inventory_quantity,'签收入库',now(),0    from customer_inventory").replaceAll(""));
 	//		Pattern o = Pattern.compile("\n|\t| +");

@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 
-	
+
 	<properties>
 		<qdevelop.version>1.0.0-SNAPSHOT</qdevelop.version>
 	</properties>
@@ -11,7 +12,7 @@
 	<artifactId>qdevelop</artifactId>
 	<version>1.0.0-SNAPSHOT</version>
 	<packaging>pom</packaging>
-	
+
 	<repositories>
 		<repository>
 			<id>central</id>
@@ -19,34 +20,29 @@
 			<url>http://maven.aliyun.com/nexus/content/groups/public</url>
 		</repository>
 		<repository>
-			<id>develop</id>		
+			<id>develop</id>
 			<url>http://192.168.86.8:8081/nexus/content/repositories/develop/</url>
 		</repository>
-		 
-		<!-- <repository>
-			<id>qdevelop</id>
-			<url>http://mvn.e-platform.cn/nexus/content/repositories/qdevelop</url>
-		</repository>  -->
-		 
+		
+<!--
+		 <repository> <id>qdevelop</id> <url>http://mvn.e-platform.cn/nexus/content/repositories/qdevelop</url> 
+			</repository> -->
+
 	</repositories>
 
 	<distributionManagement>
-		
+
 		<snapshotRepository>
-			<id>develop</id>		
+			<id>develop</id>
 			<url>http://192.168.86.8:8081/nexus/content/repositories/develop/</url>
 		</snapshotRepository>
-		
-		 <!-- <snapshotRepository>
-			<id>qdevelop</id>
-			<url>http://mvn.e-platform.cn/nexus/content/repositories/qdevelop</url>
-		</snapshotRepository>
-		<repository>
-			<id>e-platform</id>
-			<url>http://mvn.e-platform.cn/nexus/content/repositories/e-platform</url>
-		</repository>  -->
+<!--
+		 <snapshotRepository> <id>qdevelop</id> <url>http://mvn.e-platform.cn/nexus/content/repositories/qdevelop</url> 
+			</snapshotRepository> <repository> <id>e-platform</id> <url>http://mvn.e-platform.cn/nexus/content/repositories/e-platform</url> 
+			</repository> 
+			-->
 	</distributionManagement>
-	
+
 	<build>
 		<resources>
 			<resource>
@@ -95,7 +91,7 @@
 						</goals>
 					</execution>
 				</executions>
-			</plugin> 
+			</plugin>
 
 
 			<!-- <plugin> <groupId>org.apache.maven.plugins</groupId> <artifactId>maven-pmd-plugin</artifactId> 
@@ -104,33 +100,18 @@
 				</configuration> <executions> <execution> <phase>test</phase> <goals> <goal>pmd</goal> 
 				<goal>cpd</goal> <goal>cpd-check</goal> <goal>check</goal> </goals> </execution> 
 				</executions> </plugin> -->
-			<!-- <plugin>
-				<groupId>org.codehaus.mojo</groupId>
-				<artifactId>findbugs-maven-plugin</artifactId>
-				<version>2.5.1</version>
-				<configuration>
-					<configLocation>${basedir}/springside-findbugs.xml</configLocation>
-					<threshold>High</threshold>
-					<effort>Default</effort>
-					<findbugsXmlOutput>true</findbugsXmlOutput>
-					findbugs xml输出路径
-					<findbugsXmlOutputDirectory>target/site</findbugsXmlOutputDirectory>
-				</configuration>
-			</plugin> -->
+			<!-- <plugin> <groupId>org.codehaus.mojo</groupId> <artifactId>findbugs-maven-plugin</artifactId> 
+				<version>2.5.1</version> <configuration> <configLocation>${basedir}/springside-findbugs.xml</configLocation> 
+				<threshold>High</threshold> <effort>Default</effort> <findbugsXmlOutput>true</findbugsXmlOutput> 
+				findbugs xml输出路径 <findbugsXmlOutputDirectory>target/site</findbugsXmlOutputDirectory> 
+				</configuration> </plugin> -->
 
 		</plugins>
 	</build>
-	<!-- <reporting>
-		<plugins>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-jxr-plugin</artifactId>
-				<version>2.1</version>
-			</plugin>
-			<plugin> <groupId>org.codehaus.mojo</groupId> <artifactId>javancss-maven-plugin</artifactId> 
-				<version>2.0-beta-2</version> </plugin>
-		</plugins>
-	</reporting> -->
+	<!-- <reporting> <plugins> <plugin> <groupId>org.apache.maven.plugins</groupId> 
+		<artifactId>maven-jxr-plugin</artifactId> <version>2.1</version> </plugin> 
+		<plugin> <groupId>org.codehaus.mojo</groupId> <artifactId>javancss-maven-plugin</artifactId> 
+		<version>2.0-beta-2</version> </plugin> </plugins> </reporting> -->
 
 
 	<modules>
@@ -139,10 +120,9 @@
 		<module>qdevelop-service</module>
 		<module>qdevelop-dubbo</module>
 		<module>qdevelop-mq-rabbit</module>
-    <module>qdevelop-id-client</module>
-    <module>qdevelop-sensitive-word-filter</module>
-    <module>qdevelop-link-wrapper</module>
-    <module>qdevelop-redis</module>
-    <module>qdevelop-words</module>
-  </modules>
+		<module>qdevelop-id-client</module>
+		<module>qdevelop-link-wrapper</module>
+		<module>qdevelop-redis</module>
+		<module>qdevelop-words</module>
+	</modules>
 </project>

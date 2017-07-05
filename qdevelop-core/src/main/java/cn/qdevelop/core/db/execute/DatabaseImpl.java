@@ -156,7 +156,7 @@ public class DatabaseImpl {
 				for(int i=0;i<pages;i++){
 					for(int j=0;j<MAX_SPLIT;j++){
 						setValue(ub.getPreparedSql(),ub.getDbsb(),pstmt,ub.getColumns(),values.get(MAX_SPLIT*i+j),j*ub.getColumns().length+1);
-//						System.out.println(pages+" : "+(MAX_SPLIT*i+j)+" vals "+(j*ub.getColumns().length+1));
+						//						System.out.println(pages+" : "+(MAX_SPLIT*i+j)+" vals "+(j*ub.getColumns().length+1));
 					}
 					pstmt.addBatch();
 					if(++idx%500==0){
@@ -330,7 +330,22 @@ public class DatabaseImpl {
 	private Map<String,Object> parseRecord(ResultSetMetaData rsmd,ResultSet rs,int recordSize) throws QDevelopException, SQLException{
 		Map<String,Object> data = new HashMap<String,Object>(recordSize);
 		for(int i=1;i<=recordSize;i++){
-			data.put(rsmd.getColumnLabel(i), rs.getObject(i));
+			Object val = rs.getObject(i);
+			if(val == null){
+				String columnTypeName = TableColumnType.clear_brackets.matcher(rsmd.getColumnTypeName(i)).replaceAll("");
+				if(columnTypeName.equalsIgnoreCase("int") || columnTypeName.equalsIgnoreCase("tinyint")
+						||columnTypeName.equalsIgnoreCase("bigint")||columnTypeName.equalsIgnoreCase("float")
+						||columnTypeName.equalsIgnoreCase("decimal")  || columnTypeName.equalsIgnoreCase("double")){
+					val = -1;
+				}else if(columnTypeName.equalsIgnoreCase("varchar") || columnTypeName.equalsIgnoreCase("char")  || columnTypeName.equalsIgnoreCase("text")){
+					val = "";
+				}else if( columnTypeName.equalsIgnoreCase("date")||columnTypeName.equalsIgnoreCase("datetime")){
+					val = new Date(0);
+				}else {
+					val = "";
+				}
+			}
+			data.put(rsmd.getColumnLabel(i), val);
 		}
 		return data;
 	}

@@ -166,14 +166,15 @@ public class QServiceUitls {
 		if(index!=null){
 			try {
 				String[] nullArgsKey = getCheckArgsByIndex(index);
-				for(int i=0;i<nullArgsKey.length;i++){
-					String v = args.get(nullArgsKey[i]);
-					if(v==null||v.length()==0){
-						out.setErrMsg("请求参数[",nullArgsKey[i],"]不能为空");
-						return false;
+				if(nullArgsKey != null){
+					for(int i=0;i<nullArgsKey.length;i++){
+						String v = args.get(nullArgsKey[i]);
+						if(v==null||v.length()==0){
+							out.setErrMsg("请求参数[",nullArgsKey[i],"]不能为空");
+							return false;
+						}
 					}
 				}
-
 				Map<String,DBStrutsLeaf> struts = getDBStrutsLeafByIndex(index);
 				Iterator<Entry<String,String>> iter = args.entrySet().iterator();
 				while(iter.hasNext()){
@@ -300,11 +301,24 @@ public class QServiceUitls {
 		HashSet<String> args = new HashSet<String>();
 		for(int i=0;i<sqls.size();i++){
 			Element ele = sqls.get(i);
-			String params = ele.attributeValue("params");
-			if(params!=null&&params.length()>0){
-				String[] tmp = params.split("\\|");
-				for(int j=0;j<tmp.length;j++){
-					args.add(tmp[j]);
+			if(ele.attributeValue("is-full-param").equals("true")){
+				String params = ele.attributeValue("params");
+				String repeat = ele.attributeValue("repeat");
+				if(repeat!=null&&repeat.length()>0){
+					args.add(repeat);
+					if(params!=null&&params.length()>0){
+						String repeatSplit = ele.attributeValue("repeat-split");
+						Pattern clear = Pattern.compile("\\b("+repeat.replaceAll(repeatSplit, "|")+")\\b");
+						params = clear.matcher(params).replaceAll("");
+					}
+				}
+				if(params!=null&&params.length()>0){
+					String[] tmp = params.split("\\|");
+					for(int j=0;j<tmp.length;j++){
+						if(tmp[j].length()>0){
+							args.add(tmp[j]);
+						}
+					}
 				}
 			}
 		}

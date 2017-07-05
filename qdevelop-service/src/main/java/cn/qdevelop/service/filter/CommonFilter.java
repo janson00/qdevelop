@@ -84,7 +84,7 @@ public class CommonFilter  implements Filter{
 	            apiDatas.put(clean.matcher(key).replaceAll(""), prop.getProperty(key));
 	        }  
 		}
-		if(apiDatas.size()==0){
+		if(apiDatas!=null && apiDatas.size()==0){
 			apiDatas.clear();
 			apiDatas = null;
 		}

@@ -44,7 +44,7 @@ public class AppTest
     	UpdateBean ub = new UpdateBean();
     	ub.setFullSql("xxxxxx");
     	try {
-			List<IUpdateHook> updateHooks = SQLConfigParser.getInstance().getUpdateHooks("mytest_insert");
+			List<IUpdateHook> updateHooks = SQLConfigParser.getInstance().getUpdateHooks("products_log-add-action");
 			if(updateHooks==null)return;
 			System.out.println("aaa "+updateHooks.size());
 			for(IUpdateHook uh : updateHooks){

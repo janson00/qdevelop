@@ -27,7 +27,7 @@ public class TableColumnType  extends ConcurrentHashMap<String, DBStrutsBean>{
 	 */
 	private static final long serialVersionUID = 1L;
 
-	protected static Pattern clear_brackets = Pattern.compile("\\([0-9|,]+\\)");
+	public static Pattern clear_brackets = Pattern.compile("\\([0-9|,]+\\)");
 	protected static Pattern clear_brackets2 = Pattern.compile("^.*\\(|\\)");
 	protected static Pattern isNumber = Pattern.compile("^[0-9]+$");
 	protected static Pattern isTableName = Pattern.compile("^[a-zA-Z0-9|\\_]+$");

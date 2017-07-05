@@ -115,7 +115,7 @@ public class QSource {
 			stream = ClassLoader.getSystemResourceAsStream(stripped);
 		}
 		if (stream == null) {
-			throw new Exception(resource + " not found!");
+			System.err.println("load properties : "+resource + " not found!");
 		}
 		return stream;
 	}

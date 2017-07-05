@@ -63,7 +63,7 @@ public class SQLConfigParser {
 		if(config==null)throw new QDevelopException(1002,"请求没有index");
 		return config.attributeValue(attrName);
 	}
-	
+
 
 	/**
 	 * 获取配置的paramformatter
@@ -565,7 +565,7 @@ public class SQLConfigParser {
 		return tmp;
 	}
 
-	
+
 
 
 	private final static Map<String,Pattern> patternSelectCache = new ConcurrentHashMap<String,Pattern>();
@@ -595,7 +595,7 @@ public class SQLConfigParser {
 		}else if(isSelect.matcher(sqlTemplate).find()){
 			Pattern clear = patternSelectCache.get(argsName);
 			if(clear == null){
-				clear = Pattern.compile("(and|,)?( +)?\\b("+argsName+")\\b ?= ?'?\\$\\[\\b("+argsName+")\\b\\]'?",Pattern.CASE_INSENSITIVE);
+				clear = Pattern.compile("(and|,)?( +)?([0-9a-zA-Z]+\\.)?\\b("+argsName+")\\b ?= ?'?\\$\\[\\b("+argsName+")\\b\\]'?",Pattern.CASE_INSENSITIVE);
 				patternSelectCache.put(argsName, clear);
 			}
 			return clearWhere.matcher(clear.matcher(sqlTemplate).replaceAll(" ")).replaceAll("where ");
@@ -610,24 +610,20 @@ public class SQLConfigParser {
 		}
 	}
 
-	public static void main(String[] args) {
-		SQLConfigParser scp = 	new SQLConfigParser();
-		try {
-			scp.parserComplexVales("t.text","*aa*",true);
-		} catch (QDevelopException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	}
-////		System.out.println(cleanNULLArgs("select * from AAA where id =$[id] and name= '$[name]' and userName= '$[userName]'","id"));
-////		System.out.println(cleanNULLArgs("select * from AAA where id =$[id] And name='$[name]' and user_Name= '$[user_Name]'","name"));
-//		System.out.println(cleanNULLArgs("update aa set Id=$[id],Name='$[name]',userName= '$[userName]' where id =$[id] and name= '$[name]' and userName= '$[userName]'","id"));
-//		System.out.println(cleanNULLArgs("update aa set Id=$[id],Name='$[name]',userName= '$[userName]' where id =$[id] and name= '$[name]' and user_Name= '$[user_Name]'","name"));
-//		System.out.println(cleanNULLArgs("update aa set Id=$[id],Name='$[name]',   user_Name= '$[user_Name]' where id =$[id] and name= '$[name]' and user_Name= '$[user_Name]'","user_Name"));
-//
-//		//		System.out.println(cleanNULLArgs("insert into AA(id,name,user_Name) values($[id],'$[name]','$[user_Name]')","name"));
-////		System.out.println(cleanNULLArgs("insert into AA(id,name,user_Name) values($[id],'$[name]','$[user_Name]')","id"));
+//	public static void main(String[] args) {
+//		SQLConfigParser scp = 	new SQLConfigParser();
+//		String s = scp.cleanNULLArgs("select * from AAA where id =$[id] And name='$[name]' and sasd.user_Name= '$[user_Name]'","name");
+//		System.out.println(s);
 //	}
+	////		System.out.println(cleanNULLArgs("select * from AAA where id =$[id] and name= '$[name]' and userName= '$[userName]'","id"));
+	////		System.out.println(cleanNULLArgs("select * from AAA where id =$[id] And name='$[name]' and user_Name= '$[user_Name]'","name"));
+	//		System.out.println(cleanNULLArgs("update aa set Id=$[id],Name='$[name]',userName= '$[userName]' where id =$[id] and name= '$[name]' and userName= '$[userName]'","id"));
+	//		System.out.println(cleanNULLArgs("update aa set Id=$[id],Name='$[name]',userName= '$[userName]' where id =$[id] and name= '$[name]' and user_Name= '$[user_Name]'","name"));
+	//		System.out.println(cleanNULLArgs("update aa set Id=$[id],Name='$[name]',   user_Name= '$[user_Name]' where id =$[id] and name= '$[name]' and user_Name= '$[user_Name]'","user_Name"));
+	//
+	//		//		System.out.println(cleanNULLArgs("insert into AA(id,name,user_Name) values($[id],'$[name]','$[user_Name]')","name"));
+	////		System.out.println(cleanNULLArgs("insert into AA(id,name,user_Name) values($[id],'$[name]','$[user_Name]')","id"));
+	//	}
 	//		SQLConfigParser scp = 	new SQLConfigParser();
 	//		String sql = "select * from mytest e where e.source='$[source]' and e.ep_user_id=$[ep_user_id] and 9=9";
 	//		String key = "ep_user_id";

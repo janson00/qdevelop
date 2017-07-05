@@ -45,8 +45,10 @@ public abstract class SearchFileFromJars {
 		try {
 			File root = new File(QSource.getProjectPath());
 			File[] fs = root.listFiles(new FileFilter(".jar"));
-			for(int i=0;i<fs.length;i++){
-				loopSearchJar(fs[i],all);
+			if(fs!=null){
+				for(int i=0;i<fs.length;i++){
+					loopSearchJar(fs[i],all);
+				}
 			}
 			String classPath = System.getProperty("java.class.path");
 			String[] jars;
@@ -87,8 +89,10 @@ public abstract class SearchFileFromJars {
 	private void loopSearchJar(File ff,HashSet<String> collect){
 		if(ff.isDirectory()){
 			File[] fs = ff.listFiles(new FileFilter(".jar"));
-			for(int i=0;i<fs.length;i++){
-				loopSearchJar(fs[i],collect);
+			if(fs!=null){
+				for(int i=0;i<fs.length;i++){
+					loopSearchJar(fs[i],collect);
+				}
 			}
 		}else{
 			collect.add(clean.matcher(ff.getAbsolutePath()).replaceAll(""));
