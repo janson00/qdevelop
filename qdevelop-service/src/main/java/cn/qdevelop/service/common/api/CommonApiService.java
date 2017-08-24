@@ -62,6 +62,7 @@ public class CommonApiService  extends APIControl{
 				if(args.get("is-need-total")!=null && args.get("is-need-total").equals("true")){
 					totalQuery = new HashMap<String,String>(args);
 				}
+				args.put("is-convert-null", "true");
 				IDBResult result;
 				DatabaseFactory dbf = new DatabaseFactory();
 				Connection conn = dbf.getConnectByQuery(args);

@@ -28,7 +28,7 @@ public class JedisConfig {
 	}
 
 	public static void init() {
-			Properties pro = QSource.getInstance().loadProperties("plugin-config/qdevelop-redis.properties");
+			Properties pro = QSource.getInstance().loadProperties("plugin-config/qdevelop-redis.properties",JedisConfig.class);
 			log.info("loading redis config from redis.properties.......");
 			JEDIS_SWITCH = Boolean.parseBoolean(pro.getProperty("jedis.cache.switch"));
 			REDIS_IP = pro.getProperty("redis.ip");

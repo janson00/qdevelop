@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- xml中常用转义符写法： （ &  &amp; ）（ <  &lt; ） （ >  &gt; ）-->
+<SQLConfig>
+	<property index="products_log-search-action" connect="default" explain="products_log查询">
+		<!--
+		<formatter>
+			<date-formatter result-key="ctime" date-style="yyyy-MM-dd HH:mm:ss"/>
+		</formatter>
+		-->
+		<sql>select uid,plog_id,product_name,action,pid,ctime from products_log where {DYNAMIC}</sql>
+	</property>
+
+	<property index="products_log-query-action" connect="default" explain="products_log查询">
+		<!--
+		<formatter>
+			<date-formatter result-key="ctime" date-style="yyyy-MM-dd HH:mm:ss"/>
+		</formatter>
+		-->
+		<sql>select uid,plog_id,product_name,action,pid,ctime from products_log where 
+			 plog_id=$[plog_id] and uid=$[uid] and product_name='$[product_name]'
+			 and action='$[action]' and pid=$[pid] and ctime=$[ctime]
+			</sql>
+	</property>
+
+	<property index="products_log-add-action" connect="default" explain="products_log插入">
+		<sql repeat=""  repeat-concat="^" fetch-zero-err="true">
+			insert into products_log(uid,product_name,action,pid,ctime) value ($[uid],'$[product_name]','$[action]',$[pid],$[ctime])
+		</sql>
+		<!--<sql>insert other_table(plog_id) value({products_log.LAST_INSERT_ID})</sql>-->
+	</property>
+
+	<property index="products_log-store-action" connect="default" explain="products_log修改">
+		<sql  repeat=""  repeat-concat="^" fetch-zero-err="true">
+			update products_log set uid=$[uid],product_name='$[product_name]',action='$[action]',pid=$[pid],ctime=$[ctime] where plog_id=$[plog_id]
+		</sql>
+	</property>
+
+	<!--
+	<property index="products_log-remove-action" connect="default" explain="products_log删除">
+		<sql  repeat="" repeat-concat="^" fetch-zero-err="true">
+			delete from products_log where plog_id=$[plog_id]
+		</sql>
+	</property>
+	-->
+</SQLConfig>

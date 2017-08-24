@@ -75,7 +75,7 @@ public class CommonFilter  implements Filter{
 	private static Pattern clean = Pattern.compile("^\\/");
 	Map<String,String> apiDatas = null;
 	private void initApiData(){
-		Properties prop = QSource.getInstance().loadProperties("plugin-config/api-demo-datas.properties");
+		Properties prop = QSource.getInstance().loadProperties("plugin-config/api-demo-datas.properties",this.getClass());
 		if(prop!=null && prop.size()>0){
 			apiDatas = new HashMap<String,String>();
 			Enumeration<?> enu = prop.propertyNames();  

@@ -239,6 +239,11 @@ public class SQLConfigLoader extends HashMap<String,Element>{
 		if(property.attributeValue("is-master")==null){
 			property.addAttribute("is-master", isSelect?"false":"true");
 		}
+		
+		if(property.attributeValue("is-complex-build")==null){
+			property.addAttribute("is-complex-build", "true");
+		}
+		
 		property.addAttribute("is-select", isSelect.toString());
 
 

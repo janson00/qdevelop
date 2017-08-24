@@ -6,12 +6,10 @@
 	<parent>
 		<groupId>cn.qdevelop</groupId>
 		<artifactId>qdevelop</artifactId>
-		<version>1.0.0-SNAPSHOT</version>
-	</parent>
+		<version>1.0.0</version>	</parent>
 	<groupId>cn.qdevelop</groupId>
 	<artifactId>qdevelop-common</artifactId>
-	<version>1.0.0-SNAPSHOT</version>
-	<name>qdevelop-common</name>
+	<version>1.0.0</version>	<name>qdevelop-common</name>
 	<url>http://maven.apache.org</url>
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>

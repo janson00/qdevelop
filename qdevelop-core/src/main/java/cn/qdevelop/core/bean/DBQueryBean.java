@@ -16,6 +16,7 @@ public class DBQueryBean implements IDBQuery{
 	private String[] columns;
 	private Object[] values;
 	private Map<String, DBStrutsLeaf> tableStruts ;
+	private boolean isComplexBuild;
 	
 
 
@@ -122,6 +123,23 @@ public class DBQueryBean implements IDBQuery{
 	public void clear() {
 		// TODO Auto-generated method stub
 		
+	}
+	boolean convertNull = false;
+	
+	public void setConverNull(boolean isConvertNull){
+		convertNull = isConvertNull;
+	}
+	@Override
+	public boolean isConvertNull() {
+		return convertNull;
+	}
+
+	public boolean isComplexBuild() {
+		return isComplexBuild;
+	}
+
+	public void setComplexBuild(boolean isComplexBuild) {
+		this.isComplexBuild = isComplexBuild;
 	}
 
 }

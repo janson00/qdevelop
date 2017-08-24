@@ -28,6 +28,18 @@ public interface IDBQuery {
 	
 	public void clear();
 	
+	/**
+	 * 是否转换空值
+	 * @return
+	 */
+	public boolean isConvertNull();
+	
+	/**
+	 * 是否需要混合编译
+	 * @return
+	 */
+	public boolean isComplexBuild(); 
+	
 	public String toString();
 	
 	

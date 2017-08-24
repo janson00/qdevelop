@@ -31,6 +31,8 @@ import cn.qdevelop.service.utils.QServiceUitls;
 public abstract class UploadControl extends HttpServlet  implements IService{
 	private static Logger log = QLog.getLogger(UploadControl.class);
 	private static final long serialVersionUID = -726532824668251561L;
+	private ThreadLocal<HttpServletResponse> httpServletResponse = new ThreadLocal<HttpServletResponse>();
+	private ThreadLocal<HttpServletRequest> httpServletRequest = new ThreadLocal<HttpServletRequest>();
 	private static MultipartConfig config = UploadControl.class.getAnnotation(MultipartConfig.class);
 	private String[] checkColumns,ignoreColumns;
 
@@ -88,7 +90,8 @@ public abstract class UploadControl extends HttpServlet  implements IService{
 	private IOutput out ;
 	protected void doPost(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {	
-
+		httpServletResponse.set(response);
+		httpServletRequest.set(request);
 		out = QServiceUitls.getOutput(request, response);
 		if(!out.isError()){
 			Map<String,String> args = QServiceUitls.getParameters(request);
@@ -198,5 +201,12 @@ public abstract class UploadControl extends HttpServlet  implements IService{
 				.append(md5.substring(0, 2)).append("/");
 		return f.append(md5.substring(2)).append(".").append(type).toString().substring(root.length()+(root.endsWith("/")?-1:0));
 	}
+	
+	public HttpServletResponse getResponse(){
+		return httpServletResponse.get();
+	}
 
+	public HttpServletRequest getRequest(){
+		return httpServletRequest.get();
+	}
 }

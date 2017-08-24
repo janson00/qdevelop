@@ -308,7 +308,7 @@ public class IDGenerate {
 	}
 
 	private void init(){
-		Properties prop = QSource.getInstance().loadProperties("plugin-config/qdevelop-id-client.properties");
+		Properties prop = QSource.getInstance().loadProperties("plugin-config/qdevelop-id-client.properties",this.getClass());
 		if(prop!=null){
 			SERVER_IP = prop.getProperty("server_ip") == null ? "127.0.0.1" : prop.getProperty("server_ip");
 			SERVER_PORT = prop.getProperty("server_port") == null ? 10701 : Integer.parseInt(prop.getProperty("server_port"));

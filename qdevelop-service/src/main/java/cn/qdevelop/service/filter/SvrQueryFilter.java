@@ -29,7 +29,7 @@ public class SvrQueryFilter  implements Filter{
 	@Override
 	public void init(FilterConfig filterConfig) throws ServletException {
 		localIps = Pattern.compile(getIp());
-		Properties prop = QSource.getInstance().loadProperties("plugin-config/allow_ips.properties");
+		Properties prop = QSource.getInstance().loadProperties("plugin-config/allow_ips.properties",this.getClass());
 		if(prop!=null){
 			Iterator<Object> ips = prop.keySet().iterator();
 			StringBuffer sb = new StringBuffer();

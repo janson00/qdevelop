@@ -32,9 +32,10 @@ public abstract class APIControl extends HttpServlet implements IService{
 	 * 
 	 */
 	private static final long serialVersionUID = 7445553533896016332L;
-	private HttpServletResponse response;
-	private HttpServletRequest request;
-	private String[] checkColumns,ignoreColumns;
+	private ThreadLocal<HttpServletResponse> httpServletResponse = new ThreadLocal<HttpServletResponse>();
+	private ThreadLocal<HttpServletRequest> httpServletRequest = new ThreadLocal<HttpServletRequest>();
+	
+	private volatile String[] checkColumns,ignoreColumns;
 
 	public void init(ServletConfig config)throws ServletException{  
 		super.init(config);  
@@ -71,12 +72,12 @@ public abstract class APIControl extends HttpServlet implements IService{
 		this.jumpValidate = true;
 	}
 	
-	private boolean jumpValidate = false;
+	private volatile boolean jumpValidate = false;
 	private IOutput out ;
 	protected void doGet(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
-		this.response = response;
-		this.request = request;
+		httpServletResponse.set(response);
+		httpServletRequest.set(request);
 		out = QServiceUitls.getOutput(request, response);
 		if(!out.isError()){
 			Map<String,String> args = QServiceUitls.getParameters(request);
@@ -87,7 +88,8 @@ public abstract class APIControl extends HttpServlet implements IService{
 		}
 		QServiceUitls.output(out.toString(), out.getOutType(), request, response);
 	}
-
+	
+	
 
 	protected void doPost(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
@@ -96,11 +98,11 @@ public abstract class APIControl extends HttpServlet implements IService{
 
 
 	public HttpServletResponse getResponse(){
-		return response;
+		return httpServletResponse.get();
 	}
 
 	public HttpServletRequest getRequest(){
-		return request;
+		return httpServletRequest.get();
 	}
 
 	/**

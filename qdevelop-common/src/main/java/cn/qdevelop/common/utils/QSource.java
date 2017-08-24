@@ -13,6 +13,8 @@ import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 import java.util.regex.Pattern;
 
+import org.apache.commons.beanutils.locale.LocaleBeanUtils;
+
 /**
  * 
  * 获取系统资源类
@@ -170,13 +172,32 @@ public class QSource {
 		return result;
 	}
 	
+	public Properties loadProperties(String configName){
+		try {
+			InputStream idSvrConfig = getSourceAsStream(configName);
+			if(idSvrConfig!=null){
+				Properties prop = new Properties();
+				prop.load(idSvrConfig);
+				return prop;
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		} 
+		return null;
+	}
+	
 	/**
 	 * 加载配置文件
 	 * @param configName
 	 * @return
 	 */
-	public Properties loadProperties(String configName){
+	public Properties loadProperties(String configName,Class<?> callClass){
 		try {
+			
+			String runPath = callClass.getProtectionDomain().getCodeSource().getLocation().getPath();
+			if(runPath.endsWith(".jar")){
+				
+			}
 			InputStream idSvrConfig = getSourceAsStream(configName);
 			if(idSvrConfig!=null){
 				Properties prop = new Properties();
@@ -234,6 +255,10 @@ public class QSource {
 		return t;
 	}
 
+	
+	public static void main(String[] args) {
+		QSource.getInstance().loadProperties("qdevelop-log.properties", LocaleBeanUtils.class);
+	}
 
 
 	

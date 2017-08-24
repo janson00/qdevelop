@@ -111,7 +111,16 @@ public class DatabaseFactory {
 	 * @throws QDevelopException
 	 */
 	public IDBResult queryDatabase(Map<String,?> query) throws QDevelopException{
-		return queryDatabase(query,getConnectByQuery(query));
+		Connection conn = null;
+		try {
+			conn = getConnectByQuery(query);
+			return queryDatabase(query,conn);
+		} catch (QDevelopException e) {
+			throw e;
+		}finally{
+			ConnectFactory.close(conn);
+		}
+		
 	}
 	
 	
@@ -139,7 +148,6 @@ public class DatabaseFactory {
 			throw e;
 		}finally{
 			query.clear();
-			ConnectFactory.close(conn);
 			log.info("queryDatabase:"+index+" use:"+(System.currentTimeMillis()-s)+"ms");
 		}
 	}
@@ -174,18 +182,29 @@ public class DatabaseFactory {
 	 * @throws QDevelopException
 	 */
 	public boolean updateDatabase(Map<String,?> query) throws QDevelopException{
-		return updateDatabase(query,getConnectByQuery(query));
+		Connection conn = null;
+		try {
+			conn = getConnectByQuery(query);
+			return updateDatabase(query,conn,true);
+		} catch (QDevelopException e) {
+			throw e;
+		}finally{
+			ConnectFactory.close(conn);
+		}
 	}
 
-
+	public boolean updateDatabase(Map<String,?> query,Connection conn) throws QDevelopException{
+		return updateDatabase(query, conn,true) ;
+	}
 	/**
 	 * 更新数据库；框架提供整体事务控制，提供链接关闭功能
 	 * @param query
 	 * @param conn
+	 * @param isAutoCommit 是否自动事务控制
 	 * @return
 	 * @throws QDevelopException
 	 */
-	public boolean updateDatabase(Map<String,?> query,Connection conn) throws QDevelopException{
+	public boolean updateDatabase(Map<String,?> query,Connection conn,boolean isAutoCommit) throws QDevelopException{
 		long s = System.currentTimeMillis();
 		String index = String.valueOf(query.get("index"));
 		try {
@@ -197,7 +216,7 @@ public class DatabaseFactory {
 				}
 			}
 			IDBUpdate dbUpdate = SQLConfigParser.getInstance().getDBUpdateBean(query, conn);
-			boolean r =  new DatabaseImpl().updateDB(conn, dbUpdate , updateHooks, true);
+			boolean r =  new DatabaseImpl().updateDB(conn, dbUpdate , updateHooks, isAutoCommit);
 			if(updateHooks!=null){
 				for(IUpdateHook iuh : updateHooks){
 					iuh.flush(conn,query, dbUpdate);
@@ -211,7 +230,6 @@ public class DatabaseFactory {
 			throw e;
 		}finally{
 			query.clear();
-			ConnectFactory.close(conn);
 			log.info("updateDatabase:"+index+" use:"+(System.currentTimeMillis()-s)+"ms");
 		}
 	}
@@ -223,7 +241,15 @@ public class DatabaseFactory {
 	 * @throws QDevelopException
 	 */
 	public int insertDBReturnAutoID(Map<String,?> query) throws QDevelopException{
-		return insertDBReturnAutoID(query,getConnectByQuery(query));
+		Connection conn = null;
+		try {
+			conn = getConnectByQuery(query);
+			return insertDBReturnAutoID(query,conn);
+		} catch (QDevelopException e) {
+			throw e;
+		}finally{
+			ConnectFactory.close(conn);
+		}
 	}
 	
 	/**
@@ -259,7 +285,6 @@ public class DatabaseFactory {
 			throw e;
 		}finally{
 			query.clear();
-			ConnectFactory.close(conn);
 			log.info("insertDBReturnAutoID:"+index+" use:"+(System.currentTimeMillis()-s)+"ms");
 
 		}

@@ -303,6 +303,9 @@ public class SQLConfigParser {
 			dbQuery.setSql(sql.getText());
 			String[] params= sql.attributeValue("params")==null? null:sql.attributeValue("params").split("\\|");
 			String[] tables =  sql.attributeValue("tables")==null? null:sql.attributeValue("tables").split("\\|");
+			
+			dbQuery.setComplexBuild(Boolean.parseBoolean(config.attributeValue("is-complex-build")));
+			
 			try {
 				dbQuery.setTableStruts(TableColumnType.getInstance().getTablesStrutsBean(conn, tables));
 			} catch (SQLException e) {
@@ -354,6 +357,13 @@ public class SQLConfigParser {
 					dbQuery.setOrder(String.valueOf(order));
 				}
 			}
+			if(config.attributeValue("is-convert-null")!=null){
+				dbQuery.setConverNull(Boolean.parseBoolean(config.attributeValue("is-convert-null")));
+			}
+			
+			if(query.get("is-convert-null")!=null){
+				dbQuery.setConverNull(Boolean.parseBoolean(String.valueOf(query.get("is-convert-null"))));
+			}
 			query=null;
 			return dbQuery;
 		} catch (QDevelopException e) {
@@ -376,7 +386,7 @@ public class SQLConfigParser {
 		for(String key : params){
 			String val = String.valueOf(query.get(key));
 			boolean isDBColumn = tableStruts!=null && tableStruts.get(clearColumnName.matcher(key).replaceAll(""))!=null && !isFunctionValue.matcher(val).find();
-			if(isComplexValue.matcher(val).find() && !isFunctionValue.matcher(val).find() ){
+			if(dbQuery.isComplexBuild() && isComplexValue.matcher(val).find() && !isFunctionValue.matcher(val).find() ){
 				ComplexParserBean cpb = parserComplexVales(getSQLkey(key,sqlModel),val,isDBColumn);
 				if(cpb.getColumn()!=null){
 					for(int i=0;i<cpb.getColumn().length;i++){

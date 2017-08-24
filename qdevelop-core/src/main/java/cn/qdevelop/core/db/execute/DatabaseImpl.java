@@ -39,7 +39,7 @@ public class DatabaseImpl {
 			log.info("["+query.getPreparedColumns().length+"] "+query.getSql());
 			int recordSize = rsmd.getColumnCount();
 			while(rs.next()){
-				result.addResultSet(parseRecord(rsmd,rs,recordSize));
+				result.addResultSet(parseRecord(rsmd,rs,recordSize,query.isConvertNull()));
 			}
 		} catch (SQLException e) {
 			log.error("["+query.getIndex()+"] "+query.getPreparedSql());
@@ -211,7 +211,8 @@ public class DatabaseImpl {
 					e1.printStackTrace();
 				}
 			}
-			StringBuilder sb = new StringBuilder().append("数据库批量执行错误,第").append(idx+1).append("行数据错误：");
+			StringBuilder sb = new StringBuilder();
+			sb.append(e.getMessage()).append(",第").append(idx+1).append("行数据错误：");
 			Object[] val = values.get(idx);
 			for(Object v : val){
 				sb.append(v).append(",");
@@ -327,16 +328,17 @@ public class DatabaseImpl {
 		}
 	}
 
-	private Map<String,Object> parseRecord(ResultSetMetaData rsmd,ResultSet rs,int recordSize) throws QDevelopException, SQLException{
+	private Map<String,Object> parseRecord(ResultSetMetaData rsmd,ResultSet rs,int recordSize,boolean isConvertNull) throws QDevelopException, SQLException{
 		Map<String,Object> data = new HashMap<String,Object>(recordSize);
 		for(int i=1;i<=recordSize;i++){
 			Object val = rs.getObject(i);
-			if(val == null){
+			if(isConvertNull && val == null){
 				String columnTypeName = TableColumnType.clear_brackets.matcher(rsmd.getColumnTypeName(i)).replaceAll("");
 				if(columnTypeName.equalsIgnoreCase("int") || columnTypeName.equalsIgnoreCase("tinyint")
-						||columnTypeName.equalsIgnoreCase("bigint")||columnTypeName.equalsIgnoreCase("float")
 						||columnTypeName.equalsIgnoreCase("decimal")  || columnTypeName.equalsIgnoreCase("double")){
 					val = -1;
+				}else if(columnTypeName.equalsIgnoreCase("bigint")||columnTypeName.equalsIgnoreCase("float")){
+					val = -1L;
 				}else if(columnTypeName.equalsIgnoreCase("varchar") || columnTypeName.equalsIgnoreCase("char")  || columnTypeName.equalsIgnoreCase("text")){
 					val = "";
 				}else if( columnTypeName.equalsIgnoreCase("date")||columnTypeName.equalsIgnoreCase("datetime")){
@@ -357,6 +359,10 @@ public class DatabaseImpl {
 	public void setValue(String sql,Map<String,DBStrutsLeaf> dbsb,PreparedStatement pstmt,String[] columns,Object[] values,int start) throws QDevelopException{
 		try {
 			for(int i=0;i<columns.length;i++){
+				if(values[i]==null){
+					pstmt.setObject(i+start, null);
+					continue;
+				}
 				DBStrutsLeaf sl = dbsb.get(columns[i]);
 				if(sl!=null){
 					int type = sl.getColumnType();
