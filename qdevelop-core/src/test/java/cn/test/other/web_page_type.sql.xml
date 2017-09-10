@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<SQLConfig> 
+  <property index="page_type!select" explain="page_type查询" connect="web_R"> 
+    <sql>select `page_type_id`,`page_type_name`,`page_type_code`,`description`,`status`,`ctime`,`cuser` from page_type where $[_autoSearch]</sql> 
+  </property>  
+  <property index="page_type_options!select" explain="下拉框查询" connect="web_R" cacheAble="false"> 
+    <sql>select `page_type_id`,`page_type_name`,`page_type_code`,`status` from page_type where $[_autoSearch]</sql> 
+  </property>  
+  <property index="page_type!insert" explain="page_type插入" uniKey="page_type_id" connect="web"> 
+    <param-formatter> 
+      <param key="uid" value="${user.uid}"></param> 
+    </param-formatter>  
+    <sql>insert into page_type(`page_type_name`,`page_type_code`,`description`,`status`,`ctime`,`cuser`) values ('$[page_type_name]','$[page_type_code]','$[description]',1,NOW(),$[uid])</sql> 
+  </property>  
+  <property index="page_type!update" explain="page_type修改" uniKey="page_type_id" connect="web"> 
+    <!--<param-formatter><param key="uid" value="${user.id}"></param></param-formatter>-->  
+    <sql>update page_type set `page_type_name`='$[page_type_name]',`page_type_code`='$[page_type_code]',`description`='$[description]',`status`=$[status] where page_type_id='$[page_type_id]'</sql> 
+  </property>  
+  <property index="page_type!delete" explain="page_type删除" uniKey="page_type_id" connect="web"> 
+    <sql>update page_type set `status`=2 where page_type_id='$[page_type_id]'</sql> 
+  </property> 
+</SQLConfig>
+<!--特殊符号转义表 &lt; < 小于号   &gt; > 大于号
+-->

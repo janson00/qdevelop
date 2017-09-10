@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<SQLConfig>
+  <!-- 新增resource_logs表内容 -->
+  <property index="resource_logs!insert" explain="resource_logs插入" connect="web"> 
+    <sql>
+    INSERT INTO resource_logs(`cuser`,`ctime`,`resource_name`,`remark`,`upload_path`)
+    VALUES('$[cuser]',NOW(),'$[resource_name]','$[remark]','$[upload_path]')
+	</sql>
+  </property>
+  
+  <!-- 查询resource_logs表内容 -->
+  <property index="resource_logs!select" explain="resource_logs查询" connect="web">
+    <sql>
+    select * from resource_logs where $[_autoSearch] order by ctime desc
+	</sql>
+	<formatter> 
+      <date-formatter targetKey="ctime" style="yyyy-MM-dd HH:mm:ss"></date-formatter>
+      <table-cache table="qd_jaas_user" targetKey="cuser" fields="name|create_user_name"></table-cache>
+    </formatter>
+  </property>
+</SQLConfig>

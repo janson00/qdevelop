@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<SQLConfig> 
+<!-- 
+  <property index="include_file_adv!select" explain="include_file查询" connect="web_R" cacheAble="false"> 
+    <sql>select f.file_name,f.file_id,fp.target_page,f.file_path, f.file_type, f.ctime,p.page_template from file_page_relation fp left join page p on fp.target_page = p.page_id left join file f on fp.resource_file = f.file_id where $[_autoSearch]</sql>  
+    <formatter> 
+      <date-formatter targetKey="ctime" style="yyyyMMdd"></date-formatter> 
+    </formatter> 
+  </property>  
+   -->
+  <property index="include_file_adv!select" explain="include_file查询" connect="web_R" cacheAble="false"> 
+    <sql>select f.file_name,f.file_id,f.include_position,fp.target_page,f.file_path, f.file_type, f.ctime,p.page_template from file_page_relation fp left join page p on fp.target_page = p.page_id left join file f on fp.resource_file = f.file_id where $[_autoSearch]</sql>  
+    <formatter> 
+      <date-formatter targetKey="ctime" style="yyyyMMdd"></date-formatter> 
+    </formatter> 
+  </property>  
+  
+  <property index="include_file_adv_for_page!select" explain="include_file查询" connect="web_R"  afterRun="com.lelife.oa.formatter.IncludeFileFormatter"> 
+    <sql>select f.file_name,f.file_id,fp.target_page,f.file_path, f.file_type, f.ctime,p.page_template from file_page_relation fp left join page p on fp.target_page = p.page_id left join file f on fp.resource_file = f.file_id where $[_autoSearch]</sql>  
+    <formatter> 
+      <date-formatter targetKey="ctime" style="yyyyMMdd"></date-formatter> 
+    </formatter> 
+  </property>  
+  
+  <property index="page_type_adv!select" explain="page所有类型查询" connect="web_R" > 
+    <sql>select pt.page_type_id,pt.page_type_name, pt.page_type_code from  page_type pt where $[_autoSearch]</sql> 
+  </property>
+  
+   <property index="page_adv!select" explain="page查询" connect="web_R" afterRun="com.lelife.oa.formatter.FormatPageParam" cacheAble="false"> 
+    <sql>
+	    select `page_id`,`page_id` as id,`page_name`,`page_target`,`parent_id`,`parent_id` as _parentId,`page_url`,`page_level`,
+	    page_display,page_breadcrumb,page_order,description,page_type
+	    from page where $[_autoSearch]
+    </sql> 
+      <formatter> 
+      <key-value-formatter cacheIndex="page_type_adv!select" cacheKey="page_type_id" cacheValue="page_type_code" targetKey="page_type" targetName="page_type_code"></key-value-formatter>  
+    </formatter>
+  </property>
+   <property index="file_adv_for_manage!select" explain="file_adv_for_manage!select查询" connect="web_R" cacheAble="false">
+    <sql>select DISTINCT  `file_id`,`file_name`,`file_path`,`include_position`,`file_type`,f.`target_page`,`file_order`,`description`,`isCompress`,f.`status`,f.`ctime`,f.`cuser`
+    		from file f left join file_page_relation fp on f.file_id = fp.resource_file
+     		where $[_autoSearch] and f.status=1
+     </sql> 
+    <formatter> 
+      <date-formatter targetKey="ctime" style="yyyy-MM-dd HH:mm:ss"></date-formatter> 
+      <table-cache table="qd_jaas_user" targetKey="cuser" fields="name"></table-cache>  
+      <key-value-formatter cacheIndex="page_type_options!select" cacheKey="page_type_code" cacheValue="page_type_name" targetKey="target_page" targetName="page_type_name"></key-value-formatter> 
+      <union-multi-formatter targetKey="file_id" uniKey="resource_file" uniIndex="file_page_relation_adv!select" asColumn="TARGETS"></union-multi-formatter> 
+    </formatter>  
+  </property>  
+  
+  <property index="file_page_relation_adv!select" explain="file_page_relation_adv!select查询" connect="web_R" cacheAble="false"> 
+    <sql>select `resource_file`,`target_page`,`target_page`  as p_id from file_page_relation where $[_autoSearch]</sql> 
+ 	<formatter> 
+      <key-value-formatter cacheIndex="page_name_adv!select" cacheKey="page_id" cacheValue="page_name" targetKey="target_page" targetName="target_page"></key-value-formatter>  
+      <key-value-formatter cacheIndex="page_type_options!select" cacheKey="page_type_code" cacheValue="page_type_name" targetKey="target_page" targetName="target_page"></key-value-formatter> 
+    </formatter>
+  </property>  
+  
+  <property index="page_name_adv!select" explain="page_name_adv!select查询" connect="web_R" cacheAble="false"> 
+    <sql>select `page_id`,`page_name`,`page_url` from page where $[_autoSearch] and status=1</sql> 
+  </property> 
+  
+  <property index="page_file_include_page!update" explain="page_file_include!update查询" connect="web" afterRun="com.lelife.oa.formatter.IncludeFileReload"> 
+    <param-formatter> 
+      <param key="uid" value="${user.uid}"></param> 
+    </param-formatter>  
+    <sql fullParamOnly="true">delete from file_page_relation where resource_file = $[file_id] and target_page not in(select page_type_code as target_page from page_type)</sql> 
+    <sql repeat="pageId" fullParamOnly="true">insert  into  file_page_relation(resource_file,target_page,include_type,include_file_type,ctime,cuser) values($[file_id],$[pageId],1,1,NOW(),$[uid]) </sql> 
+  </property>
+  
+  <property index="page_file_include_web_site!update" explain="page_file_include!update查询" connect="web" afterRun="com.lelife.oa.formatter.IncludeFileReload"> 
+    <param-formatter> 
+      <param key="uid" value="${user.uid}"></param> 
+    </param-formatter>  
+    <sql fullParamOnly="true">delete from file_page_relation where resource_file = $[file_id] and target_page in (select page_type_code as target_page from page_type)</sql> 
+    <sql repeat="pageId" fullParamOnly="true">insert  into  file_page_relation(resource_file,target_page,include_type,include_file_type,ctime,cuser) values($[file_id],'$[pageId]',0,1,NOW(),$[uid]) </sql> 
+  </property>
+  
+  <property index="modular_func_adv!select" explain="modular_func_adv!select查询" connect="web_R"> 
+    <sql >select modular_id,modular_name,modular_func from modular where $[_autoSearch] and status = 1</sql> 
+  </property>  
+  
+  
+  <property index="file_adv!select" explain="file_adv!select查询" connect="web_R"> 
+    <sql >select file_id,file_name,file_path  from file where $[_autoSearch] and status = 1</sql> 
+  </property>
+  
+  <!-- page查询用于发布 -->
+  <property index="page_adv_for_publish!select" explain="page_adv_for_publish!select查询" connect="web_R" cacheAble="false"> 
+    <sql>select page_id,page_name,page_url,ctime,cuser,page_type,page_order
+     from page where $[_autoSearch] and status = 1 order by ctime desc
+     </sql> 
+     <formatter> 
+      <date-formatter targetKey="ctime" style="yyyy-MM-dd HH:mm:ss"></date-formatter> 
+      <table-cache table="qd_jaas_user" targetKey="cuser" fields="name"></table-cache>
+    </formatter> 
+  </property>
+  
+  <!-- web_server查询所有可用的web_server地址用于发布 -->
+  <property index="web_server_for_publish!select" explain="web_server_for_publish!select查询" connect="web_R" cacheAble="false"> 
+    <sql>select web_server_id,web_server_ip,web_server_port,web_server_desc,order_num,status from web_server where $[_autoSearch]</sql> 
+  </property>
+  <!-- 添加web_server地址 -->
+  <property index="web_server_ip!insert" explain="web_server_for_publish!select查询" connect="web"> 
+    <sql>insert into web_server(`web_server_ip`,`web_server_port`,`web_server_desc`,`order_num`,`status`) 
+    values ('$[web_server_ip]','$[web_server_port]','$[web_server_desc]','$[order_num]',1)</sql> 
+  </property>
+  <!-- 修改web_server地址 -->
+  <property index="web_server_ip!update" explain="web_server_for_publish!select查询" connect="web"> 
+    <sql>update web_server set `web_server_ip`='$[web_server_ip]',`web_server_port`='$[web_server_port]',`web_server_desc`='$[web_server_desc]',`order_num`='$[order_num]',`status`='$[status]' where `web_server_id`='$[web_server_id]'</sql> 
+  </property>
+  <!-- 逻辑删除web_server地址 -->
+  <property index="web_server_ip!detele" explain="web_server_for_publish!select查询" connect="web"> 
+    <sql>update web_server set `status`=0 where `web_server_id`='$[web_server_id]'</sql>
+  </property>
+</SQLConfig>

@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<SQLConfig> 
+  <!--广告展示查询 -->  
+  <property index="ad_show!select" explain="ad_show查询" connect="web_R" cacheAble="false"> 
+    <sql>select a.ad_space_id, b.ad_schedule_id,b.ad_schedule_id as schedule_id,ad_schedule_num,b.ad_schedule_name, c.ad_source_resource,c.ad_source_url,c.ad_source_imgpath,c.ad_source_title,c.ad_source_description,
+    		c.ad_source_id,c.ad_source_width,c.ad_source_high,c.ad_source_margin_top,c.ad_source_margin_left,c.p_ad_source_id 
+    		from ad_space a join ad_schedule b on a.ad_space_id = b.ad_space_id left join ad_source c on b.ad_source_id = c.ad_source_id 
+    		where $[_autoSearch] order by b.ad_schedule_num,b.ad_schedule_priority
+    </sql>  
+    <formatter> 
+      <union-multi-formatter targetKey="ad_schedule_id" uniKey="ad_schedule_id" uniIndex="ad_rules!select" asColumn="RULES"></union-multi-formatter> 
+    </formatter> 
+  </property>  
+  <!--广告规则集合查询 -->  
+  <property index="ad_rules!select" explain="ad_rule查询" connect="web_R"> 
+    <sql>select asrr.ad_schedule_id , asrr.rule_param,asrr.ad_schedule_id, ar.rule_object from ad_schedule_rule_raltion asrr left join ad_rule ar on asrr.ad_rule_id = ar.ad_rule_id where $[_autoSearch] and ar.status = 1 and asrr.status=1</sql> 
+  </property>  
+  <!--广告规则查询  
+ 	<property index="ad_rule!select" explain="ad_rules查询" connect="web">
+		<sql>
+			select ad_rule_id,rule_name,rule_object,rule_param_description
+			from ad_rule 
+			where $[_autoSearch]
+		</sql>
+	</property>
+	--> 
+</SQLConfig>

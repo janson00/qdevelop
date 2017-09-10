@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<SQLConfig> 
+  <property index="include_file!select" explain="include_file查询" connect="web_R" cacheAble="false"> 
+    <sql>select f.file_path,f.target_page, f.file_type, f.ctime,p.page_template from file f left join page p on f.target_page = p.page_id where $[_autoSearch]</sql>  
+    <formatter> 
+      <date-formatter targetKey="ctime" style="yyyyMMdd"></date-formatter> 
+    </formatter> 
+  </property>  
+  <property index="modular_file!select" explain="modular_file查询" connect="web_R" cacheAble="false"> 
+    <sql>select mt.`modular_path`,mt.`page_type_id`,pt.`page_type_code` from modular_type mt left join page_type pt on pt.page_type_id = mt.page_type_id where $[_autoSearch]</sql> 
+  </property>  
+  <property index="breadcrumbs!select" explain="page查询" connect="web_R"> 
+    <sql>select `page_id`,`page_name`,`parent_id`,`page_url`,`page_level`,`page_display`,`page_order`,`page_type`, `page_breadcrumb`,`page_target` from page where $[_autoSearch]</sql> 
+  </property>  
+  <property index="page_type_include!select" explain="page查询" connect="web_R" cacheAble="false"> 
+    <sql>select p.`page_id`,p.`page_url`,p.`page_type`,pt.`page_type_code`,pt.`page_type_name` from page p left join page_type pt on pt.page_type_id = p.page_type where $[_autoSearch]</sql> 
+  </property> 
+  <property index="web_file_uniqueness" explain="file防重复校验" connect="web_R" cacheAble="false"> 
+    <sql>select file_id from file where $[_autoSearch]</sql> 
+  </property> 
+  
+   <property index="web_auth_select" explain="web_auth_select" connect="default" > 
+    <sql>select id from qd_s_menu where sid  regexp '$[sid]' and id = $[menu_id];
+</sql> 
+  </property> 
+</SQLConfig>

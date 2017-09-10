@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<SQLConfig> 
+<!-- 根据函数名称查询模块信息 -->
+  <property index="modular_test!selectModels" explain="modular查询，通过函数名称" safeArgs="modular_func" connect="web_R"> 
+    <sql>select `modular_id`,`modular_name`,`modular_type`,`modular_func`,`status`,`modular_edit_status` from modular where modular_func in ($[modular_func]) and status=1</sql> 
+  </property>
+<!-- 根据模块id查询模块内容信息 -->
+  <property index="modular_test!selectByModularId" explain="modular查询，通过模块id查询内容" connect="web_R" cacheAble="false"> 
+    <sql>select `modular_content`,`page_type` from modular where $[_autoSearch]</sql> 
+  </property>
+
+<!-- 根据文件id查询文件内容信息 -->
+  <property index="file_test!selectByFileId" explain="file内容查询" connect="web_R" cacheAble="false"> 
+    <sql>select file_id,file_path,file_content from file where $[_autoSearch]</sql> 
+  </property>
+  
+<!-- 根据页面id查询文件内容信息 -->
+  <property index="page_test!selectByPageId" explain="file内容查询" connect="web_R" cacheAble="false"> 
+    <sql>select `page_content`,`page_type` from page where $[_autoSearch]</sql> 
+  </property>
+  
+<!-- 根据页面类型查询当前页面默认引入的所有文件 -->
+  <property index="file_test!selectAllFileByPageType" explain="file文件查询" connect="web_R" cacheAble="false"> 
+    <sql>select file_id,file_name,file_path,file_type from file where $[_autoSearch] and status=1</sql> 
+  </property> 
+</SQLConfig>

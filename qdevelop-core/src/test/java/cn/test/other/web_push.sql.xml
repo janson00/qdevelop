@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<SQLConfig>
+  <!-- 查询本地modular表内容 -->
+  <property index="modular_push!selectLocal" explain="查询本地modular表内容" connect="web_R" safe-args="*">  
+    <sql>select * from modular where status=1 and $[_autoSearch]</sql> 
+  </property>  
+  
+  <!-- 查询线上modular表内容 -->
+  <property index="modular_push!selectOnline" explain="查询线上modular表内容" connect="web_online" safe-args="*">  
+    <sql>select * from modular where status=1 and $[_autoSearch]</sql> 
+  </property>
+  
+  <!-- 新增线上modular表内容 -->
+  <property index="modular_push!insert" explain="线上modular插入" connect="web_online" safe-args="*">  
+    <sql>
+    INSERT INTO modular(`modular_name`,`modular_type`,`modular_content`,`modular_func`,`modular_image`,`description`,`status`,
+  						`ctime`,`cuser`,`modular_description`,`page_type`,`modular_edit_status`,`modular_editor`)
+    VALUES('$[MODULAR_NAME]','$[MODULAR_TYPE]','$[MODULAR_CONTENT]','$[MODULAR_FUNC]','$[MODULAR_IMAGE]','$[DESCRIPTION]','$[STATUS]',
+		'$[CTIME]','$[CUSER]','$[MODULAR_DESCRIPTION]','$[PAGE_TYPE]','$[MODULAR_EDIT_STATUS]','$[MODULAR_EDITOR]')
+	</sql>
+  </property>
+  
+  <!-- 修改线上modular表内容 -->
+  <property index="modular_push!update" explain="线上modular内容修改" connect="web_online" safe-args="*">
+    <sql>UPDATE modular SET `MODULAR_NAME`='$[MODULAR_NAME]',`MODULAR_TYPE`='$[MODULAR_TYPE]',
+    						`MODULAR_CONTENT`='$[MODULAR_CONTENT]',`MODULAR_FUNC`='$[MODULAR_FUNC]',`MODULAR_IMAGE`='$[MODULAR_IMAGE]',
+    						`DESCRIPTION`='$[DESCRIPTION]',`STATUS`='$[STATUS]',`CTIME`='$[CTIME]',`CUSER`='$[CUSER]',
+    						`MODULAR_DESCRIPTION`='$[MODULAR_DESCRIPTION]',`PAGE_TYPE`='$[PAGE_TYPE]',`MODULAR_EDIT_STATUS`='$[MODULAR_EDIT_STATUS]',
+    						`MODULAR_EDITOR`='$[MODULAR_EDITOR]' WHERE MODULAR_ID='$[MODULAR_ID]'
+  	</sql>  
+    <sql>INSERT INTO log_modular (`MODULAR_ID`,`MODULAR_CONTENT`,`CTIME`,`CUSER`,OPERATION) VALUES ('$[MODULAR_ID]','$[LOG_CONTENT]',NOW(),'$[LOGUSER]',3)</sql> 
+  </property>
+  
+  <!-- 查询本地page表内容 -->
+  <property index="page_push!selectLocal" explain="查询本地page表内容" connect="web_R">  
+    <sql>select * from page where status=1 and $[_autoSearch]</sql> 
+  </property>  
+  
+  <!-- 查询线上page表内容 -->
+  <property index="page_push!selectOnline" explain="查询线上page表内容" connect="web_online">  
+    <sql>select * from page where status=1 and $[_autoSearch]</sql> 
+  </property>
+  
+  <!-- 新增线上page表内容 -->
+  <property index="page_push!insert" explain="线上page插入" connect="web_online" safe-args="*">  
+    <sql>
+    INSERT INTO page(`page_name`,`parent_id`,`page_template`,`page_target`,`page_url`,`page_level`,`description`,
+  					`status`,`ctime`,`cuser`,`page_content`,`page_display`,`page_order`,`page_type`,`page_breadcrumb`) 
+	VALUES('$[PAGE_NAME]','$[PARENT_ID]','$[PAGE_TEMPLATE]','$[PAGE_TARGET]','$[PAGE_URL]','$[PAGE_LEVEL]','$[DESCRIPTION]',
+			'$[STATUS]','$[CTIME]','$[CUSER]','$[PAGE_CONTENT]','$[PAGE_DISPLAY]','$[PAGE_ORDER]','$[PAGE_TYPE]','$[PAGE_BREADCRUMB]')
+	</sql>
+  </property>
+  
+  <!-- 修改线上page表内容 -->
+  <property index="page_push!update" explain="线上page内容修改" connect="web_online" safe-args="*">
+    <sql>UPDATE page SET `PAGE_NAME`='$[PAGE_NAME]',`PARENT_ID`='$[PARENT_ID]',`PAGE_TEMPLATE`='$[PAGE_TEMPLATE]',
+    	`PAGE_TARGET`='$[PAGE_TARGET]',`PAGE_URL`='$[PAGE_URL]',`PAGE_LEVEL`='$[PAGE_LEVEL]',`DESCRIPTION`='$[DESCRIPTION]',
+  					`STATUS`='$[STATUS]',`CTIME`='$[CTIME]',`CUSER`='$[CUSER]',`PAGE_CONTENT`='$[PAGE_CONTENT]',
+  					`PAGE_DISPLAY`='$[PAGE_DISPLAY]',`PAGE_ORDER`='$[PAGE_ORDER]',`PAGE_TYPE`='$[PAGE_TYPE]',`PAGE_BREADCRUMB`='$[PAGE_BREADCRUMB]'
+  	     WHERE `PAGE_ID`='$[PAGE_ID]'
+  	</sql>  
+    <sql>INSERT INTO log_page (`PAGE_ID`,`PAGE_CONTENT`,`CTIME`,`CUSER`,OPERATION) VALUES ('$[PAGE_ID]','$[LOG_CONTENT]',NOW(),'$[LOGUSER]',3)</sql> 
+  </property>
+  
+  <!-- 查询本地file表内容 -->
+  <property index="file_push!selectLocal" explain="查询本地file表内容" connect="web_R">  
+    <sql>select * from file where status=1 and $[_autoSearch]</sql> 
+  </property>  
+  
+  <!-- 查询线上file表内容 -->
+  <property index="file_push!selectOnline" explain="查询线上file表内容" connect="web_online">  
+    <sql>select * from file where status=1 and $[_autoSearch]</sql> 
+  </property>
+  
+  <!-- 新增线上file表内容 -->
+  <property index="file_push!insert" explain="线上file插入" connect="web_online" safe-args="*">  
+    <sql>
+    INSERT INTO file(`file_name`,`file_path`,`file_type`,`target_page`,`description`,`status`,`ctime`,`cuser`,`file_content`,`file_order`)
+     VALUES('$[FILE_NAME]','$[FILE_PATH]','$[FILE_TYPE]','$[TARGET_PAGE]','$[DESCRIPTION]','$[STATUS]','$[CTIME]','$[CUSER]',
+    '$[FILE_CONTENT]','$[FILE_ORDER]')
+	</sql>
+  </property>
+  
+  <!-- 修改线上file表内容 -->
+  <property index="file_push!update" explain="线上file内容修改" connect="web_online" safe-args="*">
+    <sql>
+    UPDATE file SET `FILE_NAME`='$[FILE_NAME]',`FILE_PATH`='$[FILE_PATH]',`FILE_TYPE`='$[FILE_TYPE]',`TARGET_PAGE`='$[TARGET_PAGE]',
+    `DESCRIPTION`='$[DESCRIPTION]',`STATUS`='$[STATUS]',`CTIME`='$[CTIME]',`CUSER`='$[CUSER]',`FILE_CONTENT`='$[FILE_CONTENT]',
+    `FILE_ORDER`='$[FILE_ORDER]' WHERE `FILE_ID`='$[FILE_ID]'
+  	</sql>  
+    <sql>INSERT INTO log_file (`FILE_ID`,`FILE_CONTENT`,`CTIME`,`CUSER`,OPERATION) VALUES ('$[FILE_ID]','$[LOG_CONTENT]',NOW(),'$[LOGUSER]',3)</sql> 
+  </property>
+  
+  <!-- 查询本地modular_type表内容 -->
+  <property index="modular_type_push!selectLocal" explain="查询本地modular_type表内容" connect="web_R">  
+    <sql>select * from modular_type where status=1 and $[_autoSearch]</sql> 
+  </property>  
+  
+  <!-- 查询线上modular_type表内容 -->
+  <property index="modular_type_push!selectOnline" explain="查询线上modular_type表内容" connect="web_online">  
+    <sql>select * from modular_type where status=1 and $[_autoSearch]</sql> 
+  </property>
+  
+  <!-- 新增线上modular_type表内容 -->
+  <property index="modular_type_push!insert" explain="线上modular_type插入" connect="web_online" safe-args="*">  
+    <sql>
+    INSERT INTO modular_type(`modular_type_name`,`modular_path`,`status`,`ctime`,`cuser`,`description`,`page_type_id`)
+     VALUES('$[MODULAR_TYPE_NAME]','$[MODULAR_PATH]','$[STATUS]','$[CTIME]','$[CUSER]','$[DESCRIPTION]',
+  							'$[PAGE_TYPE_ID]')
+	</sql>
+  </property>
+  
+  <!-- 修改线上modular_type表内容 -->
+  <property index="modular_type_push!update" explain="线上modular_type内容修改" connect="web_online" safe-args="*">
+    <sql>
+    UPDATE modular_type SET `MODULAR_TYPE_NAME`='$[MODULAR_TYPE_NAME]',`MODULAR_PATH`='$[MODULAR_PATH]',`STATUS`='$[STATUS]',`CTIME`='$[CTIME]',
+    `CUSER`='$[CUSER]',`DESCRIPTION`='$[DESCRIPTION]',`PAGE_TYPE_ID`='$[PAGE_TYPE_ID]'
+  	 WHERE `MODULAR_TYPE_ID`='$[MODULAR_TYPE_ID]'
+  	</sql>
+  </property>
+</SQLConfig>

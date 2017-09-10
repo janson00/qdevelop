@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<SQLConfig> 
+  <property index="page_test!select" explain="page查询" connect="web_R" afterRun="com.lelife.oa.formatter.FormatPageParam" cacheAble="false">
+    <formatter> 
+      <table-cache table="qd_jaas_user" targetKey="cuser" fields="name"></table-cache>  
+      <key-value-formatter cacheIndex="page_type_options!select" cacheKey="page_type_id" cacheValue="page_type_name" targetKey="page_type" targetName="page_type_name"></key-value-formatter>  
+      <key-value-formatter cacheIndex="page_type_options!select" cacheKey="page_type_id" cacheValue="page_type_code" targetKey="page_type" targetName="page_type_code"></key-value-formatter> 
+    </formatter>  
+    <sql>select `page_id`,`page_id` as id,`page_name`,`page_target`,`parent_id`,`parent_id` as _parentId,`page_template`,`page_url`,`page_level`,`description`,`ctime`,`cuser`,`page_display`,`page_breadcrumb`,`page_order`,`page_type` from page where $[_autoSearch]</sql> 
+  </property> 
+  <!-- 会员专区  导航 -->
+  <property index="page_member!select" explain="pageMember查询" connect="web_R" afterRun="com.lelife.oa.formatter.FormatPageParam"> 
+    <formatter> 
+      <table-cache table="qd_jaas_user" targetKey="cuser" fields="name"></table-cache>  
+      <key-value-formatter cacheIndex="page_type_options!select" cacheKey="page_type_id" cacheValue="page_type_name" targetKey="page_type" targetName="page_type_name"></key-value-formatter>  
+      <key-value-formatter cacheIndex="page_type_options!select" cacheKey="page_type_id" cacheValue="page_type_code" targetKey="page_type" targetName="page_type_code"></key-value-formatter> 
+    </formatter>  
+    <sql>select `page_id`,`page_id` as id,`page_name`,`page_target`,`parent_id`,`parent_id` as _parentId,`page_template`,`page_url`,`page_level`,`description`,`ctime`,`cuser`,`page_display`,`page_breadcrumb`,`page_order`,`page_type` from page where page_id=248 or parent_id=248 and $[_autoSearch]</sql> 
+  </property>  
+  
+  <property index="page!select" explain="page查询" connect="web_R"> 
+    <formatter> 
+      <table-cache table="qd_jaas_user" targetKey="cuser" fields="name"></table-cache> 
+    </formatter>  
+    <sql>select `page_id`,`page_id` as id,`page_name`,`parent_id`,`page_template`,`page_url`,`page_level`,`description`,`ctime`,`cuser`,`page_display`,`page_breadcrumb`,`page_order`,`page_type` from page where $[_autoSearch]</sql> 
+  </property>  
+  
+   <!-- 用户中心 树菜单 -->
+  <property index="userCenter!select" explain="page查询" connect="web_R"> 
+    <formatter> 
+      <table-cache table="qd_jaas_user" targetKey="cuser" fields="name"></table-cache> 
+    </formatter>  
+    <sql>select `page_id`,`page_id` as id,`page_name`,`parent_id`,`page_template`,`page_url`,`page_level`,`description`,`ctime`,`cuser`,`page_display`,`page_breadcrumb`,`page_order`,`page_type`,`page_target` from page where $[_autoSearch]</sql> 
+  </property> 
+  
+  <property index="page_test!insert" explain="page插入" connect="web" beforeRun="com.lelife.oa.formatter.CreateHtml" afterRun="com.lelife.oa.formatter.ClearPageCache" safe-args="*"> 
+    <param-formatter> 
+      <param key="uid" value="${user.uid}"></param> 
+    </param-formatter>  
+    <sql>insert into page(`page_name`,`parent_id`,`page_template`,`page_url`,`page_level`,`description`,`ctime`,`cuser`,`status`,`page_display`,`page_breadcrumb`,`page_order`,`page_type`,`page_target`,`page_content`) values ('$[page_name]',$[parent_id],'$[page_url]','$[page_url]',$[page_level],'$[description]',NOW(),$[uid],1,$[page_display],$[page_breadcrumb],'$[page_order]',$[page_type],'$[page_target]','$[page_content]')</sql>  
+    <!-- 
+    <sql>update page set `page_content`='$[page_content]' where page_id=SEQID.NEXT[page,page_id]</sql> 
+     -->
+  </property>  
+  <property index="page_test!update" explain="page修改" connect="web" afterRun="com.lelife.oa.formatter.ClearPageCache"> 
+    <param-formatter> 
+      <param key="uid" value="${user.uid}"></param> 
+    </param-formatter>  
+    <sql>update page set `page_name`='$[page_name]',`description`='$[description]',`cuser`=$[uid],`page_display`='$[page_display]',`page_breadcrumb`='$[page_breadcrumb]',`page_order`='$[page_order]',`page_type`='$[page_type]',`page_target`='$[page_target]' where page_id=$[page_id]</sql> 
+  </property>  
+  <property index="page_test!delete" explain="page删除" connect="web" afterRun="com.lelife.oa.formatter.ClearPageCache"> 
+    <sql>update page set status = 2 where page_id=$[page_id]</sql> 
+  </property>  
+  <property index="page_content!update" explain="page_content修改" connect="web" safe-args="*" beforeRun="com.lelife.oa.formatter.PageAuth"> 
+  	<param-formatter> 
+      <param key="uid" value="${user.uid}"></param> 
+    </param-formatter> 
+    <sql>update page set `page_content`='$[page_content]' ,ctime = NOW(), cuser = $[uid]  where page_id=$[page_id]</sql>  
+    <sql>insert into log_page (`page_id`,`page_content`,`ctime`,`cuser`,operation) values ($[page_id],'$[page_content]',NOW(),$[uid],3)</sql> 
+  </property>  
+  <property index="page_content!select" explain="page_content查询" connect="web_R" cacheAble="false"> 
+    <sql>select `page_url`, `page_template`,`page_content` from page where $[_autoSearch]</sql> 
+  </property> 
+</SQLConfig>

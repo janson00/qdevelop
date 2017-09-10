@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- xml中常用转义符写法： （ & &amp; ）（ < &lt; ） （ > &gt; ） -->
+<SQLConfig>
+	<property index="products-search-action" connect="default"
+		explain="products查询" is-convert-null="true">
+		<formatter>
+			<left-join-multi-formatter result-key="pid"
+				left-join="products_log-search-action" on-key="pid" columns="action,ctime as ct" />
+		</formatter>
+		<sql>select * from products where {DYNAMIC}
+		</sql>
+	</property>
+
+	<property index="products-query-action" connect="default"
+		explain="products查询">
+		<!-- <formatter> <prop-formatter result-key="status" prop-key="products_status_dict"/> 
+			<date-formatter result-key="ctime" date-style="yyyy-MM-dd HH:mm:ss"/> </formatter> -->
+		<sql>select dg,phone,price,store,status,product_name,pid,ctime from
+			products where
+			pid=$[pid] and dg=$[dg] and phone='$[phone]' and
+			price=$[price]
+			and store=$[store] and status=$[status] and
+			product_name='$[product_name]'
+			and ctime=$[ctime]
+		</sql>
+	</property>
+
+	<property index="products-add-action" connect="default"
+		explain="products插入">
+		<sql repeat="" repeat-concat="^" fetch-zero-err="true">
+			insert into
+			products(dg,phone,price,store,status,product_name,ctime) value
+			($[dg],'$[phone]',$[price],$[store],$[status],'$[product_name]',$[ctime])
+		</sql>
+		<!--<sql>insert other_table(pid) value({products.LAST_INSERT_ID})</sql> -->
+	</property>
+
+	<property index="products-store-action" connect="default"
+		explain="products修改">
+		<sql repeat="" repeat-concat="^" fetch-zero-err="true" is-full-param="false">
+			update products
+			set
+			dg=$[dg],phone='$[phone]',price=$[price],store=$[store],status=$[status],product_name='$[product_name]',ctime=$[ctime]
+			where pid=$[pid]
+		</sql>
+	</property>
+
+	<!-- <property index="products-remove-action" connect="default" explain="products删除"> 
+		<sql repeat="" repeat-concat="^" fetch-zero-err="true"> delete from products 
+		where pid=$[pid] </sql> </property> -->
+</SQLConfig>

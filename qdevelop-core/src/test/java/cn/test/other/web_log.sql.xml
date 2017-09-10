@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<SQLConfig>
+<table-caches>
+    <qd_jaas_user unikey="id" connect="default"></qd_jaas_user>  
+    <page unikey="page_id" connect="web"></page>
+    <file unikey="file_id" connect="web"></file> 
+    <modular unikey="modular_id" connect="web"></modular> 
+</table-caches>
+  <!-- 查询模块的版本日志 -->
+  <property index="log_modular!select" explain="log_modular查询" connect="web_R" cacheAble="false"> 
+    <sql>select modular_log_id,modular_id,modular_content,ctime,cuser,operation 
+    from log_modular 
+    where $[_autoSearch]</sql>
+    <formatter> 
+      <date-formatter targetKey="ctime" style="yyyy-MM-dd HH:mm:ss"></date-formatter>  
+      <table-cache table="qd_jaas_user" targetKey="cuser" fields="name|username"></table-cache>
+      <table-cache table="modular" targetKey="modular_id" fields="status,modular_type,modular_name,modular_func"></table-cache>  
+    </formatter> 
+  </property>
+  
+  <!-- 根据pageid查询page的版本日志 -->
+  <property index="log_page!select" explain="log_page查询" connect="web_R" cacheAble="false"> 
+    <sql>select page_log_id,page_id,page_content,ctime,cuser,operation 
+    from log_page 
+    where $[_autoSearch]</sql>
+    <formatter> 
+      <date-formatter targetKey="ctime" style="yyyy-MM-dd HH:mm:ss"></date-formatter>  
+      <table-cache table="qd_jaas_user" targetKey="cuser" fields="name|username"></table-cache>
+      <table-cache table="page" targetKey="page_id" fields="page_name,page_url"></table-cache>  
+    </formatter> 
+  </property>
+  
+  <!-- 查询file的版本日志 -->
+  <property index="log_file!select" explain="log_file查询" connect="web_R" cacheAble="false"> 
+    <sql>select file_log_id,file_id,file_content,ctime,cuser,operation 
+    from log_file 
+    where $[_autoSearch]</sql>
+    <formatter> 
+      <date-formatter targetKey="ctime" style="yyyy-MM-dd HH:mm:ss"></date-formatter>  
+      <table-cache table="qd_jaas_user" targetKey="cuser" fields="name|username"></table-cache>
+      <table-cache table="file" targetKey="file_id" fields="file_name,file_path,file_type"></table-cache>  
+    </formatter> 
+  </property>
+</SQLConfig>

@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<SQLConfig> 
+  <table-caches>
+    <qd_jaas_user unikey="id" connect="default"></qd_jaas_user>
+  </table-caches> 
+</SQLConfig>

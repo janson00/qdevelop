@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<SQLConfig> 
+  <property index="modular_type_test!select" explain="modular_type_test查询" connect="web_R"> 
+    <formatter> 
+      <table-cache table="qd_jaas_user" targetKey="cuser" fields="name"></table-cache>  
+      <key-value-formatter cacheIndex="page_type_options!select" cacheKey="page_type_id" cacheValue="page_type_name" targetKey="page_type_id" targetName="page_type_name"></key-value-formatter> 
+    </formatter>  
+    <sql>select `modular_type_id`,`modular_type_name`,`modular_path`,`description`,`page_type_id`,`status`,`ctime`,`cuser` from modular_type where $[_autoSearch]</sql> 
+  </property>  
+  <property index="modular_type_test!selectType" explain="modular_type_test下拉选项" connect="web_R"> 
+    <sql>select `modular_type_id`,`modular_type_name` from modular_type where $[_autoSearch]</sql> 
+  </property>  
+  <property index="modular_type_test!insert" explain="modular_type_test插入" uniKey="modular_type_id" connect="web" afterRun="com.lelife.oa.formatter.ReloadAndCreateFile"> 
+    <param-formatter> 
+      <param key="uid" value="${user.uid}"></param> 
+    </param-formatter>  
+    <sql>insert into modular_type(`modular_type_name`,`modular_path`,`status`,`ctime`,`cuser`,`description`,`page_type_id`) values ('$[modular_type_name]','$[modular_path]',1,NOW(),$[cuser],'$[description]',$[page_type_id])</sql> 
+  </property>  
+  <property index="modular_type_test!update" explain="modular_type_test修改" uniKey="modular_type_id" connect="web" afterRun="com.lelife.oa.formatter.IncludeFileReload"> 
+    <param-formatter> 
+      <param key="uid" value="${user.uid}"></param> 
+    </param-formatter>  
+    <sql>update modular_type set `page_type_id` = $[page_type_id], `modular_type_id`=$[modular_type_id],`modular_type`=$[modular_type],`modular_type_name`='$[modular_type_name]',`modular_path`='$[modular_path]',`description`='$[description]',`status`=$[status],`ctime`=NOW(),`cuser`=$[cuser] where modular_type_id=$[modular_type_id]</sql> 
+  </property>  
+  <property index="modular_type_test!delete" explain="modular_type_test删除" uniKey="modular_type_id" connect="web" afterRun="com.lelife.oa.formatter.IncludeFileReload"> 
+    <sql>delete from modular_type where modular_type_id=$[modular_type_id]</sql> 
+  </property> 
+</SQLConfig>

@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<SQLConfig> 
+  <property index="url_redirect_web!select" explain="url_redirect查询" connect="web_R" cacheAble="false"> 
+    <sql>select `redirect_url`,`source_url` from url_redirect where status = 1</sql> 
+  </property> 
+  <property index="url_redirect_oa!select" explain="url_redirect查询" connect="web_R"> 
+    <formatter> 
+      <table-cache table="qd_jaas_user" targetKey="cuser" fields="name"></table-cache>
+    </formatter>
+    <sql>select `url_redirect_id`,`redirect_url`,`source_url`,`status`,`ctime`,`cuser` from url_redirect where status = 1</sql> 
+  </property>  
+  <property index="url_redirect_oa!insert" explain="url_redirect添加" connect="web"> 
+    <param-formatter> 
+      <param key="uid" value="${user.uid}"></param> 
+    </param-formatter> 
+    <sql>insert into url_redirect(`source_url`,`redirect_url`,`status`,`ctime`,`cuser`) values ('$[source_url]','$[redirect_url]',1,NOW(),$[uid])</sql> 
+  </property>
+  <property index="url_redirect_oa!update" explain="url_redirect修改" connect="web"> 
+    <param-formatter> 
+      <param key="uid" value="${user.uid}"></param> 
+    </param-formatter> 
+    <sql>update url_redirect set `source_url`='$[source_url]',`redirect_url`='$[redirect_url]',`ctime`=NOW(),`cuser`=$[uid] where `url_redirect_id`='$[url_redirect_id]'</sql> 
+  </property>
+  <property index="url_redirect_oa!detele" explain="url_redirect软删除" connect="web"> 
+    <sql>update url_redirect set `status`=0,`ctime`=NOW(),`cuser`=$[uid] where `url_redirect_id`='$[url_redirect_id]'</sql> 
+  </property>
+  
+</SQLConfig>
+<!--特殊符号转义表 &lt; < 小于号   &gt; > 大于号-->

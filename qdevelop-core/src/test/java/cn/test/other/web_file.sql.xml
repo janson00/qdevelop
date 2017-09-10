@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<SQLConfig> 
+  <property index="file_test!select" explain="file_test查询" connect="web_R"> 
+    <formatter> 
+      <table-cache table="qd_jaas_user" targetKey="cuser" fields="name"></table-cache>  
+      <key-value-formatter cacheIndex="page_type_options!select" cacheKey="page_type_code" cacheValue="page_type_name" targetKey="target_page" targetName="page_type_name"></key-value-formatter> 
+    </formatter>  
+    <sql>select `file_id`,`file_name`,`file_path`,`file_type`,`target_page`,`file_order`,`description`,`isCompress`,`status`,`ctime`,`cuser` from file where $[_autoSearch] and status=1</sql>
+  </property>  
+  <property index="file_test!insert" explain="file_test插入" uniKey="file_id" connect="web" beforeRun="com.lelife.oa.formatter.CreateFile" afterRun="com.lelife.oa.formatter.IncludeFileReload" safe-args="*"> 
+    <param-formatter> 
+      <param key="uid" value="${user.uid}"></param> 
+    </param-formatter>  
+    <sql>insert into file(`file_name`,`file_path`,`file_type`,`target_page`,`file_order`,`description`,`isCompress`,`status`,`ctime`,`cuser`,`file_content`,`include_position`) values ('$[file_name]','$[file_path]',$[file_type],'$[target_page]',$[file_order],'$[description]','$[isCompress]',1,NOW(),$[uid],'$[file_content]','$[include_position]')</sql>
+    <!-- 
+    <sql>update file set `file_content`='$[file_content]' where file_id=SEQID.NEXT[file,file_id]</sql> 
+     -->
+  </property>  
+  <property index="file_test!update" explain="file_test修改" uniKey="file_id" connect="web" cacheAble="false" afterRun="com.lelife.oa.formatter.IncludeFileReload">
+    <param-formatter> 
+      <param key="uid" value="${user.uid}"></param> 
+    </param-formatter>  
+    <sql>update file set `file_name`='$[file_name]',`description`='$[description]',`isCompress`='$[isCompress]',`ctime`=NOW(),`file_name`='$[file_name]',`target_page`='$[target_page]',`file_order`='$[file_order]',`include_position`='$[include_position]' where file_id=$[file_id]</sql>
+  </property>  
+  <property index="file_test!delete" explain="file_test删除" uniKey="file_id" connect="web" afterRun="com.lelife.oa.formatter.IncludeFileReload"> 
+    <sql>update file set `status`=2 where file_id=$[file_id]</sql> 
+  </property>  
+  <property index="file_content!update" explain="file_contet修改" uniKey="file_id" connect="web" safe-args="*"  beforeRun="com.lelife.oa.formatter.FileAuth"> 
+    <param-formatter> 
+      <param key="uid" value="${user.uid}"></param> 
+    </param-formatter>  
+    <sql>update file set `file_content`='$[file_content]', ctime = NOW(), cuser = $[uid]  where file_id=$[file_id]</sql>  
+    <sql>insert into log_file (`file_id`,`file_content`,`ctime`,`cuser`,operation) values ($[file_id],'$[file_content]',NOW(),$[uid],3)</sql> 
+  </property>  
+  <property index="file_content!select" explain="file_test查询" connect="web_R" cacheAble="false"> 
+    <sql>select `file_type`,`file_path`,`file_content`,`iscompress` from file where $[_autoSearch]</sql>
+  </property> 
+</SQLConfig>

@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<SQLConfig> 
+  <property index="modular_test!select" explain="modular_test查询" connect="web_R" cacheAble="false"> 
+    <formatter> 
+      <table-cache table="qd_jaas_user" targetKey="cuser" fields="name"></table-cache>  
+      <table-cache table="qd_jaas_user" targetKey="modular_editor" fields="name|editor"></table-cache> 
+    </formatter>  
+    <sql>select m.`modular_id`,m.`modular_name`,m.`modular_type`,m.`modular_func`,m.`description`,m.`status`,m.`modular_description`,m.`page_type`,mt.`modular_type_name`,m.`modular_image`,m.`ctime`,m.`cuser` , m.`modular_edit_status`,m.`modular_editor` from modular m left join modular_type mt on m.modular_type = mt.modular_type_id where $[_autoSearch] order by m.`ctime` desc</sql> 
+  </property>  
+  <property index="modular_test!insert" explain="modular_test插入" uniKey="modular_id" connect="web" beforeRun="com.lelife.oa.formatter.CreateModular"  afterRun="com.lelife.oa.formatter.IncludeFileReload" safe-args="*"> 
+    <param-formatter> 
+      <param key="uid" value="${user.uid}"></param> 
+    </param-formatter>  
+    <sql>insert into modular(`modular_name`,`modular_type`,`modular_content`,`modular_func`,`modular_image`,`description`,`modular_description`,`status`,`ctime`,`cuser`,`page_type`) values ('$[modular_name]',$[modular_type],'$[modular_content]','$[modular_func]','$[modular_image]','$[description]','$[modular_description]',0,NOW(),$[uid],$[page_type])</sql> 
+  </property>  
+  <property index="modular_test!update" explain="modular_test修改" uniKey="modular_id" connect="web" afterRun="com.lelife.oa.formatter.ReloadModular"> 
+    <param-formatter> 
+      <param key="uid" value="${user.uid}"></param> 
+    </param-formatter>  
+    <sql>update modular set `modular_id`=$[modular_id],`modular_name`='$[modular_name]',`modular_type`=$[modular_type],`modular_func`='$[modular_func]',`modular_image`='$[modular_image]',`description`='$[description]',`modular_description`='$[modular_description]',`ctime`=NOW(),`cuser`=$[cuser],`page_type`='$[page_type]' where modular_id=$[modular_id]</sql> 
+  </property>  
+  <property index="modular_test!delete" explain="modular_test删除" uniKey="modular_id" connect="web"> 
+    <!-- <sql>delete from modular_test where modular_id=$[modular_id] </sql>  -->  
+    <sql>update modular set `status`=2 where modular_id=$[modular_id]</sql> 
+  </property>  
+  <property index="modular_path!select" explain="modular_path查询" connect="web_R"> 
+    <sql>select m.`modular_id`,m.`modular_type`,m.`modular_func`,m.`status`, mt.`modular_path`, mt.page_type_id from modular m left join modular_type mt on m.modular_type = mt.modular_type_id left join page_type pt on mt.page_type_id = pt.page_type_id where $[_autoSearch]</sql> 
+  </property>  
+  <property index="modular_content!select" explain="modular_content查询" connect="web_R" cacheAble="false"> 
+    <sql>select m.`modular_id`,m.`modular_content`,m.`modular_type`, mt.`modular_path` from modular m left join modular_type mt on m.modular_type = mt.modular_type_id where $[_autoSearch]</sql> 
+  </property>  
+  <property index="modular_content!update" explain="modular_content修改" connect="web" safe-args="*"  beforeRun="com.lelife.oa.formatter.ModularAuth"> 
+  	<param-formatter> 
+      <param key="uid" value="${user.uid}"></param> 
+    </param-formatter> 
+    <sql>update modular set `modular_content` = '$[modular_content]',`status` = $[status], ctime = NOW(), cuser = $[uid] where modular_id = $[modular_id]</sql>  
+    <sql>insert into log_modular (`modular_id`,`modular_content`,`ctime`,`cuser`,operation) values ($[modular_id],'$[modular_content]',NOW(),$[uid],3)</sql> 
+  </property>  
+  <property index="modular_ImgPath!update" explain="modular_test修改" uniKey="modular_id" connect="web" afterRun="com.lelife.oa.formatter.IncludeFileReload"> 
+    <sql>update modular set `modular_image`='$[modular_image]' where modular_id=$[modular_id]</sql> 
+  </property>  
+  <property index="modular_editor!update" explain="modular_编辑状态" connect="web"> 
+    <param-formatter> 
+      <param key="uid" value="${user.uid}"></param> 
+    </param-formatter>  
+    <sql>update modular set `modular_edit_status`=$[editStatus], `modular_editor`=$[uid] where modular_id=$[modular_id]</sql> 
+  </property>  
+  <property index="modular_editor!select" explain="modular_编辑状态查询" connect="web_R" cacheAble="false"> 
+    <param-formatter> 
+      <param key="uid" value="${user.uid}"></param> 
+    </param-formatter>  
+    <sql>select `modular_edit_status`, `modular_editor` from modular where modular_id=$[modular_id]</sql> 
+  </property> 
+  
+  <!-- 日志列表查询 -->
+   <property index="modular_Log_list!select" explain="modular_编辑状态查询" connect="web_R"> 
+    <formatter> 
+      <table-cache table="qd_jaas_user" targetKey="cuser" fields="name"></table-cache>  
+    </formatter>  
+    <sql>select `modular_log_id`,`modular_name`,`modular_id`, `ctime`,`cuser`,`status` from log_modular  where $[_autoSearch]</sql> 
+  </property>
+</SQLConfig>

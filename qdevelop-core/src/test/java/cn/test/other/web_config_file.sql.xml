@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<SQLConfig> 
+<!-- 文件列表查询 -->
+ <property index="config_file_adv!select" explain="config_file查询" connect="web_R"> 
+    <formatter> 
+      <table-cache table="qd_jaas_user" targetKey="cuser" fields="name"></table-cache>  
+    </formatter>  
+    <sql>
+              select `config_file_id`,`config_file_path`,`config_file_name`,`config_file_desc`,`config_file_type`,`ctime`,`cuser` 
+              from config_files
+              where $[_autoSearch] and status=1
+    </sql> 
+  </property>  
+  
+  <!-- 文件内容查询 -->
+  <property index="config_file_content_adv!select" explain="config_file_content_adv查询" connect="web_R"> 
+    <sql>
+		    select `config_file_id`,`config_file_path`,`config_file_content`,`config_file_type`  
+		     from config_files
+		    where $[_autoSearch] and status=1
+    </sql> 
+  </property>  
+  
+  <!--  文件新增 -->
+  
+  <property index="config_file_adv!insert" explain="config_file_adv!insert查询" connect="web"  safe-args="*" beforeRun="com.lelife.oa.formatter.CreateConfigFile"> 
+    <param-formatter> 
+      <param key="uid" value="${user.uid}"></param> 
+    </param-formatter>  
+    <sql>
+             insert into config_files(`config_file_path`,`config_file_name`,`config_file_desc`,`status`,`config_file_type`,`ctime`,`cuser`, `config_file_content`) 
+             values ('$[config_file_path]','$[config_file_name]','$[config_file_desc]',1,$[config_file_type],NOW(),$[uid],'$[config_file_content]')
+    </sql> 
+  </property> 
+  
+  <!--  文件修改 -->
+  <property index="config_file_adv!update" explain="config_file_adv!update查询" connect="web"  safe-args="*"> 
+    <sql>
+             update config_files set `config_file_path` = '$[config_file_path]',`config_file_name` = '$[config_file_name]',`config_file_desc` = '$[config_file_desc]'
+             where  config_file_id=$[config_file_id]
+    </sql> 
+  </property> 
+  
+   <!--  文件删除 -->
+  <property index="config_file_adv!delete" explain="config_file_adv!delete查询" connect="web"  safe-args="*"  beforeRun="com.lelife.oa.formatter.DeleteConfigFile"> 
+    <sql>
+             update config_files set `status` = 2
+             where config_file_id=$[config_file_id]
+    </sql> 
+  </property>
+  
+  
+   <!--  文件内容修改 -->
+  <property index="config_file_content_adv!update" explain="config_file_content_adv!update查询" connect="web"  safe-args="*"> 
+    <param-formatter> 
+      <param key="uid" value="${user.uid}"></param> 
+    </param-formatter>  
+    <sql>
+             update config_files set `config_file_content` = '$[config_file_content]',cuser = $[uid],ctime = NOW()
+             where config_file_id=$[config_file_id]
+    </sql>
+    <sql>
+             insert into log_config_files(`config_file_id`, `config_file_content`,`ctime`,`cuser`) 
+             values ('$[config_file_id]','$[config_file_content]',NOW(),$[uid])
+    </sql>  
+  </property> 
+  
+  <property index="log_config_file!select" explain="config_file_log查询" connect="web_R"> 
+    <formatter> 
+      <table-cache table="qd_jaas_user" targetKey="cuser" fields="name"></table-cache>  
+    </formatter>  
+    <sql>
+              select log_config_file_id,config_file_id,config_file_path,config_file_content,status,cuser,ctime
+              from log_config_files
+              where $[_autoSearch] 
+    </sql> 
+  </property> 
+</SQLConfig>

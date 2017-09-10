@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<SQLConfig>
+   <!-- web_publish发布列表查询 -->
+  <property index="web_publish!select" explain="web_publish查询" connect="web_R" cacheAble="false"> 
+    <sql>select * from web_publish where $[_autoSearch]</sql>  
+    <formatter> 
+      <date-formatter targetKey="ctime,checktime" style="yyyy-MM-dd HH:mm:ss"></date-formatter>
+      <table-cache table="qd_jaas_user" targetKey="cuser" fields="name|cusername"></table-cache>
+      <table-cache table="qd_jaas_user" targetKey="checkuser" fields="name|checkusername"></table-cache>
+    </formatter> 
+  </property> 
+  
+  <!-- web_publish发布新增 -->
+  <property index="web_publish" explain="web_publish新增" connect="web" >
+    <sql>insert into web_publish(`operation_json`,`publish_desc`,`message`,`log_message`,`cuser`,`ctime`,`status`,`effect_file`) 
+    	values('$[operation_json]',concat('[','$[uname]',' ',NOW(),']','$[message]'),concat('[','$[uname]',' ',NOW(),']','$[message]'),concat('[','$[uname]',' ',NOW(),']','$[log_message]'),'$[cuser]',now(),0,'$[effect_file]')</sql>
+  </property>
+  
+   <!-- web_publish发布修改 -->
+  <property index="web_publish!update" explain="web_publish修改" connect="web" >
+  <param-formatter> 
+      <param key="uid" value="${user.uid}"></param>
+      <param key="uname" value="${user.name}"></param> 
+    </param-formatter> 
+    <sql>update web_publish set message=concat('[','$[uname]',' ',NOW(),']','$[message]'),log_message=concat('[','$[uname]',' ',NOW(),']','$[log_message]'),status='$[status]',ctime=now(),cuser=$[uid] where web_publish_id='$[web_publish_id]'</sql>
+  </property>
+  
+  <!-- web_publish发布审核 -->
+  <property index="web_publish!check" explain="web_publish审核" connect="web" >
+  <param-formatter> 
+      <param key="uid" value="${user.uid}"></param>
+      <param key="uname" value="${user.name}"></param>  
+    </param-formatter> 
+    <sql>update web_publish set message=concat('[','$[uname]',' ',NOW(),']','$[message]'),log_message=concat('[','$[uname]',' ',NOW(),']','$[log_message]'),status='$[status]',checktime=now(),checkuser=$[uid]
+     where web_publish_id='$[web_publish_id]'</sql>
+  </property>
+</SQLConfig>
