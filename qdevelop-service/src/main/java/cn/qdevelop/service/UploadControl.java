@@ -4,13 +4,13 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.Map;
 
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
-import javax.servlet.annotation.MultipartConfig;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -33,20 +33,21 @@ public abstract class UploadControl extends HttpServlet  implements IService{
 	private static final long serialVersionUID = -726532824668251561L;
 	private ThreadLocal<HttpServletResponse> httpServletResponse = new ThreadLocal<HttpServletResponse>();
 	private ThreadLocal<HttpServletRequest> httpServletRequest = new ThreadLocal<HttpServletRequest>();
-	private static MultipartConfig config = UploadControl.class.getAnnotation(MultipartConfig.class);
+//	private static MultipartConfig config = UploadControl.class.getAnnotation(MultipartConfig.class);
 	private String[] checkColumns,ignoreColumns;
+	private ThreadLocal<IOutput> out  = new ThreadLocal<IOutput>();
 
 	public void init(ServletConfig config)throws ServletException{  
 		super.init(config);  
 		String columns = config.getInitParameter(IService.INIT_VALID_REQUIRED);
 		if(columns!=null){
-			checkColumns = columns.split(",");
+			checkColumns=(columns.split(","));
 		}
 		String ignore = config.getInitParameter(IService.INIT_VALID_IGNORE);
 		if(ignore!=null){
-			ignoreColumns = (ignore+",file").split(",");
+			ignoreColumns=((ignore+",file").split(","));
 		}else{
-			ignoreColumns = new String[]{"file"};
+			ignoreColumns=(new String[]{"file"});
 		}
 	}
 
@@ -87,65 +88,52 @@ public abstract class UploadControl extends HttpServlet  implements IService{
 	 */
 	protected abstract String execute(Map<String, String> args,String[] storeName,IOutput output);
 
-	private IOutput out ;
+
 	protected void doPost(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {	
 		httpServletResponse.set(response);
 		httpServletRequest.set(request);
-		out = QServiceUitls.getOutput(request, response);
-		if(!out.isError()){
+		out.set(QServiceUitls.getOutput(request, response));
+		if(!out.get().isError()){
 			Map<String,String> args = QServiceUitls.getParameters(request);
 			init(args);
-			if(new QServiceUitls().validParameters(args,out,checkColumns,ignoreColumns)){
+			if(new QServiceUitls().validParameters(args,out.get(),checkColumns,ignoreColumns)){
 				Collection<Part> parts = request.getParts();
-				String[] storeNames = new String[parts.size()];
-				int idx = 0;
+//				String[] storeNames = new String[parts.size()];
+				ArrayList<String> storeNames = new ArrayList<String>();
 				for(Part part : parts){
-					try{
-						part = request.getPart("file");//获取part用于处理上传的文件
-					}catch(IllegalStateException ise){
-						//上传的单个文件超出maxFileSize或者上传的总的数据量超出maxRequestSize时会抛出此异常
-						if(config.maxRequestSize() == -1L)//如果注解中没设置此项，那就是单个文件超出限制
-							log.error("单个文件超限");
-						else if(config.maxFileSize() == -1L)//如果注解中没有设置单个文件最大限制，那就是总数据量超限。
-							log.error("总数据量超限");
-						else
-							log.error("Error");
-					}
-
-					if(part == null)
-						return;
-
-					String header = part.getHeader("content-disposition");
-					String fileName = getFileName(header);
-					String[] allowType = setFileAllowType();
-					if(allowType!=null){
-						String type = fileName.substring(fileName.lastIndexOf("."));
-						if(!ArrayUtils.contains(allowType, type)){
-							part.delete();
-							out.setErrMsg("上传文件格式不在允许范围之内，允许格式为：",ArrayUtils.toString(allowType));
-							QServiceUitls.output(out.toString(),RETURN_OUT_JSON,request,response);
-							return;
+					String fileName = this.getFileName(part.getHeader("Content-Disposition"));
+					System.out.println(fileName);
+					if(null!=fileName && !(fileName).trim().equals("")){
+						String[] allowType = setFileAllowType();
+						if(allowType!=null){
+							String type = fileName.substring(fileName.lastIndexOf("."));
+							if(!ArrayUtils.contains(allowType, type)){
+								part.delete();
+								out.get().setErrMsg("上传文件格式不在允许范围之内，允许格式为：",ArrayUtils.toString(allowType));
+								QServiceUitls.output(out.get().toString(),RETURN_OUT_JSON,request,response);
+								return;
+							}
 						}
-					}
 
-					String STORE_ROOT = setFileStoreRootPath();
-					if(STORE_ROOT == null){
-						STORE_ROOT = "";
+						String STORE_ROOT = setFileStoreRootPath();
+						if(STORE_ROOT == null){
+							STORE_ROOT = "";
+						}
+						String storeName = getUploadFileSaveName(fileName,QServiceUitls.getCookie("sid",request),STORE_ROOT);
+						if(disposeFile(part.getInputStream(),fileName,storeName,part.getSize())){
+							checkPath(storeName,STORE_ROOT);
+							part.write(STORE_ROOT+storeName);
+							log.info("store file: "+STORE_ROOT+storeName);
+						}
+						storeNames.add(storeName);
+						part.delete();
 					}
-					String storeName = getUploadFileSaveName(fileName,QServiceUitls.getCookie("sid",request),STORE_ROOT);
-					if(disposeFile(part.getInputStream(),fileName,storeName,part.getSize())){
-						checkPath(storeName,STORE_ROOT);
-						part.write(STORE_ROOT+storeName);
-						log.info("store file: "+STORE_ROOT+storeName);
-					}
-					storeNames[idx++] = storeName;
-					part.delete();
 				}
-				execute(args,storeNames,out);
+				execute(args,storeNames.toArray(new String[]{}),out.get());
 			}
 		}
-		QServiceUitls.output(out.toString(), out.getOutType(), request, response);
+		QServiceUitls.output(out.get().toString(), out.get().getOutType(), request, response);
 	}
 
 	private String getFileName(String header) {
@@ -155,11 +143,13 @@ public abstract class UploadControl extends HttpServlet  implements IService{
 		 * IE浏览器下：tempArr1={form-data,name="file",filename="E:\snmp4j--api.zip"}
 		 */
 		String[] tempArr1 = header.split(";");
+		if(tempArr1.length<3)return null;
 		/**
 		 *火狐或者google浏览器下：tempArr2={filename,"snmp4j--api.zip"}
 		 *IE浏览器下：tempArr2={filename,"E:\snmp4j--api.zip"}
 		 */
 		String[] tempArr2 = tempArr1[2].split("=");
+		if(tempArr2.length<2)return null;
 		//获取文件名，兼容各种浏览器的写法
 		return  tempArr2[1].substring(tempArr2[1].lastIndexOf("\\")+1).replaceAll("\"", "");
 	}
@@ -169,7 +159,7 @@ public abstract class UploadControl extends HttpServlet  implements IService{
 	 * @return
 	 */
 	public IOutput getOutPut(){
-		return out;
+		return out.get();
 	}
 
 
@@ -201,7 +191,7 @@ public abstract class UploadControl extends HttpServlet  implements IService{
 				.append(md5.substring(0, 2)).append("/");
 		return f.append(md5.substring(2)).append(".").append(type).toString().substring(root.length()+(root.endsWith("/")?-1:0));
 	}
-	
+
 	public HttpServletResponse getResponse(){
 		return httpServletResponse.get();
 	}
@@ -209,4 +199,6 @@ public abstract class UploadControl extends HttpServlet  implements IService{
 	public HttpServletRequest getRequest(){
 		return httpServletRequest.get();
 	}
+
+
 }

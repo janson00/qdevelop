@@ -6,22 +6,19 @@ import java.util.Map;
 
 import cn.qdevelop.common.exception.QDevelopException;
 import cn.qdevelop.core.db.SQLConfigParser;
-import cn.qdevelop.core.db.bean.UpdateBean;
 import cn.qdevelop.core.standard.IDBQuery;
-import cn.qdevelop.core.standard.IDBUpdate;
+import cn.qdevelop.core.standard.IDBResult;
 import junit.framework.TestCase;
 
 public class DataBaseFactoryTest extends TestCase {
 	
 	public void testQuery(){
 		Map<String,Object> query = new HashMap<String,Object>();
-		query.put("index", "users-query-action");
-		query.put("hour", "24");
-		query.put("epa.is_viewed", "1|2");
-		query.put("status", "0|1");
-		query.put("`epa.area_id`","1");
-		query.put("timestampdiff(hour, apply_time, now())", 1);
-		query.put("interview_time", ">='2012-01-01 00:00:00'&<='2012-01-01 23:59:59'");
+		query.put("index", "users-search-action");
+		query.put("status", "1");
+		query.put("usr.pid", "11");
+		query.put("age", "2");
+		query.put("user_name", ">='2012-01-01 00:00:00'&<='2012-01-01 23:59:59'");
 		query.put("page_size", 10);
 		try {
 			
@@ -35,34 +32,34 @@ public class DataBaseFactoryTest extends TestCase {
 			for(int i=0;i<columns.length;i++){
 				System.out.println(columns[i]+" = "+dbQuery.getPreparedValues()[i]);
 			}
-//			IDBResult rb  = DatabaseFactory.getInstance().queryDatabase(query);
-//			for(int i=0;i<rb.getSize();i++){
-//				System.out.println(rb.getResult(i));
-//			}
+			IDBResult rb  = DatabaseFactory.getInstance().queryDatabase(query);
+			for(int i=0;i<rb.getSize();i++){
+				System.out.println(rb.getResult(i));
+			}
 		} catch (QDevelopException e) {
 			e.printStackTrace();
 		}
 		
 	}
 	
-	public void testUpdate(){
-		Map<String,Object> query = new HashMap<String,Object>();
-		query.put("index", "users-add-action");
-		query.put("uid", "1");
-		query.put("utime", System.currentTimeMillis());
-//		query.put("reason", "1");
-//		query.put("epba_id", "1");
-		try {
-			Connection conn = DatabaseFactory.getInstance().getConnectByQuery(query);
-			IDBUpdate dbUpdate = SQLConfigParser.getInstance().getDBUpdateBean(query, conn);
-			for(UpdateBean ub : dbUpdate.getUpdateBeans()){
-				System.out.println(ub.getPreparedSql()+" => "+ub.getFullSql());
-			}
-		} catch (QDevelopException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	}
+//	public void testUpdate(){
+//		Map<String,Object> query = new HashMap<String,Object>();
+//		query.put("index", "users-add-action");
+//		query.put("uid", "1");
+//		query.put("utime", System.currentTimeMillis());
+////		query.put("reason", "1");
+////		query.put("epba_id", "1");
+//		try {
+//			Connection conn = DatabaseFactory.getInstance().getConnectByQuery(query);
+//			IDBUpdate dbUpdate = SQLConfigParser.getInstance().getDBUpdateBean(query, conn);
+//			for(UpdateBean ub : dbUpdate.getUpdateBeans()){
+//				System.out.println(ub.getPreparedSql()+" => "+ub.getFullSql());
+//			}
+//		} catch (QDevelopException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
+//	}
 	
 //	public void testUpdate(){
 //		Map<String,Object> query = new HashMap<String,Object>();

@@ -154,6 +154,7 @@ public class DatabaseFactory {
 
 
 	/**
+	 * @deprecated
 	 * 查询数据库；自助控制数据库链接，请求参数和数据库链接都不清理
 	 * @param query
 	 * @param conn
@@ -194,10 +195,17 @@ public class DatabaseFactory {
 	}
 
 	public boolean updateDatabase(Map<String,?> query,Connection conn) throws QDevelopException{
-		return updateDatabase(query, conn,true) ;
+		try {
+			return updateDatabase(query, conn,conn.getAutoCommit()) ;
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return false;
 	}
 	/**
-	 * 更新数据库；框架提供整体事务控制，提供链接关闭功能
+	 * @deprecated 
+	 *  更新数据库；框架提供整体事务控制，提供链接关闭功能
+	 *
 	 * @param query
 	 * @param conn
 	 * @param isAutoCommit 是否自动事务控制
@@ -271,7 +279,7 @@ public class DatabaseFactory {
 				}
 			}
 			IDBUpdate dbUpdate = SQLConfigParser.getInstance().getDBUpdateBean(query, conn);
-			int r =  new DatabaseImpl().insertDBReturnAutoID(conn, dbUpdate.getUpdateBeans().get(0) , updateHooks, true);
+			int r =  new DatabaseImpl().insertDBReturnAutoID(conn, dbUpdate.getUpdateBeans().get(0) , updateHooks, conn.getAutoCommit());
 			if(updateHooks!=null){
 				for(IUpdateHook iuh : updateHooks){
 					iuh.flush(conn,query, dbUpdate);
@@ -283,6 +291,9 @@ public class DatabaseFactory {
 			return r;
 		} catch (QDevelopException e) {
 			throw e;
+		} catch (SQLException e) {
+			e.printStackTrace();
+			throw new QDevelopException(10001,e.getMessage(),e);
 		}finally{
 			query.clear();
 			log.info("insertDBReturnAutoID:"+index+" use:"+(System.currentTimeMillis()-s)+"ms");
@@ -333,7 +344,7 @@ public class DatabaseFactory {
 				}
 			}
 			IDBUpdate dbUpdate = SQLConfigParser.getInstance().getDBUpdateBean(query, conn);
-			int r =  new DatabaseImpl().singleBatchUpdate(conn, dbUpdate.getUpdateBeans().get(0),values,updateHooks, false);
+			int r =  new DatabaseImpl().singleBatchUpdate(conn, dbUpdate.getUpdateBeans().get(0),values,updateHooks, conn.getAutoCommit());
 			if(updateHooks!=null){
 				for(IUpdateHook iuh : updateHooks){
 					iuh.flush(conn,query, dbUpdate);
@@ -345,6 +356,9 @@ public class DatabaseFactory {
 			return r;
 		} catch (QDevelopException e) {
 			throw e;
+		} catch (SQLException e) {
+			e.printStackTrace();
+			throw new QDevelopException(1001,e.getMessage(),e);
 		}finally{
 			query.clear();
 			log.info("updateBatch:"+index+" use:"+(System.currentTimeMillis()-s)+"ms");
@@ -352,6 +366,7 @@ public class DatabaseFactory {
 	}
 
 	/**
+	 * @deprecated
 	 * 更新数据库；框架只提供模版执行的方法,数据库链接、数据库事务、请求对象等需要自己关闭或清除
 	 * @param query
 	 * @param conn
@@ -368,7 +383,7 @@ public class DatabaseFactory {
 				}
 			}
 			IDBUpdate dbUpdate = SQLConfigParser.getInstance().getDBUpdateBean(query, conn);
-			boolean r =  new DatabaseImpl().updateDB(conn, dbUpdate , updateHooks, false);
+			boolean r =  new DatabaseImpl().updateDB(conn, dbUpdate , updateHooks, conn.getAutoCommit());
 			if(updateHooks!=null){
 				for(IUpdateHook iuh : updateHooks){
 					iuh.flush(conn,query, dbUpdate);
@@ -380,6 +395,9 @@ public class DatabaseFactory {
 			return r;
 		} catch (QDevelopException e) {
 			throw e;
+		} catch (SQLException e) {
+			e.printStackTrace();
+			throw new QDevelopException(1001,e.getMessage(),e);
 		}
 	}
 

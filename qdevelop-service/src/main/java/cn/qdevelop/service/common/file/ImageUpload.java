@@ -26,6 +26,7 @@ public class ImageUpload extends UploadControl{
 	@Override
 	protected String execute(Map<String, String> args, String[] storeName, IOutput output) {
 		output.setData(storeName);
+		output.addAttr("args", args);
 		return null;
 	}
 

@@ -303,9 +303,9 @@ public class SQLConfigParser {
 			dbQuery.setSql(sql.getText());
 			String[] params= sql.attributeValue("params")==null? null:sql.attributeValue("params").split("\\|");
 			String[] tables =  sql.attributeValue("tables")==null? null:sql.attributeValue("tables").split("\\|");
-			
+
 			dbQuery.setComplexBuild(Boolean.parseBoolean(config.attributeValue("is-complex-build")));
-			
+
 			try {
 				dbQuery.setTableStruts(TableColumnType.getInstance().getTablesStrutsBean(conn, tables));
 			} catch (SQLException e) {
@@ -360,7 +360,7 @@ public class SQLConfigParser {
 			if(config.attributeValue("is-convert-null")!=null){
 				dbQuery.setConverNull(Boolean.parseBoolean(config.attributeValue("is-convert-null")));
 			}
-			
+
 			if(query.get("is-convert-null")!=null){
 				dbQuery.setConverNull(Boolean.parseBoolean(String.valueOf(query.get("is-convert-null"))));
 			}
@@ -420,19 +420,30 @@ public class SQLConfigParser {
 				String key = entry.getKey();
 				String val = String.valueOf(entry.getValue());
 				if(!isSpecilKeys.matcher(key).find() && !ArrayUtils.contains(params, key) && tableStruts.get(clearColumnName.matcher(key).replaceAll(""))!=null){
-					ComplexParserBean cpb = parserComplexVales(key,val,true);
-					if(cpb.getColumn()!=null){
-						for(int i=0;i<cpb.getColumn().length;i++){
-							columns.add(clearColumnName.matcher(cpb.getColumn()[i]).replaceAll(""));
-							values.add(cpb.getValues()[i]);
+					if(dbQuery.isComplexBuild()){
+						ComplexParserBean cpb = parserComplexVales(key,val,true);
+						if(cpb.getColumn()!=null){
+							for(int i=0;i<cpb.getColumn().length;i++){
+								columns.add(clearColumnName.matcher(cpb.getColumn()[i]).replaceAll(""));
+								values.add(cpb.getValues()[i]);
+							}
 						}
+						if(autoSearch1.length() > 1){
+							autoSearch1.append(" and");
+							autoSearch2.append(" and");
+						}
+						autoSearch1.append(" ").append(cpb.getParseFullValue());
+						autoSearch2.append(" ").append(cpb.getParseVale());
+					}else{
+						columns.add(clearColumnName.matcher(key).replaceAll(""));
+						values.add(val);
+						if(autoSearch1.length() > 1){
+							autoSearch1.append(" and");
+							autoSearch2.append(" and");
+						}
+						autoSearch1.append(" ").append(key).append("='").append(val).append("'");
+						autoSearch2.append(" ").append(key).append("=?");
 					}
-					if(autoSearch1.length() > 1){
-						autoSearch1.append(" and");
-						autoSearch2.append(" and");
-					}
-					autoSearch1.append(" ").append(cpb.getParseFullValue());
-					autoSearch2.append(" ").append(cpb.getParseVale());
 				}
 			}
 			if(autoSearch1.length() > 0){
@@ -620,11 +631,11 @@ public class SQLConfigParser {
 		}
 	}
 
-//	public static void main(String[] args) {
-//		SQLConfigParser scp = 	new SQLConfigParser();
-//		String s = scp.cleanNULLArgs("select * from AAA where id =$[id] And name='$[name]' and sasd.user_Name= '$[user_Name]'","name");
-//		System.out.println(s);
-//	}
+	//	public static void main(String[] args) {
+	//		SQLConfigParser scp = 	new SQLConfigParser();
+	//		String s = scp.cleanNULLArgs("select * from AAA where id =$[id] And name='$[name]' and sasd.user_Name= '$[user_Name]'","name");
+	//		System.out.println(s);
+	//	}
 	////		System.out.println(cleanNULLArgs("select * from AAA where id =$[id] and name= '$[name]' and userName= '$[userName]'","id"));
 	////		System.out.println(cleanNULLArgs("select * from AAA where id =$[id] And name='$[name]' and user_Name= '$[user_Name]'","name"));
 	//		System.out.println(cleanNULLArgs("update aa set Id=$[id],Name='$[name]',userName= '$[userName]' where id =$[id] and name= '$[name]' and userName= '$[userName]'","id"));

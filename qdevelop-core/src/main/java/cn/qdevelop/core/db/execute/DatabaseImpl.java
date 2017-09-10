@@ -355,6 +355,10 @@ public class DatabaseImpl {
 	public void setValue(String sql,Map<String,DBStrutsLeaf> dbsb,PreparedStatement pstmt,String[] columns,Object[] values) throws QDevelopException{
 		setValue( sql, dbsb, pstmt,columns,values,1);
 	}
+	
+	
+	private static Pattern isNumber = Pattern.compile("^\\-?[0-9]+?\\.?([0-9]+)?$");
+	private static Pattern isDateTime = Pattern.compile("(^[0-9]{4}\\-[0-9]{2}\\-[0-9]{2}$)|(^[0-9]{2}:[0-9]{2}:[0-9]{2}$)|(^[0-9]{4}\\-[0-9]{2}\\-[0-9]{2} [0-9]{2}:[0-9]{2}:[0-9]{2}$)");
 
 	public void setValue(String sql,Map<String,DBStrutsLeaf> dbsb,PreparedStatement pstmt,String[] columns,Object[] values,int start) throws QDevelopException{
 		try {
@@ -371,7 +375,11 @@ public class DatabaseImpl {
 						if(values[i].getClass().equals(Integer.class)){
 							pstmt.setInt(i+start, (Integer)values[i]);
 						}else{
-							pstmt.setInt(i+start, Integer.parseInt(String.valueOf(values[i]).replaceAll("'", "")));
+							String v = String.valueOf(values[i]).replaceAll("'", "");
+							if(!isNumber.matcher(v).find()){
+								throw new QDevelopException(1001,QString.append("参数",columns[i]," = '",v,"' "," 为非",sl.getColumnTypeName(),"错误"));
+							}
+							pstmt.setInt(i+start, Integer.parseInt(v));
 						}
 						break;
 					case 2:
@@ -381,16 +389,22 @@ public class DatabaseImpl {
 						if(values[i].getClass().equals(Double.class)){
 							pstmt.setDouble(i+start, (Double)values[i]);
 						}else{
-							pstmt.setDouble(i+start, Double.parseDouble(String.valueOf(values[i]).replaceAll("'", "")));
+							String v = String.valueOf(values[i]).replaceAll("'", "");
+							if(!isNumber.matcher(v).find()){
+								throw new QDevelopException(1001,QString.append("参数",columns[i]," = '",v,"' "," 为非",sl.getColumnTypeName(),"错误"));
+							}
+							pstmt.setDouble(i+start, Double.parseDouble(v));
 						}
 						break;
 					case 4:
 						java.sql.Date val=null;
 						if(values[i].getClass().equals(Date.class)){
 							val = new java.sql.Date(((Date)values[i]).getTime());
-
 						}else if(values[i].getClass().equals(String.class)){
 							String v = String.valueOf(values[i]).replaceAll("'", "");
+							if(!isDateTime.matcher(v).find()){
+								throw new QDevelopException(1001,QString.append("参数",columns[i]," = '",v,"' "," 为非",sl.getColumnTypeName(),"错误"));
+							}
 							if(v.length() == 19){
 								val = new java.sql.Date(new SimpleDateFormat("yyyy-MM-dd hh:mm:ss").parse(v).getTime());
 							}else if(v.length() == 10){
@@ -405,6 +419,9 @@ public class DatabaseImpl {
 							val1 = new java.sql.Timestamp(((Date)values[i]).getTime());
 						}else if(values[i].getClass().equals(String.class)){
 							String v = String.valueOf(values[i]).replaceAll("'", "");
+							if(!isDateTime.matcher(v).find()){
+								throw new QDevelopException(1001,QString.append("参数",columns[i]," = '",v,"' "," 为非",sl.getColumnTypeName(),"错误"));
+							}
 							if(v.length() == 19){
 								val1 = new java.sql.Timestamp(new SimpleDateFormat("yyyy-MM-dd hh:mm:ss").parse(v).getTime());
 							}else if(v.length() == 10){
@@ -417,14 +434,22 @@ public class DatabaseImpl {
 						if(values[i].getClass().equals(BigDecimal.class)){
 							pstmt.setBigDecimal(i+start, (BigDecimal)values[i]);
 						}else{
-							pstmt.setBigDecimal(i+start, new BigDecimal(String.valueOf(values[i]).replaceAll("'", "")));
+							String v = String.valueOf(values[i]).replaceAll("'", "");
+							if(!isNumber.matcher(v).find()){
+								throw new QDevelopException(1001,QString.append("参数",columns[i]," = '",v,"' "," 为非",sl.getColumnTypeName(),"错误"));
+							}
+							pstmt.setBigDecimal(i+start, new BigDecimal(v));
 						}
 						break;
 					case 7:
 						if(values[i].getClass().equals(Float.class)){
 							pstmt.setFloat(i+start, (Float)values[i]);
 						}else{
-							pstmt.setFloat(i+start, Float.parseFloat(String.valueOf(values[i]).replaceAll("'", "")));
+							String v = String.valueOf(values[i]).replaceAll("'", "");
+							if(!isNumber.matcher(v).find()){
+								throw new QDevelopException(1001,QString.append("参数",columns[i]," = '",v,"' "," 为非",sl.getColumnTypeName(),"错误"));
+							}
+							pstmt.setFloat(i+start, Float.parseFloat(v));
 						}
 						break;
 					default :
@@ -442,7 +467,9 @@ public class DatabaseImpl {
 			log.error("预编译SQL："+sql);
 			log.error(toDebugInfo(dbsb,columns,values));
 			throw new QDevelopException(1003,"SQL预编译错误",e);
-		} */catch (Exception e) {
+		} */catch (QDevelopException e) {
+			throw e;
+		}catch (Exception e) {
 			log.error("预编译SQL："+sql);
 			log.error(toDebugInfo(dbsb,columns,values));
 			throw new QDevelopException(1003,"预编译SQL错误",e);

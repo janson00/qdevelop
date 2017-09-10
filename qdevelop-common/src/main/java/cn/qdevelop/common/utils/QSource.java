@@ -240,6 +240,10 @@ public class QSource {
 				} catch (IOException e1) {
 				}
 			} 
+			/*兼容window路径问题*/
+			if(projectPath.startsWith("/file:/")){
+				projectPath = projectPath.substring(7);
+			}
 			System.out.println("root ==> "+projectPath);
 		}
 		return projectPath;

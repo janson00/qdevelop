@@ -179,7 +179,7 @@ public class QServiceUitls {
 				Iterator<Entry<String,String>> iter = args.entrySet().iterator();
 				while(iter.hasNext()){
 					Entry<String,String> itor = iter.next();
-					if(ArrayUtils.contains(ignoreColumns, itor.getKey())){
+					if(ignoreColumns!=null && ArrayUtils.contains(ignoreColumns, itor.getKey())){
 						continue;
 					}
 					DBStrutsLeaf dsf = struts.get(itor.getKey());
@@ -222,7 +222,7 @@ public class QServiceUitls {
 			Iterator<Entry<String,String>> iter = args.entrySet().iterator();
 			while(iter.hasNext()){
 				Entry<String,String> itor = iter.next();
-				if(ArrayUtils.contains(ignoreColumns, itor.getKey())){
+				if(ignoreColumns!=null && ArrayUtils.contains(ignoreColumns, itor.getKey())){
 					continue;
 				}
 				if(isAttackValue.matcher(itor.getValue()).find()){

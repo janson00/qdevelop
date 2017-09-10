@@ -34,21 +34,26 @@ public abstract class APIControl extends HttpServlet implements IService{
 	private static final long serialVersionUID = 7445553533896016332L;
 	private ThreadLocal<HttpServletResponse> httpServletResponse = new ThreadLocal<HttpServletResponse>();
 	private ThreadLocal<HttpServletRequest> httpServletRequest = new ThreadLocal<HttpServletRequest>();
-	
-	private volatile String[] checkColumns,ignoreColumns;
 
+//	private  ThreadLocal<String[]> checkColumns = new ThreadLocal<String[]>(),ignoreColumns = new ThreadLocal<String[]>();
+	private String[] checkColumns,ignoreColumns;
+	private  Boolean jumpValidate = new Boolean(false);
+	private ThreadLocal<IOutput> out  = new ThreadLocal<IOutput>();
+	
+	
 	public void init(ServletConfig config)throws ServletException{  
 		super.init(config);  
 		String columns = config.getInitParameter(IService.INIT_VALID_REQUIRED);
 		if(columns!=null){
-			checkColumns = columns.split(",");
+			checkColumns=columns.split(",");
 		}
 		String ignore = config.getInitParameter(IService.INIT_VALID_IGNORE);
 		if(ignore!=null){
-			ignoreColumns = ignore.split(",");
+			ignoreColumns=ignore.split(",");
 		}else{
-			ignoreColumns = new String[]{};
+			ignoreColumns=(new String[]{});
 		}
+		
 	}
 
 	/**
@@ -71,25 +76,25 @@ public abstract class APIControl extends HttpServlet implements IService{
 	protected void closeValidate(){
 		this.jumpValidate = true;
 	}
+
 	
-	private volatile boolean jumpValidate = false;
-	private IOutput out ;
+
 	protected void doGet(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
 		httpServletResponse.set(response);
 		httpServletRequest.set(request);
-		out = QServiceUitls.getOutput(request, response);
-		if(!out.isError()){
+		out.set(QServiceUitls.getOutput(request, response));
+		if(!out.get().isError()){
 			Map<String,String> args = QServiceUitls.getParameters(request);
 			init(args);
-			if(jumpValidate || new QServiceUitls().validParameters(args,out,checkColumns,ignoreColumns)){
-				execute(args,out);
+			if(jumpValidate || new QServiceUitls().validParameters(args,out.get(),checkColumns,ignoreColumns)){
+				execute(args,out.get());
 			}
 		}
-		QServiceUitls.output(out.toString(), out.getOutType(), request, response);
+		QServiceUitls.output(out.get().toString(), out.get().getOutType(), request, response);
 	}
-	
-	
+
+
 
 	protected void doPost(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
@@ -110,9 +115,14 @@ public abstract class APIControl extends HttpServlet implements IService{
 	 * @return
 	 */
 	public IOutput getOutPut(){
-		return out;
+		return out.get();
 	}
 
+	public void destroy() {
+		out.remove();
+		httpServletResponse.remove();
+		httpServletRequest.remove();
+	}
 
 
 }
