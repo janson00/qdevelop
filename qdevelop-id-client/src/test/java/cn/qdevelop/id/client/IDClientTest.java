@@ -38,13 +38,15 @@ public class IDClientTest implements Runnable {
 //			threadPool.execute(new IDClientTest());
 //		}
 //		threadPool.shutdown();
-		for(int i=0;i<10000;i++){
+		long s = System.currentTimeMillis();
+		for(int i=0;i<10;i++){
 			try {
-				System.out.println(IDGenerate.getInstance().getIDStr("random_test",3,100));
+				System.out.println(IDGenerate.getInstance().getIDStr("random_test",4,100));
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
 		}
+		System.out.println((System.currentTimeMillis()-s));
 //		IDGenerate.getInstance().shutdown();
 //		try {
 //			threadPool.awaitTermination(30000, TimeUnit.MILLISECONDS);
@@ -66,16 +68,22 @@ public class IDClientTest implements Runnable {
 //		}
 //		
 	}
-	static Random r = new Random();
-	static String[] names = new String[]{"asdasf","sdfasdf","fsad","egaw","cewasd","fewcaec","asd1ds"};
+//	static Random r = new Random();
+//	static String[] names = new String[]{"asdasf","sdfasdf","fsad","egaw","cewasd","fewcaec","asd1ds"};
+//	@Override
+//	public void run() {
+//		try {
+//			String id = IDGenerate.getInstance().getIDStr(names[r.nextInt(7)], 6, 5);
+//			System.out.println(id);
+//		} catch (Exception e) {
+//			e.printStackTrace();
+//		}
+
 	@Override
 	public void run() {
-		try {
-			String id = IDGenerate.getInstance().getIDStr(names[r.nextInt(7)], 6, 5);
-			System.out.println(id);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+		// TODO Auto-generated method stub
+		
 	}
+	
 
 }

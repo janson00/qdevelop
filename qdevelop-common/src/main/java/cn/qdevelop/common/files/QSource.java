@@ -136,41 +136,6 @@ public class QSource {
 		return new File(url.toURI());
 	}
 
-	/**
-	 * 加载jar包中的资源
-	 * @param jarPath jar包路径
-	 * @param fileName 文件名
-	 * @return
-	 */
-	public InputStream loadFromJar(File jarPath, String fileName) {
-		InputStream result = null;
-		if (jarPath.exists() && jarPath.isFile()) {
-			JarFile file = null;
-			try {
-				file = new JarFile(jarPath);
-				Enumeration<JarEntry> entrys = file.entries();
-				while (entrys.hasMoreElements()) {
-					JarEntry jarEntry = entrys.nextElement();
-					if (jarEntry.getName().endsWith(fileName)) {
-						System.out.println("load jar["+file.getName()+"] resource:\t" + jarEntry.getName());
-						result = file.getInputStream(jarEntry);
-						
-					}
-				}
-			} catch (IOException e) {
-				e.printStackTrace();
-			} finally {
-				try {
-					if (file != null)
-						file.close();
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			}
-		}
-		return result;
-	}
-	
 //	public Properties loadProperties(String configName){
 //		try {
 //			InputStream idSvrConfig = getSourceAsStream(configName);
@@ -235,60 +200,6 @@ public class QSource {
 		} 
 		return null;
 	}
-
-	public InputStream loadInputStream(String configName,Class<?> callClass){
-		try {
-			InputStream res = getSourceAsStream(configName);
-			if(res!=null){
-				return res;
-			}
-			String runPath = callClass.getProtectionDomain().getCodeSource().getLocation().getPath();
-			System.out.println("load from : "+runPath);
-			if(runPath.endsWith(".jar")){
-				File jarPath = new File(runPath);
-				InputStream result = null;
-				if (jarPath.exists() && jarPath.isFile()) {
-					JarFile file = null;
-					try {
-						file = new JarFile(jarPath);
-						Enumeration<JarEntry> entrys = file.entries();
-						while (entrys.hasMoreElements()) {
-							JarEntry jarEntry = entrys.nextElement();
-							if (jarEntry.getName().endsWith(configName)) {
-								System.out.println("load jar["+file.getName()+"] resource:\t" + jarEntry.getName());
-								result = file.getInputStream(jarEntry);
-//								InputStream
-								
-							}
-						}
-					} catch (IOException e) {
-						e.printStackTrace();
-					} finally {
-						try {
-							if (file != null)
-								file.close();
-						} catch (Exception e) {
-							e.printStackTrace();
-						}
-					}
-				}
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
-		} 
-		return null;
-	}
-	/**
-	 * 加载clazz所在的jar包中的资源
-	 * @param claZZ
-	 * @param fileName
-	 * @return
-	 */
-	public InputStream loadFromJar(Class<?> claZZ, String fileName) {
-		String path = claZZ.getProtectionDomain().getCodeSource().getLocation().getFile();
-		return loadFromJar(new File(path), fileName);
-	}
-
 
 	private final static Pattern regProjectName = Pattern.compile("^.*\\/");
 	private final static Pattern clearProjectName = Pattern.compile("\\/bin\\/?$|\\/WEB-INF.+?$|\\/lib\\/?$|\\/target.+?$");

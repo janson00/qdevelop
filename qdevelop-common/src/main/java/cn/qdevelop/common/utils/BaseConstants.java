@@ -8,6 +8,8 @@
  */
 package cn.qdevelop.common.utils;
 
+import cn.qdevelop.common.files.QProperties;
+
 /**
  * @ClassName: BaseConstants
  * @Description: TODO

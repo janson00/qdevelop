@@ -1,4 +1,4 @@
-package cn.qdevelop.service.common.file;
+package cn.qdevelop.service.common;
 
 import java.io.InputStream;
 import java.util.Map;
@@ -6,8 +6,8 @@ import java.util.Map;
 import javax.servlet.annotation.MultipartConfig;
 import javax.servlet.annotation.WebServlet;
 
-import cn.qdevelop.service.IOutput;
 import cn.qdevelop.service.UploadControl;
+import cn.qdevelop.service.interfacer.IOutput;
 
 
 //使用@WebServlet配置UploadServlet的访问路径

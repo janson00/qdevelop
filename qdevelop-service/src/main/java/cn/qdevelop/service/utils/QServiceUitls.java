@@ -30,8 +30,8 @@ import cn.qdevelop.core.db.config.SQLConfigLoader;
 import cn.qdevelop.core.db.connect.ConnectFactory;
 import cn.qdevelop.core.db.execute.TableColumnType;
 import cn.qdevelop.core.standard.IParamFormatter;
-import cn.qdevelop.service.IOutput;
 import cn.qdevelop.service.bean.OutputJson;
+import cn.qdevelop.service.interfacer.IOutput;
 
 public class QServiceUitls {
 

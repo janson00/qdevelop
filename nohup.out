@@ -1,0 +1,61 @@
+2017-12-05T02:57:00.724597Z 0 [Warning] TIMESTAMP with implicit DEFAULT value is deprecated. Please use --explicit_defaults_for_timestamp server option (see documentation for more details).
+2017-12-05T02:57:00.727722Z 0 [Warning] Insecure configuration for --secure-file-priv: Current value does not restrict location of generated files. Consider setting it to a valid, non-empty path.
+2017-12-05T02:57:00.728618Z 0 [Note] /usr/local/Cellar/mysql/5.7.15/bin/mysqld (mysqld 5.7.15) starting as process 24726 ...
+2017-12-05T02:57:00.758014Z 0 [Note] InnoDB: Mutexes and rw_locks use GCC atomic builtins
+2017-12-05T02:57:00.758083Z 0 [Note] InnoDB: Uses event mutexes
+2017-12-05T02:57:00.758097Z 0 [Note] InnoDB: GCC builtin __atomic_thread_fence() is used for memory barrier
+2017-12-05T02:57:00.758109Z 0 [Note] InnoDB: Compressed tables use zlib 1.2.3
+2017-12-05T02:57:00.760888Z 0 [Note] InnoDB: Number of pools: 1
+2017-12-05T02:57:00.763015Z 0 [Note] InnoDB: Using CPU crc32 instructions
+2017-12-05T02:57:00.767152Z 0 [Note] InnoDB: Initializing buffer pool, total size = 128M, instances = 1, chunk size = 128M
+2017-12-05T02:57:00.787089Z 0 [Note] InnoDB: Completed initialization of buffer pool
+2017-12-05T02:57:00.816893Z 0 [Note] InnoDB: Highest supported file format is Barracuda.
+2017-12-05T02:57:00.823300Z 0 [Note] InnoDB: Log scan progressed past the checkpoint lsn 139151834
+2017-12-05T02:57:00.823340Z 0 [Note] InnoDB: Doing recovery: scanned up to log sequence number 139151843
+2017-12-05T02:57:00.823573Z 0 [Note] InnoDB: Doing recovery: scanned up to log sequence number 139151843
+2017-12-05T02:57:00.823629Z 0 [Note] InnoDB: Database was not shutdown normally!
+2017-12-05T02:57:00.823651Z 0 [Note] InnoDB: Starting crash recovery.
+2017-12-05T02:57:01.090022Z 0 [Note] InnoDB: Removed temporary tablespace data file: "ibtmp1"
+2017-12-05T02:57:01.090067Z 0 [Note] InnoDB: Creating shared tablespace for temporary tables
+2017-12-05T02:57:01.090209Z 0 [Note] InnoDB: Setting file './ibtmp1' size to 12 MB. Physically writing the file full; Please wait ...
+2017-12-05T02:57:01.113745Z 0 [Note] InnoDB: File './ibtmp1' size is now 12 MB.
+2017-12-05T02:57:01.114785Z 0 [Note] InnoDB: 96 redo rollback segment(s) found. 96 redo rollback segment(s) are active.
+2017-12-05T02:57:01.114818Z 0 [Note] InnoDB: 32 non-redo rollback segment(s) are active.
+2017-12-05T02:57:01.115077Z 0 [Note] InnoDB: Waiting for purge to start
+2017-12-05T02:57:01.167075Z 0 [Note] InnoDB: 5.7.15 started; log sequence number 139151843
+2017-12-05T02:57:01.167556Z 0 [Note] InnoDB: Loading buffer pool(s) from /usr/local/var/mysql/ib_buffer_pool
+2017-12-05T02:57:01.168680Z 0 [Note] Plugin 'FEDERATED' is disabled.
+2017-12-05T02:57:01.187103Z 0 [Note] InnoDB: Buffer pool(s) load completed at 171205 10:57:01
+2017-12-05T02:57:01.202729Z 0 [Note] Found ca.pem, server-cert.pem and server-key.pem in data directory. Trying to enable SSL support using them.
+2017-12-05T02:57:01.202768Z 0 [Note] Skipping generation of SSL certificates as certificate files are present in data directory.
+2017-12-05T02:57:01.206430Z 0 [Warning] CA certificate ca.pem is self signed.
+2017-12-05T02:57:01.207296Z 0 [Note] Skipping generation of RSA key pair as key files are present in data directory.
+2017-12-05T02:57:01.222337Z 0 [Note] Server hostname (bind-address): '*'; port: 3306
+2017-12-05T02:57:01.222463Z 0 [Note] IPv6 is available.
+2017-12-05T02:57:01.222508Z 0 [Note]   - '::' resolves to '::';
+2017-12-05T02:57:01.222587Z 0 [Note] Server socket created on IP: '::'.
+2017-12-05T02:57:01.332361Z 0 [Note] Event Scheduler: Loaded 0 events
+2017-12-05T02:57:01.332554Z 0 [Note] /usr/local/Cellar/mysql/5.7.15/bin/mysqld: ready for connections.
+Version: '5.7.15'  socket: '/tmp/mysql.sock'  port: 3306  Homebrew
+2017-12-05T07:42:35.509422Z 12 [Note] Aborted connection 12 to db: 'qd_user_center' user: 'root' host: 'localhost' (Got an error reading communication packets)
+2017-12-05T08:09:26.453513Z 32 [Note] Aborted connection 32 to db: 'qd_user_center' user: 'root' host: 'localhost' (Got an error reading communication packets)
+2017-12-05T08:09:26.453690Z 29 [Note] Aborted connection 29 to db: 'qd_user_center' user: 'root' host: 'localhost' (Got an error reading communication packets)
+2017-12-05T08:09:26.453700Z 30 [Note] Aborted connection 30 to db: 'qd_user_center' user: 'root' host: 'localhost' (Got an error reading communication packets)
+2017-12-05T08:09:26.453751Z 24 [Note] Aborted connection 24 to db: 'qd_user_center' user: 'root' host: 'localhost' (Got an error reading communication packets)
+2017-12-05T08:09:26.453751Z 28 [Note] Aborted connection 28 to db: 'qd_user_center' user: 'root' host: 'localhost' (Got an error reading communication packets)
+2017-12-05T08:09:26.453771Z 27 [Note] Aborted connection 27 to db: 'qd_user_center' user: 'root' host: 'localhost' (Got an error reading communication packets)
+2017-12-05T08:09:26.453876Z 23 [Note] Aborted connection 23 to db: 'qd_user_center' user: 'root' host: 'localhost' (Got an error reading communication packets)
+2017-12-05T08:09:26.453895Z 31 [Note] Aborted connection 31 to db: 'qd_user_center' user: 'root' host: 'localhost' (Got an error reading communication packets)
+2017-12-05T08:09:26.453906Z 26 [Note] Aborted connection 26 to db: 'qd_user_center' user: 'root' host: 'localhost' (Got an error reading communication packets)
+2017-12-05T08:09:26.453918Z 25 [Note] Aborted connection 25 to db: 'qd_user_center' user: 'root' host: 'localhost' (Got an error reading communication packets)
+2017-12-05T10:37:51.517664Z 58 [Note] Aborted connection 58 to db: 'qd_user_center' user: 'root' host: 'localhost' (Got an error reading communication packets)
+2017-12-05T11:46:44.193139Z 123 [Note] Aborted connection 123 to db: 'qd_user_center' user: 'root' host: 'localhost' (Got an error reading communication packets)
+2017-12-05T11:46:44.193202Z 122 [Note] Aborted connection 122 to db: 'qd_user_center' user: 'root' host: 'localhost' (Got an error reading communication packets)
+2017-12-05T11:46:44.193247Z 121 [Note] Aborted connection 121 to db: 'qd_user_center' user: 'root' host: 'localhost' (Got an error reading communication packets)
+2017-12-05T11:46:44.193293Z 124 [Note] Aborted connection 124 to db: 'qd_user_center' user: 'root' host: 'localhost' (Got an error reading communication packets)
+2017-12-05T11:46:44.193296Z 120 [Note] Aborted connection 120 to db: 'qd_user_center' user: 'root' host: 'localhost' (Got an error reading communication packets)
+2017-12-05T11:46:44.193326Z 119 [Note] Aborted connection 119 to db: 'qd_user_center' user: 'root' host: 'localhost' (Got an error reading communication packets)
+2017-12-05T11:46:44.193328Z 118 [Note] Aborted connection 118 to db: 'qd_user_center' user: 'root' host: 'localhost' (Got an error reading communication packets)
+2017-12-05T11:46:44.193352Z 117 [Note] Aborted connection 117 to db: 'qd_user_center' user: 'root' host: 'localhost' (Got an error reading communication packets)
+2017-12-05T11:46:44.193353Z 116 [Note] Aborted connection 116 to db: 'qd_user_center' user: 'root' host: 'localhost' (Got an error reading communication packets)
+2017-12-05T11:46:44.193381Z 115 [Note] Aborted connection 115 to db: 'qd_user_center' user: 'root' host: 'localhost' (Got an error reading communication packets)

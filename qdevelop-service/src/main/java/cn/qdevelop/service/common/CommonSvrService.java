@@ -1,4 +1,4 @@
-package cn.qdevelop.service.common.api;
+package cn.qdevelop.service.common;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -12,8 +12,8 @@ import cn.qdevelop.core.DatabaseFactory;
 import cn.qdevelop.core.db.SQLConfigParser;
 import cn.qdevelop.core.standard.IDBResult;
 import cn.qdevelop.service.APIControl;
-import cn.qdevelop.service.IOutput;
-import cn.qdevelop.service.IService;
+import cn.qdevelop.service.interfacer.IOutput;
+import cn.qdevelop.service.interfacer.IService;
 
 @WebServlet(urlPatterns="/svr/sys/common/*",
 loadOnStartup=1,initParams={  

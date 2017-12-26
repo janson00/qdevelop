@@ -5,12 +5,12 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.apache.log4j.Logger;
 
-import cn.qdevelop.common.utils.QLog;
+import cn.qdevelop.common.QLogFactory;
 
 public class AsynExcutor extends ConcurrentLinkedQueue<Runnable>{
 
 	
-	private static Logger log = QLog.getLogger(AsynExcutor.class);
+	private static Logger log = QLogFactory.getLogger(AsynExcutor.class);
 	
 	private static final long serialVersionUID = -6561523792411246397L;
 	private static AsynExcutor _AsynExcutor = new AsynExcutor();

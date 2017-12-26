@@ -18,8 +18,8 @@ import javax.servlet.annotation.WebFilter;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import cn.qdevelop.common.utils.QSource;
-import cn.qdevelop.service.IOutput;
+import cn.qdevelop.common.files.QSource;
+import cn.qdevelop.service.interfacer.IOutput;
 import cn.qdevelop.service.utils.QServiceUitls;
 
 @WebFilter(urlPatterns="/svr/*")

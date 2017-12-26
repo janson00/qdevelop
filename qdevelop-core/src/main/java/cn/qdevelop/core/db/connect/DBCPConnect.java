@@ -2,14 +2,15 @@ package cn.qdevelop.core.db.connect;
 
 
 import java.sql.Connection;
+import java.sql.DriverManager;
 import java.sql.SQLException;
 
 import org.apache.commons.dbcp2.BasicDataSource;
 import org.apache.log4j.Logger;
 import org.dom4j.Element;
 
+import cn.qdevelop.common.QLogFactory;
 import cn.qdevelop.common.exception.QDevelopException;
-import cn.qdevelop.common.utils.QLog;
 import cn.qdevelop.common.utils.QString;
 
 /**
@@ -19,7 +20,7 @@ import cn.qdevelop.common.utils.QString;
  *
  */
 public class DBCPConnect implements IConnect {
-	private static Logger log  = QLog.getLogger(DBCPConnect.class);
+	private static Logger log  = QLogFactory.getLogger(DBCPConnect.class);
 
   private BasicDataSource bds;
   public String database = "MYSQL";
@@ -145,6 +146,8 @@ private static String DECODE_KEY="";
   public void shutdown() {
       try {
           if(bds!=null){
+        	  DriverManager.deregisterDriver(bds.getDriver());
+        	  bds.getConnection().close();
               bds.close();
           }
           bds = null;

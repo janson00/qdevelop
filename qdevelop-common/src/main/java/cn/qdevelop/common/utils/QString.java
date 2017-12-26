@@ -2,15 +2,12 @@ package cn.qdevelop.common.utils;
 
 import java.io.UnsupportedEncodingException;
 import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
-
-import sun.misc.BASE64Encoder;
 
 /**
  * 字符串处理相关辅助类
@@ -226,28 +223,27 @@ public class QString {
 	}
 	
 
-	/**
-	 * 64 MD5 加密
-	 * @param arg
-	 * @return
-	 */
-	@SuppressWarnings("restriction")
-	public static String get64MD5(String arg){
-		if(arg==null)return null;
-		try {
-			MessageDigest md5 = MessageDigest.getInstance("MD5");
-			BASE64Encoder base64en = new BASE64Encoder();
-			return base64en.encode(md5.digest(arg.getBytes("utf-8")));
-		} catch (NoSuchAlgorithmException e) {
-			e.printStackTrace();
-		} catch (UnsupportedEncodingException e) {
-			e.printStackTrace();
-		}
-		return  null;
-	}
+//	/**
+//	 * 64 MD5 加密
+//	 * @param arg
+//	 * @return
+//	 */
+//	public static String get64MD5(String arg){
+//		if(arg==null)return null;
+//		try {
+//			MessageDigest md5 = MessageDigest.getInstance("MD5");
+//			BASE64Encoder base64en = new BASE64Encoder();
+//			return base64en.encode(md5.digest(arg.getBytes("utf-8")));
+//		} catch (NoSuchAlgorithmException e) {
+//			e.printStackTrace();
+//		} catch (UnsupportedEncodingException e) {
+//			e.printStackTrace();
+//		}
+//		return  null;
+//	}
 	
-	public static void main(String[] args) {
-		System.out.println(QString.get64MD5("tianrongxin123"));
-	}
+//	public static void main(String[] args) {
+//		System.out.println(QString.get64MD5("tianrongxin123"));
+//	}
 
 }

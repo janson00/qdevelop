@@ -5,7 +5,7 @@ import java.util.Map;
 import org.dom4j.Element;
 
 import cn.qdevelop.common.exception.QDevelopException;
-import cn.qdevelop.common.utils.QProperties;
+import cn.qdevelop.common.files.QProperties;
 import cn.qdevelop.core.formatter.AbstractResultFormatter;
 import cn.qdevelop.core.standard.IDBResult;
 

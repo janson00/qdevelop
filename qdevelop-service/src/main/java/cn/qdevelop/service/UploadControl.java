@@ -19,8 +19,10 @@ import javax.servlet.http.Part;
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.log4j.Logger;
 
-import cn.qdevelop.common.utils.QLog;
+import cn.qdevelop.common.QLogFactory;
 import cn.qdevelop.common.utils.QString;
+import cn.qdevelop.service.interfacer.IOutput;
+import cn.qdevelop.service.interfacer.IService;
 import cn.qdevelop.service.utils.QServiceUitls;
 
 /**
@@ -29,7 +31,7 @@ import cn.qdevelop.service.utils.QServiceUitls;
  *
  */
 public abstract class UploadControl extends HttpServlet  implements IService{
-	private static Logger log = QLog.getLogger(UploadControl.class);
+	private static Logger log = QLogFactory.getLogger(UploadControl.class);
 	private static final long serialVersionUID = -726532824668251561L;
 	private ThreadLocal<HttpServletResponse> httpServletResponse = new ThreadLocal<HttpServletResponse>();
 	private ThreadLocal<HttpServletRequest> httpServletRequest = new ThreadLocal<HttpServletRequest>();
@@ -134,6 +136,9 @@ public abstract class UploadControl extends HttpServlet  implements IService{
 			}
 		}
 		QServiceUitls.output(out.get().toString(), out.get().getOutType(), request, response);
+		out.remove();
+		httpServletResponse.remove();
+		httpServletRequest.remove();
 	}
 
 	private String getFileName(String header) {

@@ -4,10 +4,10 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.apache.log4j.Logger;
 
-import cn.qdevelop.common.utils.QLog;
+import cn.qdevelop.common.QLogFactory;
 
 public class AsyncLog implements Runnable{
-	private static Logger log = QLog.getLogger(AsyncLog.class);
+	private static Logger log = QLogFactory.getLogger(AsyncLog.class);
 	
 	HttpServletRequest request;long start;
 	

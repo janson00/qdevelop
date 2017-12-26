@@ -1,7 +1,7 @@
 /**
  * 
  */
-package cn.qdevelop.common.utils;
+package cn.qdevelop.common;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -15,24 +15,48 @@ import java.util.regex.Pattern;
 import org.apache.log4j.Logger;
 import org.apache.log4j.PropertyConfigurator;
 
+import cn.qdevelop.common.files.QSource;
+import cn.qdevelop.common.files.SearchFileFromJars;
+import cn.qdevelop.common.files.SearchFileFromProject;
+import cn.qdevelop.common.utils.DateUtil;
+import cn.qdevelop.common.utils.QString;
+
 /**
  * @author Janson
  * 
  */
-public class QLog {
+public class QLogFactory {
 	public static Pattern isArgs = Pattern.compile("(\\{)SYSNAME(\\})");
 	private static String logConfig = "qdevelop-log.properties$";
 	private static AtomicBoolean isInit = new AtomicBoolean(false);
 
+	/**
+	 * 直接获取原生logger
+	 * @param claZZ
+	 * @return
+	 */
 	public static Logger getLogger(Class<?> claZZ){
 		if(!isInit.get()){
 			init();
 		}
 		return Logger.getLogger(claZZ);
 	}
+	
+	/**
+	 * 获取异步logger执行
+	 * @param claZZ
+	 * @return
+	 */
+	public static QLogger getQLogger(Class<?> claZZ){
+		if(!isInit.get()){
+			init();
+		}
+		return new QLogger(Logger.getLogger(claZZ));
+	}
 
 
 	public static void init(){
+		long start =System.currentTimeMillis();
 		final Properties props = new Properties();
 		new SearchFileFromJars(){
 			@Override
@@ -96,12 +120,13 @@ public class QLog {
 			if(props.getProperty("log4j.logger.cn.qdevelop.service")!=null){
 				props.setProperty("log4j.logger.cn.qdevelop.service", props.getProperty("log4j.logger.cn.qdevelop.service")+",console");
 			}
-			if(props.getProperty("log4j.appender.sqlExcute.file")!=null){
-				System.out.println("[sql log] ===> "+props.getProperty("log4j.appender.sqlExcute.file"));
-			}
+//			if(props.getProperty("log4j.logger.cn.qdevelop.core.db.execute")!=null){
+//				props.setProperty("log4j.logger.cn.qdevelop.core.db.execute", props.getProperty("log4j.logger.cn.qdevelop.core.db.execute")+",console");
+//			}
 		}
 		PropertyConfigurator.configure(props);
 		isInit.set(true);
+		System.out.println("init QLog used: "+(System.currentTimeMillis()-start)+" store: "+props.getProperty("log4j.appender.sqlExcute.file"));
 	}
 	
 	

@@ -49,7 +49,6 @@ public  abstract class SearchFileFromProject {
 					searchFiles(_f,search);
 				}else{
 					if(!isFindClassPath.booleanValue() || _f.getAbsolutePath().indexOf("classes") > -1){
-						//						System.out.println(_f.getAbsolutePath());
 						if(search.matcher(_f.getAbsolutePath()).find()){
 							disposeFile(_f);
 						}

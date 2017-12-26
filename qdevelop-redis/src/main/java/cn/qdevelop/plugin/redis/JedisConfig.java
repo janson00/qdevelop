@@ -4,31 +4,38 @@ import java.util.Properties;
 
 import org.apache.log4j.Logger;
 
-import cn.qdevelop.common.utils.QLog;
-import cn.qdevelop.common.utils.QSource;
+import cn.qdevelop.common.QLogFactory;
+import cn.qdevelop.common.files.QSource;
 
 public class JedisConfig {
-	
-	protected static Logger log = QLog.getLogger(JedisConfig.class);
-	
-	public static String REDIS_IP;
-	public static int REDIS_PORT;
-	public static String PASSWORD;
-	public static int MAX_ACTIVE;
-	public static int MAX_IDLE;
-	public static long MAX_WAIT;
-	public static boolean TEST_ON_BORROW;
-	public static boolean TEST_ON_RETURN;
-	public static boolean SHARDED;
-	public static int DBINDEX;
-	public static boolean JEDIS_SWITCH;
-	
-	static {
-		init();
+
+	protected static Logger log = QLogFactory.getLogger(JedisConfig.class);
+
+	public  String REDIS_IP;
+	public  int REDIS_PORT;
+	public  String PASSWORD;
+	public  int MAX_ACTIVE;
+	public  int MAX_IDLE;
+	public  long MAX_WAIT;
+	public  boolean TEST_ON_BORROW;
+	public  boolean TEST_ON_RETURN;
+	public  boolean SHARDED;
+	public  int DBINDEX;
+	public  boolean JEDIS_SWITCH;
+
+
+
+	public  JedisConfig() {
+		init("plugin-config/qdevelop-redis.properties");
 	}
 
-	public static void init() {
-			Properties pro = QSource.getInstance().loadProperties("plugin-config/qdevelop-redis.properties",JedisConfig.class);
+	public JedisConfig(String configPath) {
+		init(configPath);
+	}
+
+	public void init(String configPath){
+		Properties pro = QSource.getInstance().loadProperties(configPath,JedisConfig.class);
+		if(pro!=null){
 			log.info("loading redis config from redis.properties.......");
 			JEDIS_SWITCH = Boolean.parseBoolean(pro.getProperty("jedis.cache.switch"));
 			REDIS_IP = pro.getProperty("redis.ip");
@@ -42,5 +49,8 @@ public class JedisConfig {
 			SHARDED = Boolean.parseBoolean(pro.getProperty("redis.sharded"));
 			DBINDEX = Integer.parseInt(pro.getProperty("redis.dbindex"));
 			log.info("redis config load Completed :"+REDIS_IP);
+		}else{
+			log.error("redis config not defound : "+configPath);
+		}
 	}
 }

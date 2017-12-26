@@ -11,7 +11,7 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import cn.qdevelop.common.utils.QProperties;
+import cn.qdevelop.common.files.QProperties;
 
 /**
  * @author square

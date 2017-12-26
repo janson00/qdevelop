@@ -22,7 +22,7 @@ public class AdaptorControl extends HttpServlet{
 		if(webPathIdx == null){
 			webPathIdx = request.getContextPath().length();
 		}
-		request.getRequestDispatcher(QString.append("/jsp/",uri.substring(webPathIdx, uri.length()-5),"jsp")).forward(request, response);
+		request.getRequestDispatcher(QString.append("/htmlx/",uri.substring(webPathIdx, uri.length()-5),"jsp")).forward(request, response);
 	}
 	
 	protected void doPost(HttpServletRequest request, HttpServletResponse response)

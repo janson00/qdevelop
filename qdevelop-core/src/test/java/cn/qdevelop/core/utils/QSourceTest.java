@@ -3,9 +3,9 @@ package cn.qdevelop.core.utils;
 import java.io.File;
 import java.io.InputStream;
 
-import cn.qdevelop.common.utils.QSource;
-import cn.qdevelop.common.utils.SearchFileFromJars;
-import cn.qdevelop.common.utils.SearchFileFromProject;
+import cn.qdevelop.common.files.QSource;
+import cn.qdevelop.common.files.SearchFileFromJars;
+import cn.qdevelop.common.files.SearchFileFromProject;
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;

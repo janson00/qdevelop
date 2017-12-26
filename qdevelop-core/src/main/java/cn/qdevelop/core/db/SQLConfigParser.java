@@ -14,8 +14,8 @@ import org.apache.commons.lang.ArrayUtils;
 import org.apache.log4j.Logger;
 import org.dom4j.Element;
 
+import cn.qdevelop.common.QLogFactory;
 import cn.qdevelop.common.exception.QDevelopException;
-import cn.qdevelop.common.utils.QLog;
 import cn.qdevelop.core.Contant;
 import cn.qdevelop.core.bean.DBQueryBean;
 import cn.qdevelop.core.bean.DBUpdateBean;
@@ -33,7 +33,7 @@ import cn.qdevelop.core.standard.IResultFormatter;
 import cn.qdevelop.core.standard.IUpdateHook;
 
 public class SQLConfigParser {
-	private static Logger log  = QLog.getLogger(SQLConfigParser.class);
+	private static Logger log  = QLogFactory.getLogger(SQLConfigParser.class);
 	public static SQLConfigParser getInstance(){return new SQLConfigParser();}
 
 	private final static Map<String,ArrayList<IResultFormatter>> resultFormatterByIndex = new ConcurrentHashMap<String,ArrayList<IResultFormatter>>();
@@ -357,13 +357,18 @@ public class SQLConfigParser {
 					dbQuery.setOrder(String.valueOf(order));
 				}
 			}
-			if(config.attributeValue("is-convert-null")!=null){
-				dbQuery.setConverNull(Boolean.parseBoolean(config.attributeValue("is-convert-null")));
-			}
-
 			if(query.get("is-convert-null")!=null){
 				dbQuery.setConverNull(Boolean.parseBoolean(String.valueOf(query.get("is-convert-null"))));
+			}else{
+				dbQuery.setConverNull(Boolean.parseBoolean(config.attributeValue("is-convert-null")));
 			}
+			
+			if(query.get("is-need-totle")!=null){
+				dbQuery.setNeedTotle(Boolean.parseBoolean(String.valueOf(query.get("is-need-totle"))));
+			}else{
+				dbQuery.setNeedTotle(Boolean.parseBoolean(config.attributeValue("is-need-totle")));
+			}
+			
 			query=null;
 			return dbQuery;
 		} catch (QDevelopException e) {
@@ -376,6 +381,7 @@ public class SQLConfigParser {
 	private static final Pattern isComplexValue = Pattern.compile("%|&|>|<|!|\\||\\*|=");
 	private static final Pattern isFunctionValue = Pattern.compile(".+\\(.+?\\)|.+\\(\\)");
 	private static final Pattern clearPreparedSql = Pattern.compile("'\\?'");
+	
 	private void reBuildPreparedSql(DBQueryBean dbQuery ,Map<String,?> query,String[] params) throws QDevelopException{
 		Map<String, DBStrutsLeaf> tableStruts = dbQuery.getTableStruts() ;
 		ArrayList<String> columns = new ArrayList<String>();

@@ -2,26 +2,29 @@ package cn.qdevelop.common.files;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.security.CodeSource;
 import java.util.Enumeration;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 
-import org.apache.log4j.Logger;
-
-import cn.qdevelop.common.utils.QLog;
-
+/**
+ * 项目内文件加载，先从本地加载资源文件，文件不存在时，从调用所在jar包内加载指定配置文件资源
+ * @author janson
+ *
+ */
 public abstract class QFileLoader {
-	protected static Logger log = QLog.getLogger(QFileLoader.class);
+//	protected static Logger log = QLog.getLogger(QFileLoader.class);
 	
 	
 	/**
 	 * 加载项目指定配置文件
 	 * @param configName
 	 */
-	public void loadFile(String configName){
-		this.loadFile(configName,this.getClass());
+	public void loadFile(String configName)  throws FileNotFoundException{
+		this.loadFile(configName,super.getClass());
 	}
 	
 	
@@ -30,15 +33,19 @@ public abstract class QFileLoader {
 	 * @param configName
 	 * @param callClass
 	 */
-	public void loadFile(String configName,Class<?> callClass){
+	public void loadFile(String configName,Class<?> callClass) throws FileNotFoundException{
 		try {
 			InputStream res = getSourceAsStream(configName);
 			if(res!=null){
 				despose(res);
 				return;
 			}
-			String runPath = callClass.getProtectionDomain().getCodeSource().getLocation().getPath();
-			log.info("load from : "+runPath);
+			CodeSource pd =  callClass.getProtectionDomain().getCodeSource();
+			if(pd==null){
+				throw new FileNotFoundException(configName);
+			}
+			String runPath = pd.getLocation().getPath();
+			System.out.println("load from : "+runPath);
 			if(runPath.endsWith(".jar")){
 				File jarPath = new File(runPath);
 				if (jarPath.exists() && jarPath.isFile()) {
@@ -49,13 +56,12 @@ public abstract class QFileLoader {
 						while (entrys.hasMoreElements()) {
 							JarEntry jarEntry = entrys.nextElement();
 							if (jarEntry.getName().endsWith(configName)) {
-								log.info("load jar resource:\t" + jarEntry.getName());
+								System.out.println("load jar resource:\t" + jarEntry.getName());
 								despose(file.getInputStream(jarEntry));
 							}
 						}
 					} catch (IOException e) {
 						e.printStackTrace();
-						log.error(e);
 					} finally {
 						try {
 							if (file != null)
@@ -65,15 +71,15 @@ public abstract class QFileLoader {
 						}
 					}
 				}
+			}else{
+				throw new FileNotFoundException(configName);
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
-			log.error(e);
 		} 
 	}
 	
 	public abstract void despose(InputStream is);
-	
 	
 	private InputStream getSourceAsStream(String resource) throws Exception {
 		File tmp = new File(resource);
@@ -96,7 +102,7 @@ public abstract class QFileLoader {
 			stream = ClassLoader.getSystemResourceAsStream(stripped);
 		}
 		if (stream == null) {
-			log.error("load properties : "+resource + " not found!");
+			System.err.println("load properties : "+resource + " not found!");
 		}
 		return stream;
 	}

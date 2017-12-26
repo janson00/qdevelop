@@ -17,9 +17,9 @@ import javax.servlet.annotation.WebFilter;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import cn.qdevelop.common.utils.QSource;
+import cn.qdevelop.common.files.QSource;
 import cn.qdevelop.core.QDevelopUtils;
-import cn.qdevelop.service.IService;
+import cn.qdevelop.service.interfacer.IService;
 import cn.qdevelop.service.utils.QServiceUitls;
 
 @WebFilter(urlPatterns="/*")

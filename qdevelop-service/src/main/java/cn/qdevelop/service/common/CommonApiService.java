@@ -1,4 +1,4 @@
-package cn.qdevelop.service.common.api;
+package cn.qdevelop.service.common;
 
 import java.sql.Connection;
 import java.util.HashMap;
@@ -18,8 +18,8 @@ import cn.qdevelop.core.db.execute.DatabaseImpl;
 import cn.qdevelop.core.standard.IDBQuery;
 import cn.qdevelop.core.standard.IDBResult;
 import cn.qdevelop.service.APIControl;
-import cn.qdevelop.service.IOutput;
-import cn.qdevelop.service.IService;
+import cn.qdevelop.service.interfacer.IOutput;
+import cn.qdevelop.service.interfacer.IService;
 
 @WebServlet(urlPatterns="/api/sys/common/*",
 loadOnStartup=1,initParams={  
@@ -69,7 +69,6 @@ public class CommonApiService  extends APIControl{
 				try {
 					dbf.formatterParameters(args);
 					IDBQuery dbQuery = SQLConfigParser.getInstance().getDBQueryBean(args, conn);
-					
 					if(dbQuery.getSql().indexOf(Contant.AUTO_SEARCH_MARK)>-1){
 						output.setErrMsg("当前查询接口有风险，不能够直接使用，请先明确配置变量名称！");
 						return null;

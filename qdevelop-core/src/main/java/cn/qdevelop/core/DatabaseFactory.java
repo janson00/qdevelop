@@ -12,8 +12,8 @@ import java.util.regex.Pattern;
 import org.apache.log4j.Logger;
 import org.dom4j.Element;
 
+import cn.qdevelop.common.QLogFactory;
 import cn.qdevelop.common.exception.QDevelopException;
-import cn.qdevelop.common.utils.QLog;
 import cn.qdevelop.common.utils.QString;
 import cn.qdevelop.core.bean.DBResultBean;
 import cn.qdevelop.core.db.SQLConfigParser;
@@ -29,7 +29,7 @@ import cn.qdevelop.core.standard.IUpdateHook;
 
 public class DatabaseFactory {
 	public static DatabaseFactory getInstance(){return new DatabaseFactory();}
-	private final static Logger log  = QLog.getLogger(DatabaseFactory.class);
+	private final static Logger log  = QLogFactory.getLogger(DatabaseFactory.class);
 
 
 	/**
@@ -325,7 +325,7 @@ public class DatabaseFactory {
 	}
 	
 	/**
-	 * 单sql模版批量更新数据库操作,需要自己控制rollback
+	 * 单sql模版批量更新数据库操作
 	 * @param query
 	 * @param values
 	 * @param conn

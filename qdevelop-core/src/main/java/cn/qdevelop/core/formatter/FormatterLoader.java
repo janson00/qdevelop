@@ -10,12 +10,12 @@ import java.util.Map;
 import org.apache.log4j.Logger;
 import org.dom4j.Element;
 
+import cn.qdevelop.common.QLogFactory;
 import cn.qdevelop.common.exception.QDevelopException;
-import cn.qdevelop.common.utils.QLog;
-import cn.qdevelop.common.utils.QSource;
+import cn.qdevelop.common.files.QSource;
+import cn.qdevelop.common.files.SearchFileFromJars;
+import cn.qdevelop.common.files.SearchFileFromProject;
 import cn.qdevelop.common.utils.QXMLUtils;
-import cn.qdevelop.common.utils.SearchFileFromJars;
-import cn.qdevelop.common.utils.SearchFileFromProject;
 import cn.qdevelop.core.Contant;
 import cn.qdevelop.core.standard.IParamFormatter;
 import cn.qdevelop.core.standard.IResultFormatter;
@@ -37,7 +37,7 @@ public class FormatterLoader{
 	
 	private static Logger log;
 	public FormatterLoader(){
-		log  = QLog.getLogger(FormatterLoader.class);
+		log  = QLogFactory.getLogger(FormatterLoader.class);
 		init();
 	}
 	

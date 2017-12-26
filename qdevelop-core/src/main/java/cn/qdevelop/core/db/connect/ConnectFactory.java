@@ -17,18 +17,18 @@ import org.dom4j.DocumentException;
 import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
 
+import cn.qdevelop.common.QLogFactory;
 import cn.qdevelop.common.exception.QDevelopException;
-import cn.qdevelop.common.utils.QLog;
-import cn.qdevelop.common.utils.QSource;
+import cn.qdevelop.common.files.QSource;
+import cn.qdevelop.common.files.SearchFileFromJars;
+import cn.qdevelop.common.files.SearchFileFromProject;
 import cn.qdevelop.common.utils.QString;
 import cn.qdevelop.common.utils.QXMLUtils;
-import cn.qdevelop.common.utils.SearchFileFromJars;
-import cn.qdevelop.common.utils.SearchFileFromProject;
 import cn.qdevelop.core.Contant;
 
 public class ConnectFactory {
 
-	private final static Logger log  = QLog.getLogger(ConnectFactory.class);
+	private final static Logger log  = QLogFactory.getLogger(ConnectFactory.class);
 
 	final static ConcurrentHashMap<String,IConnect> connCache = new  ConcurrentHashMap<String,IConnect>();
 
@@ -187,7 +187,13 @@ public class ConnectFactory {
 			entry.getValue().shutdown();
 		}
 		connCache.clear();
-
+//		try {  
+//		    com.mysql.jdbc.AbandonedConnectionCleanupThread.shutdown();  
+//		} catch (InterruptedException e) {  
+//		    e.printStackTrace();  
+//		}  
+//		DriverManager.deregisterDriver(driver);
+//		DriverManager.deregisterDriver(DriverManager.getDriver(jdbcUrl));
 	}
 
 	public static void close(Connection conn){

@@ -1,17 +1,20 @@
-package cn.qdevelop.service.common.api;
+package cn.qdevelop.service.common;
 
 import java.util.Map;
+
+import javax.servlet.annotation.WebInitParam;
+import javax.servlet.annotation.WebServlet;
 
 import cn.qdevelop.common.exception.QDevelopException;
 import cn.qdevelop.core.DatabaseFactory;
 import cn.qdevelop.service.APIControl;
-import cn.qdevelop.service.IOutput;
-import cn.qdevelop.service.IService;
+import cn.qdevelop.service.interfacer.IOutput;
+import cn.qdevelop.service.interfacer.IService;
 
-//@WebServlet(urlPatterns={"/svr/sys/ajax/formCommit.json","/svr/sys/ajax/formCommit.jsonp"},loadOnStartup=1,initParams={  
-//        @WebInitParam(name=IService.INIT_VALID_REQUIRED,value="index"),
-//        @WebInitParam(name=IService.INIT_VALID_IGNORE,value="index")
-//})
+@WebServlet(urlPatterns={"/svr/sys/ajax/formCommit.json","/svr/sys/ajax/formCommit.jsonp"},loadOnStartup=1,initParams={  
+        @WebInitParam(name=IService.INIT_VALID_REQUIRED,value="index"),
+        @WebInitParam(name=IService.INIT_VALID_IGNORE,value="index")
+})
 public class FormCommit  extends APIControl {
 	private static final long serialVersionUID = 5578926696733805453L;
 

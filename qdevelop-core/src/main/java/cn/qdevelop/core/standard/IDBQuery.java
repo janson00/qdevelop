@@ -34,6 +34,8 @@ public interface IDBQuery {
 	 */
 	public boolean isConvertNull();
 	
+	public boolean isNeedTotle();
+	
 	/**
 	 * 是否需要混合编译
 	 * @return

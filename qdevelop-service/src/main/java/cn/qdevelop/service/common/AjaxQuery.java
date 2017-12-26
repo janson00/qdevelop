@@ -1,4 +1,4 @@
-package cn.qdevelop.service.common.api;
+package cn.qdevelop.service.common;
 
 import java.util.Map;
 
@@ -6,8 +6,8 @@ import cn.qdevelop.common.exception.QDevelopException;
 import cn.qdevelop.core.DatabaseFactory;
 import cn.qdevelop.core.standard.IDBResult;
 import cn.qdevelop.service.APIControl;
-import cn.qdevelop.service.IOutput;
-import cn.qdevelop.service.IService;
+import cn.qdevelop.service.interfacer.IOutput;
+import cn.qdevelop.service.interfacer.IService;
 
 //@WebServlet(urlPatterns={"/svr/sys/ajax/query.json","/svr/sys/ajax/query.jsonp"},
 //		loadOnStartup=1,initParams={  

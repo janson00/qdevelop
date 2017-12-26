@@ -1,4 +1,4 @@
-package cn.qdevelop.service.common.svr;
+package cn.qdevelop.service.common;
 
 import java.io.IOException;
 
@@ -8,8 +8,8 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import cn.qdevelop.common.utils.QProperties;
-import cn.qdevelop.service.IService;
+import cn.qdevelop.common.files.QProperties;
+import cn.qdevelop.service.interfacer.IService;
 import cn.qdevelop.service.utils.QServiceUitls;
 
 @WebServlet("/svr/conf/*")

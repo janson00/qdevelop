@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- xml中常用转义符写法： （ &  &amp; ）（ <  &lt; ） （ >  &gt; ）-->
 <SQLConfig>
-	<property index="products_log-search-action" connect="default" explain="products_log查询">
+	<!-- <property index="products_log-search-action" connect="default" explain="products_log查询">
 		<formatter>
 			<date-formatter result-key="ctime" date-style="yyMMdd HH:mm"/>
 		</formatter>
 		<sql>select uid,plog_id,product_name,action,pid,ctime from Products_Log where {DYNAMIC}</sql>
-	</property>
+	</property> -->
 
 	<property index="products_log-query-action" connect="default" explain="products_log查询">
 		<!--
@@ -33,11 +33,9 @@
 		</sql>
 	</property>
 
-	<!--
-	<property index="products_log-remove-action" connect="default" explain="products_log删除">
-		<sql  repeat="" repeat-concat="^" fetch-zero-err="true">
-			delete from products_log where plog_id=$[plog_id]
+	<property index="products_left_test" connect="default" explain="products_log删除">
+		<sql >
+			select a.product_name,a.uid,a.price,b.action from products a,products_log b on a.pid=b.pid and $[_autoSearch]
 		</sql>
 	</property>
-	-->
 </SQLConfig>

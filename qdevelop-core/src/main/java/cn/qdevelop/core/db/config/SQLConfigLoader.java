@@ -4,34 +4,35 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.apache.log4j.Logger;
 import org.dom4j.Document;
+import org.dom4j.DocumentException;
 import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
 
+import cn.qdevelop.common.QLogFactory;
 import cn.qdevelop.common.exception.QDevelopException;
-import cn.qdevelop.common.utils.QLog;
-import cn.qdevelop.common.utils.QSource;
+import cn.qdevelop.common.files.QSource;
+import cn.qdevelop.common.files.SearchFileFromJars;
+import cn.qdevelop.common.files.SearchFileFromProject;
 import cn.qdevelop.common.utils.QXMLUtils;
-import cn.qdevelop.common.utils.SearchFileFromJars;
-import cn.qdevelop.common.utils.SearchFileFromProject;
 import cn.qdevelop.core.Contant;
 
-public class SQLConfigLoader extends HashMap<String,Element>{
+public class SQLConfigLoader extends ConcurrentHashMap<String,Element>{
 
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 2514613541934551967L;
 
-	private static Logger log  = QLog.getLogger(SQLConfigLoader.class);
+	private static Logger log  = QLogFactory.getLogger(SQLConfigLoader.class);
 
 	private static SQLConfigLoader _SQLConfigLoader = new SQLConfigLoader();
 	public static SQLConfigLoader getInstance(){return _SQLConfigLoader;}
@@ -44,7 +45,9 @@ public class SQLConfigLoader extends HashMap<String,Element>{
 		isOpenReg = Pattern.compile("\\/(api|open)\\/");
 		nameSpaceClean = Pattern.compile("\\-[0-9]+?\\..+$");
 		isJarFile = Pattern.compile("\\.jar\\!");
+		cleanPrefix = Pattern.compile("^.*(/|\\\\)");
 		tablesIndex = new HashSet<String>();
+		projectIndex = QSource.getProjectPath().length();
 		long s = System.currentTimeMillis();
 		loadConfigFromJars();
 		loadConfigFromProject();
@@ -69,7 +72,7 @@ public class SQLConfigLoader extends HashMap<String,Element>{
 			@Override
 			public void desposeFile(String jarName,String fileName, InputStream is) {
 				try {
-					Element root = new QXMLUtils().getDocument(is).getRootElement();
+					Element root = xmlUtils.getDocument(is).getRootElement();
 					if(root.getName().equals(Contant.SQL_CONFIG_ROOT)){
 						initSqlConfig(root.elementIterator(),jarName+"!"+fileName,true);
 					}
@@ -82,13 +85,12 @@ public class SQLConfigLoader extends HashMap<String,Element>{
 	}
 
 	private void loadConfigFromProject(){
-		final int projectIndex = QSource.getProjectPath().length();
 		new SearchFileFromProject(){
 			@SuppressWarnings("unchecked")
 			@Override
 			protected void disposeFile(File f) {
 				try {
-					Element root = new QXMLUtils().getDocument(f).getRootElement();
+					Element root = xmlUtils.getDocument(f).getRootElement();
 					if(root.getName().equals(Contant.SQL_CONFIG_ROOT)){
 						initSqlConfig(root.elementIterator(),f.getAbsolutePath().substring(projectIndex).replaceAll("\\\\", "/"),false);
 					}
@@ -108,28 +110,10 @@ public class SQLConfigLoader extends HashMap<String,Element>{
 	 * 热加载本地配置文件
 	 */
 	public void hotLoadConfig(){
-		final int projectIndex = QSource.getProjectPath().length();
 		new SearchFileFromProject(){
-			@SuppressWarnings("unchecked")
 			@Override
 			protected void disposeFile(File f) {
-				try {
-					Element root = new QXMLUtils().getDocument(f).getRootElement();
-					if(root.getName().equals(Contant.SQL_CONFIG_ROOT)){
-						Iterator<Element> items = root.elementIterator();
-						String fileName  = f.getAbsolutePath().substring(projectIndex);
-						log.info("load sqlConfig: "+fileName);
-						while (items.hasNext()) {
-							Element property = items.next();
-							if (property.getName().equals("property")) {
-								initProperty(property,fileName.replaceAll("\\\\", "/"));
-							}
-						}
-					}
-				} catch (Exception e) {
-					log.error(f.getAbsolutePath(),e);
-					e.printStackTrace();
-				}
+				hotLoadConfigFile(f);
 			}
 
 			@Override
@@ -138,8 +122,34 @@ public class SQLConfigLoader extends HashMap<String,Element>{
 		}.searchProjectFiles("*.sql.xml$");
 	}
 
+	private static int projectIndex = 0;
+
+	/**
+	 * 热加载本地指定配置文件
+	 * @param configPath
+	 */
+	@SuppressWarnings("unchecked")
+	public void  hotLoadConfigFile(File configPath){
+		try {
+			Element root = xmlUtils.getDocument(configPath).getRootElement();
+			if(root.getName().equals(Contant.SQL_CONFIG_ROOT)){
+				Iterator<Element> items = root.elementIterator();
+				String fileName  = configPath.getAbsolutePath().substring(projectIndex);
+				log.info("hot load sqlConfig: "+fileName);
+				while (items.hasNext()) {
+					Element property = items.next();
+					if (property.getName().equals("property")) {
+						initProperty(property,fileName.replaceAll("\\\\", "/"));
+					}
+				}
+			}
+		} catch (DocumentException e) {
+			e.printStackTrace();
+		}
+	}
 
 
+	private static Pattern cleanPrefix;
 	private void initSqlConfig(Iterator<Element> items,String fileName,boolean isJarConfig){
 		log.info("load sqlConfig: "+fileName);
 		while (items.hasNext()) {
@@ -151,6 +161,10 @@ public class SQLConfigLoader extends HashMap<String,Element>{
 					if(isJarConfig){
 						log.warn("原文件【"+fileName+"】被当前【"+ele.attributeValue("file")+"】文件中index="+index+"的配置覆盖");
 					}else{
+						if(cleanPrefix.matcher(fileName).replaceAll("").equals(cleanPrefix.matcher(ele.attributeValue("file")).replaceAll(""))){
+							log.warn("文件【"+fileName+"】和【"+ele.attributeValue("file")+"】含有重复索引，本次检测跳过，如不是临时编译文件，请手动检查index："+index);
+							continue;
+						}
 						log.error("当前文件【"+fileName+"】\n和文件【"+ele.attributeValue("file")+"】\n存在重复索引 index : "+index+" ！");
 						System.exit(0);
 					}
@@ -239,11 +253,19 @@ public class SQLConfigLoader extends HashMap<String,Element>{
 		if(property.attributeValue("is-master")==null){
 			property.addAttribute("is-master", isSelect?"false":"true");
 		}
-		
+		//是否需要转义编译SQL
 		if(property.attributeValue("is-complex-build")==null){
 			property.addAttribute("is-complex-build", "true");
 		}
-		
+		//是否需要覆盖空值数据进行展示，字符串转为空串，数值型转为-1
+		if(property.attributeValue("is-convert-null")==null){
+			property.addAttribute("is-convert-null", "false");
+		}
+		//查询是否返回总记录数
+		if(property.attributeValue("is-need-total")==null){
+			property.addAttribute("is-need-total", "false");
+		}
+
 		property.addAttribute("is-select", isSelect.toString());
 
 
@@ -251,37 +273,28 @@ public class SQLConfigLoader extends HashMap<String,Element>{
 		Element resultFormatter = property.element("formatter");
 		if(resultFormatter!=null){
 			Element _r = property.addElement("result-formatter");
-			xml.copyElement(resultFormatter, _r);
+			xmlUtils.copyElement(resultFormatter, _r);
 			property.remove(resultFormatter);
 		}
-
-
 		tables.clear();
 		this.put(property.attributeValue("index"), property);
 	}
 
-	QXMLUtils xml = new QXMLUtils();
+	private QXMLUtils xmlUtils = new QXMLUtils();
 	private void storeDebugXML(){
 		Document sqlModelConfigCache = DocumentHelper.createDocument();
 		Element sqlModelRoot = sqlModelConfigCache.addElement("sql-config-debug");
 		Collection<Element> entries = this.values();
 		for(Element ele : entries){
 			Element e = sqlModelRoot.addElement("poperty"); 
-			xml.copyElement(ele, e);
+			xmlUtils.copyElement(ele, e);
 		}
 		try {
-			xml.save(sqlModelConfigCache, new File(QSource.getProjectPath()+"/qdevelop_sql_debug.xml"));
+			xmlUtils.save(sqlModelConfigCache, new File(QSource.getProjectPath()+"/qdevelop_sql_debug.xml"));
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
 	}
-
-
-
-
-
-
-
 
 	/**
 	 * 整理SQL语句格式；将使用者写的sql格式做一个统一
@@ -349,51 +362,36 @@ public class SQLConfigLoader extends HashMap<String,Element>{
 	}
 
 	private Pattern cleanTableName = Pattern.compile("\\)| .+$|`");
-
-	Pattern selectAnalsys = Pattern.compile(" from | join ",Pattern.CASE_INSENSITIVE);
-	Pattern isRightName = Pattern.compile("^[0-9a-zA-Z_]+$");
+	private Pattern selectAnalsys = Pattern.compile(" from | join ",Pattern.CASE_INSENSITIVE);
+	private Pattern cleanSelectRight = Pattern.compile(" where .+$| on .+$| union .+$|select .+ from|\\(|\\)",Pattern.CASE_INSENSITIVE);
+	private Pattern cleanSelectTable = Pattern.compile(" .+$|\\)(.+)?$",Pattern.CASE_INSENSITIVE);
+	private Pattern isRightName = Pattern.compile("^[0-9a-zA-Z_]+$");
 
 	private  String getSelectTableNames(String sql) {
 		Set<String> tables = new HashSet<String>(); 
 		Matcher matcher = selectAnalsys.matcher(sql);
 		while (matcher.find()) {
-			String t = sql.substring(matcher.end()).trim();
-			if(t.indexOf(" ")>-1){
-				t = t.substring(0, t.indexOf(" "));
+			String t = cleanSelectRight.matcher(sql.substring(matcher.end()).trim()).replaceAll("").trim();
+			if(t.startsWith("(") || t.toLowerCase().startsWith("select")){
+				continue;
 			}
-			if(isRightName.matcher(t).find()){
-				tables.add(t);
+			if(t.indexOf(",") > -1 ){
+				String[] tmp = t.split(",");
+				for(int i=0;i<tmp.length;i++){
+					tmp[i] = cleanSelectTable.matcher(tmp[i].trim()).replaceAll("");
+					if(isRightName.matcher(tmp[i]).find()){
+						tables.add(tmp[i]);
+					}
+				}
+			}else{
+				t= cleanSelectTable.matcher(t).replaceAll("");
+				if(isRightName.matcher(t).find()){
+					tables.add(t);
+				}
 			}
 		}
-		//		
-		//		String[] tbs = sql.replaceAll("`", "").toUpperCase().split("FROM | JOIN ");
-		//		for (String tb : tbs) {
-		//			tb =tb.replaceAll(" WHERE .+| ORDER.+| GROUP.+|\\(.+", "").trim()
-		//					.replaceAll(" .+,$", "");
-		//			if (tb.length() > 1 && !tb.startsWith("SELECT") && !tb.startsWith("(")) {
-		//				if (tb.indexOf(",") == -1) {
-		//					tables.add(cleanTableName.matcher(tb).replaceAll(""));
-		//				} else {
-		//					for (String ss : tb.split(",")) {
-		//						tables.add(cleanTableName.matcher(ss).replaceAll(""));
-		//					}
-		//				}
-		//			}
-		//		}
 		return append(tables,"|");
 	}
-
-	//	private static Pattern selectTableName = Pattern.compile(" (from|join) .+ ?",Pattern.CASE_INSENSITIVE);
-	//	private static  String parseSelectTableNames(String sql) {
-	//		Set<String> tables = new HashSet<String>();
-	//		Matcher rs = selectTableName.matcher(sql);
-	//		while(rs.find()){
-	//			System.out.println(rs.group(2));
-	//		}
-	//		return null;// append(tables,"|");
-	//	}
-
-
 
 	private void addTables(String tables,String connect){
 		if(tables==null||connect==null)return;
@@ -402,6 +400,19 @@ public class SQLConfigLoader extends HashMap<String,Element>{
 			tablesIndex.add(t+"@"+connect);
 		}
 	}
+
+//	public static void main(String[] args) {
+//		String[] ss = new String[]{
+//				"select a.product_name,a.uid,a.price,b.action from products a , products_log b on a.pid=b.pid and 9=9",
+//				"select a.product_name,a.uid,a.price,b.action from products a left join products_log b on a.pid=b.pid and 9=9",
+//				"select a.product_name,a.uid,a.price,b.action from (select * from products where 1=1) a ,(select * from  products_log) b on a.pid=b.pid and 9=9",
+//		"select a.product_name,a.uid,a.price,b.action from (select a.product_name,a.uid from products a,product_relation b where 1=1) a ,(select a.product_name,a.uid from  products_log) b on a.pid=b.pid and 9=9"		};
+//		for(String s : ss){
+//			System.out.println(s);
+//			String tab = SQLConfigLoader.getInstance().getSelectTableNames(s);
+//			System.out.println(tab);	
+//		};
+//	}
 
 	//		public static void main(String[] args) {
 	//			parseSelectTableNames(" select customer_inventory_id,1,inventory_quantity,'签收入库',now(),0    from customer_inventory t left join custsdad cs on ");

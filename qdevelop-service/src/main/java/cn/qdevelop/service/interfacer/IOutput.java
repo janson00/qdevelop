@@ -1,4 +1,4 @@
-package cn.qdevelop.service;
+package cn.qdevelop.service.interfacer;
 
 public interface IOutput {
 	
@@ -17,4 +17,7 @@ public interface IOutput {
 	
 	public String getOutType();
 	
+	public boolean isBodyOnly();
+	
+	public void setBodyOnly(boolean isBodyOnly);
 }

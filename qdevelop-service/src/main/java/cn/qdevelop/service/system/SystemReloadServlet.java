@@ -5,11 +5,11 @@ import java.util.Map;
 import javax.servlet.annotation.WebInitParam;
 import javax.servlet.annotation.WebServlet;
 
-import cn.qdevelop.common.utils.QProperties;
+import cn.qdevelop.common.files.QProperties;
 import cn.qdevelop.core.db.config.SQLConfigLoader;
 import cn.qdevelop.service.APIControl;
-import cn.qdevelop.service.IOutput;
-import cn.qdevelop.service.IService;
+import cn.qdevelop.service.interfacer.IOutput;
+import cn.qdevelop.service.interfacer.IService;
 
 @WebServlet(urlPatterns="/svr/sys/reload",
 loadOnStartup=1,initParams={  

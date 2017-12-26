@@ -32,15 +32,27 @@ public class JedisClient {
 	
 	private JedisPool jedisPool;
 	
+	private JedisConfig jedisConfig;
+	
 	public static JedisClient getInstance(){
-		if (jedisClient == null && JedisConfig.JEDIS_SWITCH) {
+		if (jedisClient == null) {
 			jedisClient = new JedisClient();
 		}
 		return jedisClient;
 	}
 	
-	private JedisClient() {	
-		if(JedisConfig.SHARDED){
+	public JedisClient() {	
+		jedisConfig = new JedisConfig();
+		if(jedisConfig.SHARDED){
+			initialShardedPool();
+		}else{
+			initialPool();
+		}
+	}
+	
+	public JedisClient(String config) {	
+		jedisConfig = new JedisConfig(config);
+		if(jedisConfig.SHARDED){
 			initialShardedPool();
 		}else{
 			initialPool();
@@ -52,16 +64,16 @@ public class JedisClient {
 	 */
 	private void initialPool() {
 		JedisPoolConfig config = new JedisPoolConfig();
-		config.setMaxTotal(JedisConfig.MAX_ACTIVE);
-		config.setMaxIdle(JedisConfig.MAX_IDLE);
-		config.setMaxWaitMillis(JedisConfig.MAX_WAIT);
-		config.setTestOnBorrow(JedisConfig.TEST_ON_BORROW);
+		config.setMaxTotal(jedisConfig.MAX_ACTIVE);
+		config.setMaxIdle(jedisConfig.MAX_IDLE);
+		config.setMaxWaitMillis(jedisConfig.MAX_WAIT);
+		config.setTestOnBorrow(jedisConfig.TEST_ON_BORROW);
 		jedisPool = new JedisPool(config,
-								  JedisConfig.REDIS_IP,
-								  JedisConfig.REDIS_PORT,
+								  jedisConfig.REDIS_IP,
+								  jedisConfig.REDIS_PORT,
 								  Protocol.DEFAULT_TIMEOUT,
-								  JedisConfig.PASSWORD == null || JedisConfig.PASSWORD.equals("") ? null : JedisConfig.PASSWORD,
-								  JedisConfig.DBINDEX);
+								  jedisConfig.PASSWORD == null || jedisConfig.PASSWORD.equals("") ? null : jedisConfig.PASSWORD,
+								  jedisConfig.DBINDEX);
 	}
 
 	/**
@@ -69,12 +81,12 @@ public class JedisClient {
 	 */
 	private void initialShardedPool() {
 		JedisPoolConfig config = new JedisPoolConfig();
-		config.setMaxTotal(JedisConfig.MAX_ACTIVE);
-		config.setMaxIdle(JedisConfig.MAX_IDLE);
-		config.setMaxWaitMillis(JedisConfig.MAX_WAIT);
-		config.setTestOnBorrow(JedisConfig.TEST_ON_BORROW);
+		config.setMaxTotal(jedisConfig.MAX_ACTIVE);
+		config.setMaxIdle(jedisConfig.MAX_IDLE);
+		config.setMaxWaitMillis(jedisConfig.MAX_WAIT);
+		config.setTestOnBorrow(jedisConfig.TEST_ON_BORROW);
 		List<JedisShardInfo> shards = new ArrayList<JedisShardInfo>();
-		shards.add(new JedisShardInfo(JedisConfig.REDIS_IP, JedisConfig.REDIS_PORT, "master"));
+		shards.add(new JedisShardInfo(jedisConfig.REDIS_IP, jedisConfig.REDIS_PORT, "master"));
 		shardedJedisPool = new ShardedJedisPool(config, shards);
 	}
 	

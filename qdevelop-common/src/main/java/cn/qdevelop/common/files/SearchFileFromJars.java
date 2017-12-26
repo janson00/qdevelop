@@ -3,38 +3,47 @@ package cn.qdevelop.common.files;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.HashSet;
+import java.util.List;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 import java.util.regex.Pattern;
 
 public abstract class SearchFileFromJars {
+	public static List<File> libs;
 	File _f;
 	public void searchAllJarsFiles(String filter){
-		HashSet<String> libs = getEnvironmentJars();
+		if(libs == null){
+			HashSet<String> lists = getEnvironmentJars();
+			libs = new ArrayList<File>(lists.size());
+			for(String s : lists){
+				File f = new File(s);
+				if(f.isFile()){
+					libs.add(f);
+				}
+			}
+		}
 		Pattern search = Pattern.compile(filter.replaceAll("\\*", ".+"));
-		for(String f:libs){
-			_f = new File(f);
-			if(_f.isFile()){
-				JarFile file=null;
+		for(File _f:libs){
+			JarFile file=null;
+			try {
+				file = new JarFile(_f);
+				Enumeration<JarEntry> entrys = file.entries();
+				while(entrys.hasMoreElements()){
+					JarEntry jar = entrys.nextElement();
+					if(search.matcher(jar.getName()).find()){
+						desposeFile(clear.matcher(file.getName()).replaceAll(""),jar.getName(),file.getInputStream(jar));
+					}
+				}
+			} catch (Exception e) {
+				e.printStackTrace();
+			}finally{
 				try {
-					file = new JarFile(_f);
-					Enumeration<JarEntry> entrys = file.entries();
-					while(entrys.hasMoreElements()){
-						JarEntry jar = entrys.nextElement();
-						if(search.matcher(jar.getName()).find()){
-							desposeFile(clear.matcher(file.getName()).replaceAll(""),jar.getName(),file.getInputStream(jar));
-						}
-					}
-				} catch (Exception e) {
+					if(file!=null)file.close();
+				} catch (IOException e) {
 					e.printStackTrace();
-				}finally{
-					try {
-						if(file!=null)file.close();
-					} catch (IOException e) {
-						e.printStackTrace();
-					}
 				}
 			}
 		}
@@ -65,6 +74,7 @@ public abstract class SearchFileFromJars {
 		}catch(Exception e){
 			e.printStackTrace();
 		}
+		//		System.out.println("load environmentJars >>>>>>>>>>>>>>>>");
 		return all;
 	}
 

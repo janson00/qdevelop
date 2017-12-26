@@ -1,17 +1,24 @@
 package com.wangjiu.common.util;
 
-import cn.qdevelop.common.asynchronous.AsynExcutor;
+import org.apache.log4j.Logger;
+
+import cn.qdevelop.common.QLogFactory;
+import cn.qdevelop.common.QLogger;
 
 public class AsyncRun {
-
+	private static QLogger logger = QLogFactory.getQLogger(QLogFactory.class);
+	private static Logger log = QLogFactory.getLogger(QLogFactory.class);
 	public static void main(String[] args) {
-		for(int i=0;i<100;i++){
-		AsynExcutor.getInstance().asynExec(new Runnable(){
-			@Override
-			public void run() {
-				System.out.println(Math.random());
-			}
-		});
+		for(int i=0;i<100000;i++){
+			logger.info(System.getProperties().toString());
+		}
+		try {
+			Thread.sleep(2000);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+		for(int i=0;i<100000;i++){
+			log.info(System.getProperties().toString());
 		}
 	}
 

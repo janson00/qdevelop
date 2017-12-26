@@ -1,6 +1,8 @@
 package cn.qdevelop.plugin.id.client;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.ObjectInputStream;
 import java.io.PrintWriter;
 import java.net.Socket;
@@ -14,9 +16,20 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-import cn.qdevelop.common.utils.QSource;
+import org.apache.log4j.Logger;
 
+import cn.qdevelop.common.QLogFactory;
+import cn.qdevelop.common.files.QFileLoader;
+
+/**
+ * @deprecated
+ * @author janson
+ *
+ */
 public class IDGenerate {
+	
+	protected static Logger log = QLogFactory.getLogger(IDGenerate.class);
+	
 	private static IDGenerate _IDClient = new IDGenerate();
 	private static String SERVER_IP;
 	private static int SERVER_PORT;
@@ -42,58 +55,64 @@ public class IDGenerate {
 
 
 	/**
+	 * @deprecated
 	 * 获取用户ID
 	 * 
 	 * @return
 	 * @throws Exception
 	 */
-	public long getUserID() throws Exception {
-		return getID("user", 8, 2);
+	public String getUserID() throws Exception {
+		return getIDStr("user", 8, 2);
 	}
 
 	/**
+	 * @deprecated
 	 * 获取商品ID
 	 * 
 	 * @return
 	 * @throws Exception
 	 */
-	public long getProductID() throws Exception {
-		return getID("product", 6, 2);
+	public String getProductID() throws Exception {
+		return getIDStr("product", 6, 2);
 	}
 
 	/**
+	 * @deprecated
 	 * 获取随机验证码
 	 * 
 	 * @return
 	 * @throws Exception
 	 */
-	public long getRandomID() throws Exception {
-		return getID("random", 6, 5);
+	public String getRandomID() throws Exception {
+		return getIDStr("random", 6, 5);
 	}
 
 	/**
+	 * @deprecated
 	 * 获取订单ID
 	 * 
 	 * @return
 	 * @throws Exception
 	 */
-	public long getOrderID() throws Exception {
-		return getID("order", 8, 2);
+	public String getOrderID() throws Exception {
+		return getIDStr("order", 8, 2);
 	}
 
 	/**
+	 * @deprecated
 	 * 获取优惠券ID
 	 * 
 	 * @return
 	 * @throws Exception
 	 */
-	public long getCouponID() throws Exception {
-		return getID("coupon", 9, 2);
+	public String getCouponID() throws Exception {
+		return getIDStr("coupon", 9, 2);
 	}
 
 
 
 	/**
+	 * @deprecated
 	 * 获取ID字符串
 	 * @param name 设置需要获取队列的名称
 	 * @param digit 设置此队列中自增ID的长度
@@ -115,6 +134,7 @@ public class IDGenerate {
 	}
 
 	/**
+	 * @deprecated
 	 * 获取ID数值
 	 * @param name 设置需要获取队列的名称
 	 * @param digit 设置此队列中自增ID的长度
@@ -308,10 +328,22 @@ public class IDGenerate {
 	}
 
 	private void init(){
-		Properties prop = QSource.getInstance().loadProperties("plugin-config/qdevelop-id-client.properties",this.getClass());
-		if(prop!=null){
-			SERVER_IP = prop.getProperty("server_ip") == null ? "127.0.0.1" : prop.getProperty("server_ip");
-			SERVER_PORT = prop.getProperty("server_port") == null ? 10701 : Integer.parseInt(prop.getProperty("server_port"));
+		try {
+			new QFileLoader(){
+				@Override
+				public void despose(InputStream is) {
+					try {
+						Properties prop = new Properties();
+						prop.load(is);
+						SERVER_IP = prop.getProperty("server_ip") == null ? "127.0.0.1" : prop.getProperty("server_ip");
+						SERVER_PORT = prop.getProperty("server_port") == null ? 10701 : Integer.parseInt(prop.getProperty("server_port"));
+					} catch (IOException e) {
+						e.printStackTrace();
+					}
+				}
+			}.loadFile("plugin-config/qdevelop-id-client.properties", this.getClass());
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
 		}
 
 		Runtime.getRuntime().addShutdownHook(new Thread(){
@@ -320,9 +352,10 @@ public class IDGenerate {
 			}
 		});
 	}
+	
 	public static void main(String[] args) {
 		try {
-			long id = IDGenerate.getInstance().getRandomID();
+			String id = IDGenerate.getInstance().getRandomID();
 			System.out.println(id);
 		} catch (Exception e) {
 			// TODO Auto-generated catch block

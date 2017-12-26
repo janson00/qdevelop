@@ -15,6 +15,8 @@ import org.dom4j.io.OutputFormat;
 import org.dom4j.io.SAXReader;
 import org.dom4j.io.XMLWriter;
 
+import cn.qdevelop.common.files.FileFilter;
+
 public class QXMLUtils {
 	
 	public boolean isRootWith(String root,InputStream xml){

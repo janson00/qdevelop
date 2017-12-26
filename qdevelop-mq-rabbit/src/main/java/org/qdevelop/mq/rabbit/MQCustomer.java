@@ -17,15 +17,33 @@ import com.rabbitmq.client.Envelope;
 import com.rabbitmq.client.QueueingConsumer;
 
 public class MQCustomer {
-	private static MQCustomer _MQCustomer = new MQCustomer();
-	public static MQCustomer getInstance(){return _MQCustomer;}
+	private static MQCustomer _MQCustomer;
+	public static MQCustomer getInstance(){
+		if(_MQCustomer == null){
+			_MQCustomer = new MQCustomer();
+		}
+		return _MQCustomer;
+	}
 	private ArrayList<Connection> collection = new ArrayList<Connection>();
 
 	ConnectionFactory factory;
+	
 	public MQCustomer(){
+		init("plugin-config/rabbit-mq.properties");
+	}
+
+	/**
+	 * 自定义配置文件路径地址
+	 * @param config
+	 */
+	public MQCustomer(String config){
+		init(config);
+	}
+
+	private void init(String config){
 		Properties props = new Properties();
 		try {
-			props.load(new MQConfig().getSourceAsStream("plugin-config/rabbit-mq.properties"));
+			props.load(new MQConfig().getSourceAsStream(config));
 			factory = new ConnectionFactory();  
 			factory.setHost(props.getProperty("mq_server_host"));
 			factory.setPort(Integer.parseInt(props.getProperty("mq_server_port")));
@@ -42,6 +60,8 @@ public class MQCustomer {
 		}
 		factory.setAutomaticRecoveryEnabled(true);
 	}
+
+
 
 	public void register(final ICustomer customer){
 		try {

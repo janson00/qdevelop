@@ -1,4 +1,4 @@
-package cn.qdevelop.service;
+package cn.qdevelop.service.interfacer;
 
 public interface IService {
 	/**输出json或者js文件**/

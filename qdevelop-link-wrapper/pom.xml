@@ -5,10 +5,10 @@
   <parent>
     <groupId>cn.qdevelop</groupId>
     <artifactId>qdevelop</artifactId>
-    <version>1.0.0-SNAPSHOT</version>  </parent>
+    <version>2.0.0</version>  </parent>
   <groupId>cn.qdevelop</groupId>
   <artifactId>qdevelop-link-wrapper</artifactId>
-  <version>1.0.0-SNAPSHOT</version> 
+  <version>1.0.0</version> 
    <name>qdevelop-link-wrapper</name>
   <url>http://maven.apache.org</url>
   <properties>

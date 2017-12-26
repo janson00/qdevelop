@@ -22,8 +22,23 @@ public class MQProvider  extends ConcurrentLinkedQueue<MQBean>{
 	 */
 	private static final long serialVersionUID = -2312239022403219259L;
 	private  AtomicBoolean isRunning = new AtomicBoolean(false);
-	private static MQProvider _MQPublisher = new MQProvider();
-	public static MQProvider getInstance(){return _MQPublisher;}
+	private static MQProvider _MQPublisher ;
+	public static MQProvider getInstance(){
+		if(_MQPublisher == null){
+			_MQPublisher = new MQProvider();
+		}
+		return _MQPublisher;
+	}
+
+	public MQProvider(){
+		initFactory("plugin-config/rabbit-mq.properties");
+	}
+
+	public MQProvider(String config){
+		initFactory(config);
+	}
+
+
 	ConnectionFactory factory;
 
 	/**
@@ -36,7 +51,7 @@ public class MQProvider  extends ConcurrentLinkedQueue<MQBean>{
 		if(!isRunning.get()){
 			new Thread(){
 				public void run(){
-					MQProvider.getInstance().aync();
+					aync();
 				}
 			}.start();
 		}
@@ -75,9 +90,6 @@ public class MQProvider  extends ConcurrentLinkedQueue<MQBean>{
 	private void aync(){
 		if(isRunning.get() || this.isEmpty())return;
 		isRunning.set(true);
-		if(factory==null){
-			initFactory();
-		}
 		Connection connection = null;
 		Channel channel = null;
 		MQBean mq = null;
@@ -107,10 +119,10 @@ public class MQProvider  extends ConcurrentLinkedQueue<MQBean>{
 		isRunning.set(false);
 	}
 
-	private void initFactory() {
+	private void initFactory(String config) {
 		Properties props = new Properties();
 		try {
-			props.load(new MQConfig().getSourceAsStream("plugin-config/rabbit-mq.properties"));
+			props.load(new MQConfig().getSourceAsStream(config));
 			factory = new ConnectionFactory();  
 			factory.setHost(props.getProperty("mq_server_host"));
 			factory.setPort(Integer.parseInt(props.getProperty("mq_server_port")));

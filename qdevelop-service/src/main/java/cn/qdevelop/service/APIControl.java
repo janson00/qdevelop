@@ -9,7 +9,9 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import cn.qdevelop.service.utils.QServiceUitls;
+import cn.qdevelop.service.interfacer.IOutput;
+import cn.qdevelop.service.interfacer.IService;
+import cn.qdevelop.service.utils.QServiceHelper;
 
 /**
  * @WebServlet(
@@ -81,17 +83,23 @@ public abstract class APIControl extends HttpServlet implements IService{
 
 	protected void doGet(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
+		QServiceHelper sh = new QServiceHelper();
 		httpServletResponse.set(response);
 		httpServletRequest.set(request);
-		out.set(QServiceUitls.getOutput(request, response));
+		out.set(sh.getOutput(request, response));
 		if(!out.get().isError()){
-			Map<String,String> args = QServiceUitls.getParameters(request);
+			Map<String,String> args = sh.getParameters(request);
 			init(args);
-			if(jumpValidate || new QServiceUitls().validParameters(args,out.get(),checkColumns,ignoreColumns)){
+			if(jumpValidate || sh.validParameters(args,out.get(),checkColumns,ignoreColumns)){
 				execute(args,out.get());
 			}
+			args.clear();
+			args=null;
 		}
-		QServiceUitls.output(out.get().toString(), out.get().getOutType(), request, response);
+		sh.output(out.get().toString(), out.get().getOutType(), request, response);
+		out.remove();
+		httpServletResponse.remove();
+		httpServletRequest.remove();
 	}
 
 

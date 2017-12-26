@@ -141,7 +141,7 @@ public class QServiceHelper {
 
 
 	private static Pattern isInteger = Pattern.compile("^(([><=&\\^!\\|]+)?[0-9]+?)+?$");
-	private static Pattern isDouble = Pattern.compile("^(([><=&\\^!\\|]+)?[0-9]+?\\.[0-9]+?)+?$");
+	private static Pattern isDouble = Pattern.compile("^(([><=&\\^!\\|]+)?[0-9]+?(\\.[0-9]+?)?)+?$");
 	private static Pattern isTime = Pattern.compile("^(([><=&\\^!\\|]+)?[0-9]{4}-[0-9]{2}-[0-9]{2}( [0-9]{2}:[0-9]{2}:[0-9]{2})?)+?$");
 
 	private static Pattern isAttackValue =
@@ -326,15 +326,17 @@ public class QServiceHelper {
 				acb.setAutoSearch(true);
 			}
 			String params = ele.attributeValue("params");
-			String repeat = ele.attributeValue("repeat");
-			if(repeat!=null&&repeat.length()>0){
-				args.add(repeat);
-				if(params!=null&&params.length()>0){
-					String repeatSplit = ele.attributeValue("repeat-split");
-					Pattern clear = Pattern.compile("\\b("+repeat.replaceAll(repeatSplit, "|")+")\\b");
-					params = clear.matcher(params).replaceAll("");
-				}
-			}
+//			String repeat = ele.attributeValue("repeat");
+//			if(repeat!=null&&repeat.length()>0){
+//				args.add(repeat);
+//				if(params!=null&&params.length()>0){
+//					String repeatSplit = ele.attributeValue("repeat-split");
+//					if(repeatSplit!=null){
+//						Pattern clear = Pattern.compile("\\b("+repeat.replaceAll(repeatSplit, "|")+")\\b");
+//						params = clear.matcher(params).replaceAll("");
+//					}
+//				}
+//			}
 			if(params!=null&&params.length()>0){
 				String[] tmp = params.split("\\|");
 				for(int j=0;j<tmp.length;j++){
@@ -363,4 +365,12 @@ public class QServiceHelper {
 		getCheckArgsByIndexCache.put(index, acb);
 		return r;
 	}
+
+	//	public static void main(String[] args) {
+	//		System.out.println(isDouble.matcher("1.21").find());
+	//		System.out.println(isDouble.matcher("1.1").find());
+	//		System.out.println(isDouble.matcher("11").find());
+	//		System.out.println(isDouble.matcher("1a1").find());
+	//	}
+
 }

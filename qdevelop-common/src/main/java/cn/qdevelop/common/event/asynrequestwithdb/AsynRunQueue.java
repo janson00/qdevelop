@@ -3,9 +3,9 @@ package cn.qdevelop.common.event.asynrequestwithdb;
 import java.util.List;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.log4j.Logger;
 
+import cn.qdevelop.common.QLogFactory;
 import cn.qdevelop.common.event.IRequest;
 import cn.qdevelop.common.schedule.QScheduleFactory;
 
@@ -59,7 +59,7 @@ public class AsynRunQueue extends ConcurrentLinkedQueue<AsynRunBean> {
 
 	private static final long serialVersionUID = -5578417746089072721L;
 
-	private static final transient Logger log = LoggerFactory.getLogger(AsynRunQueue.class);
+	private static final transient Logger log = QLogFactory.getLogger(AsynRunQueue.class);
 
 	private boolean isRunning = false;
 
