@@ -10,7 +10,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>cn.qdevelop</groupId>
 	<artifactId>qdevelop</artifactId>
-	<version>2.0.0</version>	
+	<version>2.0.0</version>
 	<packaging>pom</packaging>
 
 	<repositories>
@@ -20,35 +20,29 @@
 			<url>http://maven.aliyun.com/nexus/content/groups/public</url>
 		</repository>
 
+		<!-- <repository> <id>qdevelop</id> <url>http://192.168.86.8:8081/nexus/content/repositories/qdevelop/</url> 
+			</repository> <repository> <id>develop</id> <url>http://192.168.86.8:8081/nexus/content/repositories/develop/</url> 
+			</repository> -->
 		<repository>
 			<id>qdevelop</id>
-			<url>http://192.168.86.8:8081/nexus/content/repositories/qdevelop/</url>
+			<url>http://mvn.e-platform.cn/nexus/content/repositories/qdevelop</url>
 		</repository>
-		<repository>
-			<id>develop</id>
-			<url>http://192.168.86.8:8081/nexus/content/repositories/develop/</url>
-		</repository>
-<!--
-		 <repository> <id>qdevelop</id> <url>http://mvn.e-platform.cn/nexus/content/repositories/qdevelop</url> 
-			</repository> -->
 
 	</repositories>
 
 	<distributionManagement>
 
-		<repository> 
-			<id>qdevelop</id> 
-			<url>http://192.168.86.8:8081/nexus/content/repositories/qdevelop/</url>
-		</repository> 
-		<snapshotRepository> 
-			<id>develop</id> 
-			<url>http://192.168.86.8:8081/nexus/content/repositories/develop/</url>
-		</snapshotRepository> 
-<!--
-		 <snapshotRepository> <id>qdevelop</id> <url>http://mvn.e-platform.cn/nexus/content/repositories/qdevelop</url> 
-			</snapshotRepository> <repository> <id>e-platform</id> <url>http://mvn.e-platform.cn/nexus/content/repositories/e-platform</url> 
-			</repository> 
-			-->
+		<!-- <repository> <id>qdevelop</id> <url>http://192.168.86.8:8081/nexus/content/repositories/qdevelop/</url> 
+			</repository> <snapshotRepository> <id>develop</id> <url>http://192.168.86.8:8081/nexus/content/repositories/develop/</url> 
+			</snapshotRepository> -->
+		<snapshotRepository>
+			<id>qdevelop</id>
+			<url>http://mvn.e-platform.cn/nexus/content/repositories/qdevelop</url>
+		</snapshotRepository>
+		<repository>
+			<id>e-platform</id>
+			<url>http://mvn.e-platform.cn/nexus/content/repositories/e-platform</url>
+		</repository>
 	</distributionManagement>
 
 	<build>
