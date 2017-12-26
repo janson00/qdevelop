@@ -6,7 +6,7 @@ import java.util.Map.Entry;
 
 import com.alibaba.fastjson.JSON;
 
-import cn.qdevelop.service.IOutput;
+import cn.qdevelop.service.interfacer.IOutput;
 
 public class OutputJson implements IOutput{
 	/**返回结果状态标识，default 0 正常**/
@@ -15,7 +15,7 @@ public class OutputJson implements IOutput{
 	Object data;
 	HashMap<String,Object> attr = null;
 	String jsonpCallback = null;
-	boolean isError = false;
+	boolean isError,isBodyOnly = false;
 	String outType;
 
 	public int getTag() {
@@ -43,7 +43,7 @@ public class OutputJson implements IOutput{
 		}
 		this.errMsg = sb.toString();
 	}
-	
+
 	public Object getData() {
 		return data;
 	}
@@ -61,35 +61,57 @@ public class OutputJson implements IOutput{
 
 
 	public String toString(){
-		StringBuffer out = new StringBuffer().append(jsonpCallback==null?"":jsonpCallback+"(").append("{")
-				.append("\"tag\":").append(this.getTag()).append(",")
-				.append("\"data\":{\"result\":").append(JSON.toJSONString(this.getData()));
-		if(attr!=null){
-			Iterator<Entry<String,Object>> iter = attr.entrySet().iterator();
-			while(iter.hasNext()){
-				Entry<String,Object> itor = iter.next();
-				out.append(",\"").append(itor.getKey()).append("\":").append(JSON.toJSONString(itor.getValue()));
+		StringBuffer out = new StringBuffer();
+		out.append(jsonpCallback==null?"":jsonpCallback+"(").append("{");
+		if(isBodyOnly()){
+			out.append("\"data\":").append(JSON.toJSONString(this.getData()));
+			if(attr!=null){
+				Iterator<Entry<String,Object>> iter = attr.entrySet().iterator();
+				while(iter.hasNext()){
+					Entry<String,Object> itor = iter.next();
+					out.append(",\"").append(itor.getKey()).append("\":").append(JSON.toJSONString(itor.getValue()));
+				}
 			}
+		}else{
+			out.append("\"tag\":").append(this.getTag()).append(",")
+			.append("\"data\":{\"result\":").append(JSON.toJSONString(this.getData()));
+			if(attr!=null){
+				Iterator<Entry<String,Object>> iter = attr.entrySet().iterator();
+				while(iter.hasNext()){
+					Entry<String,Object> itor = iter.next();
+					out.append(",\"").append(itor.getKey()).append("\":").append(JSON.toJSONString(itor.getValue()));
+				}
+			}
+			out.append("},\"errMsg\":\"").append(this.getErrMsg()).append("\"");
 		}
-		return out.append("},\"errMsg\":\"").append(this.getErrMsg()).append("\"").append("}").append(jsonpCallback==null?"":");").toString();
+		out.append("}").append(jsonpCallback==null?"":");");
+		return out.toString();
 	}
-	
+
 	@Override
 	public boolean isError() {
 		return isError;
 	}
-	
+
 	@Override
 	public String getOutType() {
 		return outType;
 	}
-	
+
 	public void setOutType(String outType){
 		this.outType = outType;
 	}
-	
+
 	public void setJsonpCallback(String callback){
 		jsonpCallback = callback;
+	}
+	@Override
+	public boolean isBodyOnly() {
+		return isBodyOnly;
+	}
+
+	public void setBodyOnly(boolean isBodyOnly){
+		this.isBodyOnly = isBodyOnly;
 	}
 
 }

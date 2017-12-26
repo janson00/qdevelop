@@ -1,4 +1,4 @@
-package cn.qdevelop.common.utils;
+package cn.qdevelop.common.files;
 
 import java.io.File;
 import java.io.IOException;

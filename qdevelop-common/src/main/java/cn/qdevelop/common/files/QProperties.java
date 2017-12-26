@@ -1,4 +1,4 @@
-package cn.qdevelop.common.utils;
+package cn.qdevelop.common.files;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -15,6 +15,9 @@ import org.apache.log4j.Logger;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
+
+import cn.qdevelop.common.utils.QLog;
+import cn.qdevelop.common.utils.QString;
 
 /**
  * 系统文件配置读取工具,目前读取classes/prop/*.properties的文件

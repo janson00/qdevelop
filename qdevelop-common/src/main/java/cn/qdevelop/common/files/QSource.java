@@ -1,4 +1,4 @@
-package cn.qdevelop.common.utils;
+package cn.qdevelop.common.files;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -12,8 +12,6 @@ import java.util.Properties;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 import java.util.regex.Pattern;
-
-import org.apache.commons.beanutils.locale.LocaleBeanUtils;
 
 /**
  * 
@@ -154,8 +152,9 @@ public class QSource {
 				while (entrys.hasMoreElements()) {
 					JarEntry jarEntry = entrys.nextElement();
 					if (jarEntry.getName().endsWith(fileName)) {
-						System.out.println("load jar resource:\t" + jarEntry.getName());
+						System.out.println("load jar["+file.getName()+"] resource:\t" + jarEntry.getName());
 						result = file.getInputStream(jarEntry);
+						
 					}
 				}
 			} catch (IOException e) {
@@ -172,19 +171,19 @@ public class QSource {
 		return result;
 	}
 	
-	public Properties loadProperties(String configName){
-		try {
-			InputStream idSvrConfig = getSourceAsStream(configName);
-			if(idSvrConfig!=null){
-				Properties prop = new Properties();
-				prop.load(idSvrConfig);
-				return prop;
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
-		} 
-		return null;
-	}
+//	public Properties loadProperties(String configName){
+//		try {
+//			InputStream idSvrConfig = getSourceAsStream(configName);
+//			if(idSvrConfig!=null){
+//				Properties prop = new Properties();
+//				prop.load(idSvrConfig);
+//				return prop;
+//			}
+//		} catch (Exception e) {
+//			e.printStackTrace();
+//		} 
+//		return null;
+//	}
 	
 	/**
 	 * 加载配置文件
@@ -193,15 +192,42 @@ public class QSource {
 	 */
 	public Properties loadProperties(String configName,Class<?> callClass){
 		try {
-			
-			String runPath = callClass.getProtectionDomain().getCodeSource().getLocation().getPath();
-			if(runPath.endsWith(".jar")){
-				
-			}
-			InputStream idSvrConfig = getSourceAsStream(configName);
-			if(idSvrConfig!=null){
+			InputStream res = getSourceAsStream(configName);
+			if(res!=null){
 				Properties prop = new Properties();
-				prop.load(idSvrConfig);
+				prop.load(res);
+				return prop;
+			}
+			String runPath = callClass.getProtectionDomain().getCodeSource().getLocation().getPath();
+			System.out.println("load from : "+runPath);
+			if(runPath.endsWith(".jar")){
+				File jarPath = new File(runPath);
+				Properties prop = new Properties();
+				InputStream result = null;
+				if (jarPath.exists() && jarPath.isFile()) {
+					JarFile file = null;
+					try {
+						file = new JarFile(jarPath);
+						Enumeration<JarEntry> entrys = file.entries();
+						while (entrys.hasMoreElements()) {
+							JarEntry jarEntry = entrys.nextElement();
+							if (jarEntry.getName().endsWith(configName)) {
+								System.out.println("load jar["+file.getName()+"] resource:\t" + jarEntry.getName());
+								result = file.getInputStream(jarEntry);
+								prop.load(result);
+							}
+						}
+					} catch (IOException e) {
+						e.printStackTrace();
+					} finally {
+						try {
+							if (file != null)
+								file.close();
+						} catch (Exception e) {
+							e.printStackTrace();
+						}
+					}
+				}
 				return prop;
 			}
 		} catch (Exception e) {
@@ -210,6 +236,48 @@ public class QSource {
 		return null;
 	}
 
+	public InputStream loadInputStream(String configName,Class<?> callClass){
+		try {
+			InputStream res = getSourceAsStream(configName);
+			if(res!=null){
+				return res;
+			}
+			String runPath = callClass.getProtectionDomain().getCodeSource().getLocation().getPath();
+			System.out.println("load from : "+runPath);
+			if(runPath.endsWith(".jar")){
+				File jarPath = new File(runPath);
+				InputStream result = null;
+				if (jarPath.exists() && jarPath.isFile()) {
+					JarFile file = null;
+					try {
+						file = new JarFile(jarPath);
+						Enumeration<JarEntry> entrys = file.entries();
+						while (entrys.hasMoreElements()) {
+							JarEntry jarEntry = entrys.nextElement();
+							if (jarEntry.getName().endsWith(configName)) {
+								System.out.println("load jar["+file.getName()+"] resource:\t" + jarEntry.getName());
+								result = file.getInputStream(jarEntry);
+//								InputStream
+								
+							}
+						}
+					} catch (IOException e) {
+						e.printStackTrace();
+					} finally {
+						try {
+							if (file != null)
+								file.close();
+						} catch (Exception e) {
+							e.printStackTrace();
+						}
+					}
+				}
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		} 
+		return null;
+	}
 	/**
 	 * 加载clazz所在的jar包中的资源
 	 * @param claZZ
@@ -260,9 +328,12 @@ public class QSource {
 	}
 
 	
-	public static void main(String[] args) {
-		QSource.getInstance().loadProperties("qdevelop-log.properties", LocaleBeanUtils.class);
-	}
+//	public static void main(String[] args) {
+//		Properties prop = QSource.getInstance().loadProperties("qdevelop-log.properties", Closeables.class);
+//		if(prop!=null){
+//			System.out.println(prop.toString());
+//		}
+//	}
 
 
 	
