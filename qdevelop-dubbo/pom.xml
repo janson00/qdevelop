@@ -6,10 +6,11 @@
 	<parent>
 		<groupId>cn.qdevelop</groupId>
 		<artifactId>qdevelop</artifactId>
-		<version>2.0.0</version>	</parent>
+		<version>2.0.0</version>
+	</parent>
 	<groupId>cn.qdevelop</groupId>
 	<artifactId>qdevelop-dubbo</artifactId>
-	<version>2.0.0</version>	
+	<!-- <version>2.0.0</version> -->
 	<name>qdevelop-dubbo</name>
 	<url>http://maven.apache.org</url>
 	<properties>
@@ -46,7 +47,8 @@
 		<dependency>
 			<groupId>cn.qdevelop</groupId>
 			<artifactId>qdevelop-common</artifactId>
-			<version>2.0.0</version>		</dependency>
+			<version>2.0.0</version>
+		</dependency>
 		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
