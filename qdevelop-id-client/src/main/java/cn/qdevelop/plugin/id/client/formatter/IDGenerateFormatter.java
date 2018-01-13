@@ -9,11 +9,13 @@ import org.dom4j.Element;
 
 import cn.qdevelop.common.exception.QDevelopException;
 import cn.qdevelop.core.formatter.AbstractParamFormatter;
-import cn.qdevelop.plugin.id.client.IDGenerate;
+import cn.qdevelop.plugin.id.client.IDClient;
+import cn.qdevelop.plugin.idgenerate.bean.IDRequestBean;
 
 public class IDGenerateFormatter extends AbstractParamFormatter{
 	String paramKey,appIdName,wrapper,dateStyle;
 	int digit,buffer;
+	boolean isRandom , isDateRange;
 	@Override
 	public void initFormatter(Element conf) throws QDevelopException {
 		paramKey = conf.attributeValue("param-key");
@@ -22,7 +24,8 @@ public class IDGenerateFormatter extends AbstractParamFormatter{
 		digit = conf.attributeValue("digit") == null ? 6 : Integer.parseInt(conf.attributeValue("digit"));
 		buffer = conf.attributeValue("buffer") == null ? 5 : Integer.parseInt(conf.attributeValue("buffer"));
 		dateStyle = conf.attributeValue("date-format") == null ? "yyMMdd" : conf.attributeValue("date-format");
-
+		isRandom = conf.attributeValue("is-random") == null ? false : Boolean.parseBoolean(conf.attributeValue("is-random"));
+		isDateRange = conf.attributeValue("is-date-range") == null ? false : Boolean.parseBoolean(conf.attributeValue("is-date-range"));
 	}
 
 	@Override
@@ -40,7 +43,10 @@ public class IDGenerateFormatter extends AbstractParamFormatter{
 	@Override
 	public Map<String, Object> formatter(Map<String, Object> query) {
 		try {
-			String id = IDGenerate.getInstance().getIDStr(appIdName, digit, buffer);
+			IDRequestBean req = new IDRequestBean(appIdName, digit, buffer);
+			req.setDateRange(isDateRange);
+			req.setRandom(isRandom);
+			String id = IDClient.getInstance().getIDStr(req);
 			if(wrapper!=null&&isTemplate.matcher(wrapper).find()){
 				if(wrapper.indexOf("{ID}") > -1){
 					wrapper =  wrapper.replace("{ID}", id);

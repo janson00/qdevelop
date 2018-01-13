@@ -27,7 +27,7 @@ public interface IDRequest extends java.io.Serializable {
 	 * 当天用满后，ID自动往上增长
 	 * @return
 	 */
-	public boolean isDateRanke();
+	public boolean isDateRange();
 	
 	/**
 	 * 或者日期生成格式，default： yymmdd

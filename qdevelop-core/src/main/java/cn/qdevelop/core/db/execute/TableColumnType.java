@@ -5,14 +5,12 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.regex.Pattern;
 
 import cn.qdevelop.common.exception.QDevelopException;
-import cn.qdevelop.common.utils.QString;
 import cn.qdevelop.core.db.bean.DBStrutsBean;
 import cn.qdevelop.core.db.bean.DBStrutsLeaf;
 import cn.qdevelop.core.db.connect.ConnectFactory;
@@ -33,7 +31,7 @@ public class TableColumnType  extends ConcurrentHashMap<String, DBStrutsBean>{
 	protected static Pattern isTableName = Pattern.compile("^[a-zA-Z0-9|\\_]+$");
 	private final static Map<String,String> connNameRelation = new ConcurrentHashMap<String,String>();
 	
-	private static HashSet<String> allConnectNameWithTableName = new HashSet<String>();
+//	private static HashSet<String> allConnectNameWithTableName = new HashSet<String>();
 
 
 	public Map<String,DBStrutsLeaf> getTablesStrutsBean(String connName,String ... tables) {
@@ -134,27 +132,29 @@ public class TableColumnType  extends ConcurrentHashMap<String, DBStrutsBean>{
 		return result;
 	}
 
-	public void collects(String connectName,String ... tables){
-		for(String t : tables){
-			allConnectNameWithTableName.add(QString.append(connectName,"@#@",t));
-		}
-	}
-	
-	public void initLoad(){
-		if(allConnectNameWithTableName.size()>0){
-			Iterator<String> itors = allConnectNameWithTableName.iterator();
-			while(itors.hasNext()){
-				String tmp = itors.next();
-				String connName = tmp.substring(0, tmp.indexOf("@#@"));
-				String tableName = tmp.substring(tmp.indexOf("@#@")+3);
-				
-			}
-		}
-	}
+//	public void collects(String connectName,String ... tables){
+//		for(String t : tables){
+//			allConnectNameWithTableName.add(QString.append(connectName,"@#@",t));
+//		}
+//	}
+//	
+//	public void initLoad(){
+//		if(allConnectNameWithTableName.size()>0){
+//			Iterator<String> itors = allConnectNameWithTableName.iterator();
+//			while(itors.hasNext()){
+//				String tmp = itors.next();
+//				String connName = tmp.substring(0, tmp.indexOf("@#@"));
+//				String tableName = tmp.substring(tmp.indexOf("@#@")+3);
+//				
+//			}
+//		}
+//	}
 
 
 
-	//	public static void main(String[] args)  {
+//		public static void main(String[] args)  {
+//			System.out.println(isTableName.matcher("aa_01_asd.tables_01").find());
+//		}
 	//		Pattern isTableName = Pattern.compile("^[a-zA-Z0-9|\\_]+$");
 	//		String[] test = new String[]{"a1_1","aSd","a a","aA-s"};
 	//		for(String t:test)

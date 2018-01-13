@@ -9,7 +9,7 @@ import org.apache.commons.dbcp2.BasicDataSource;
 import org.apache.log4j.Logger;
 import org.dom4j.Element;
 
-import cn.qdevelop.common.QLogFactory;
+import cn.qdevelop.common.QLog;
 import cn.qdevelop.common.exception.QDevelopException;
 import cn.qdevelop.common.utils.QString;
 
@@ -20,7 +20,7 @@ import cn.qdevelop.common.utils.QString;
  *
  */
 public class DBCPConnect implements IConnect {
-	private static Logger log  = QLogFactory.getLogger(DBCPConnect.class);
+	private static Logger log  = QLog.getLogger(DBCPConnect.class);
 
   private BasicDataSource bds;
   public String database = "MYSQL";

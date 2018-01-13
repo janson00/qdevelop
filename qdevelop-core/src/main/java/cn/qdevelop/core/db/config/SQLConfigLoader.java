@@ -17,7 +17,7 @@ import org.dom4j.DocumentException;
 import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
 
-import cn.qdevelop.common.QLogFactory;
+import cn.qdevelop.common.QLog;
 import cn.qdevelop.common.exception.QDevelopException;
 import cn.qdevelop.common.files.QSource;
 import cn.qdevelop.common.files.SearchFileFromJars;
@@ -32,7 +32,7 @@ public class SQLConfigLoader extends ConcurrentHashMap<String,Element>{
 	 */
 	private static final long serialVersionUID = 2514613541934551967L;
 
-	private static Logger log  = QLogFactory.getLogger(SQLConfigLoader.class);
+	private static Logger log  = QLog.getLogger(SQLConfigLoader.class);
 
 	private static SQLConfigLoader _SQLConfigLoader = new SQLConfigLoader();
 	public static SQLConfigLoader getInstance(){return _SQLConfigLoader;}

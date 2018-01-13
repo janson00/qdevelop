@@ -16,7 +16,7 @@ import java.util.regex.Pattern;
 
 import org.apache.log4j.Logger;
 
-import cn.qdevelop.common.QLogFactory;
+import cn.qdevelop.common.QLog;
 import cn.qdevelop.common.exception.QDevelopException;
 import cn.qdevelop.common.utils.QString;
 import cn.qdevelop.core.db.bean.DBStrutsLeaf;
@@ -27,7 +27,7 @@ import cn.qdevelop.core.standard.IDBUpdate;
 import cn.qdevelop.core.standard.IUpdateHook;
 
 public class DatabaseImpl {
-	private final static Logger log  = QLogFactory.getLogger(DatabaseImpl.class);
+	private final static Logger log  = QLog.getLogger(DatabaseImpl.class);
 
 	public IDBResult queryDB(Connection conn,IDBQuery query,IDBResult result) throws QDevelopException{
 		PreparedStatement pstmt = null;

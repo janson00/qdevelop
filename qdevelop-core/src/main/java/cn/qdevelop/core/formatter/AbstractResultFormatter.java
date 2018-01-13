@@ -6,7 +6,7 @@ import java.util.Set;
 import org.apache.log4j.Logger;
 import org.dom4j.Element;
 
-import cn.qdevelop.common.QLogFactory;
+import cn.qdevelop.common.QLog;
 import cn.qdevelop.core.standard.IResultFormatter;
 
 /**
@@ -15,7 +15,7 @@ import cn.qdevelop.core.standard.IResultFormatter;
  *
  */
 public abstract class AbstractResultFormatter  implements IResultFormatter{
-	private final static Logger log  = QLogFactory.getLogger(AbstractResultFormatter.class);
+	private final static Logger log  = QLog.getLogger(AbstractResultFormatter.class);
 
 	protected Map<String, String> attrs;
 	public IResultFormatter clone(){

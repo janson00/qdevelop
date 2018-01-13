@@ -10,7 +10,7 @@ import java.util.Map;
 import org.apache.log4j.Logger;
 import org.dom4j.Element;
 
-import cn.qdevelop.common.QLogFactory;
+import cn.qdevelop.common.QLog;
 import cn.qdevelop.common.exception.QDevelopException;
 import cn.qdevelop.common.files.QSource;
 import cn.qdevelop.common.files.SearchFileFromJars;
@@ -37,7 +37,7 @@ public class FormatterLoader{
 	
 	private static Logger log;
 	public FormatterLoader(){
-		log  = QLogFactory.getLogger(FormatterLoader.class);
+		log  = QLog.getLogger(FormatterLoader.class);
 		init();
 	}
 	

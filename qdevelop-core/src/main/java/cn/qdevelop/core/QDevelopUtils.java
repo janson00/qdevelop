@@ -1,6 +1,6 @@
 package cn.qdevelop.core;
 
-import cn.qdevelop.common.QLogFactory;
+import cn.qdevelop.common.QLog;
 import cn.qdevelop.common.files.QProperties;
 import cn.qdevelop.core.db.config.SQLConfigLoader;
 import cn.qdevelop.core.db.connect.ConnectFactory;
@@ -12,7 +12,7 @@ public class QDevelopUtils {
 	 * 初始化所有的资源文件
 	 */
 	public static void initAll(){
-		QLogFactory.init();
+		QLog.init();
 		QProperties.getInstance();
 		SQLConfigLoader.getInstance();
 		ConnectFactory.initAllConnect();

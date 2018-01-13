@@ -29,7 +29,7 @@ public class QUtils {
 	 * @return
 	 */
 	public static Logger getLogger(Class<?> claZZ){
-		return QLogFactory.getLogger(claZZ);
+		return QLog.getLogger(claZZ);
 	}
 
 

@@ -6,11 +6,11 @@ import java.util.Set;
 import org.apache.log4j.Logger;
 import org.dom4j.Element;
 
-import cn.qdevelop.common.QLogFactory;
+import cn.qdevelop.common.QLog;
 import cn.qdevelop.core.standard.IParamFormatter;
 
 public abstract class AbstractParamFormatter implements IParamFormatter{
-	private final static Logger log  = QLogFactory.getLogger(AbstractParamFormatter.class);
+	private final static Logger log  = QLog.getLogger(AbstractParamFormatter.class);
 
 	protected Map<String, String> attrs;
 	public IParamFormatter clone(){

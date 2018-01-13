@@ -14,7 +14,7 @@ import org.apache.commons.lang.ArrayUtils;
 import org.apache.log4j.Logger;
 import org.dom4j.Element;
 
-import cn.qdevelop.common.QLogFactory;
+import cn.qdevelop.common.QLog;
 import cn.qdevelop.common.exception.QDevelopException;
 import cn.qdevelop.core.Contant;
 import cn.qdevelop.core.bean.DBQueryBean;
@@ -33,7 +33,7 @@ import cn.qdevelop.core.standard.IResultFormatter;
 import cn.qdevelop.core.standard.IUpdateHook;
 
 public class SQLConfigParser {
-	private static Logger log  = QLogFactory.getLogger(SQLConfigParser.class);
+	private static Logger log  = QLog.getLogger(SQLConfigParser.class);
 	public static SQLConfigParser getInstance(){return new SQLConfigParser();}
 
 	private final static Map<String,ArrayList<IResultFormatter>> resultFormatterByIndex = new ConcurrentHashMap<String,ArrayList<IResultFormatter>>();

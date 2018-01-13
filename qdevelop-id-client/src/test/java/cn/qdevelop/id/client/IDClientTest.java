@@ -1,11 +1,6 @@
 package cn.qdevelop.id.client;
 
-import java.util.Random;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ThreadPoolExecutor;
-import java.util.concurrent.TimeUnit;
-
-import cn.qdevelop.plugin.id.client.IDGenerate;
+import cn.qdevelop.plugin.id.client.IDClient;
 
 public class IDClientTest implements Runnable {
 	public static double BMI(double weight,double hight){
@@ -39,14 +34,15 @@ public class IDClientTest implements Runnable {
 //		}
 //		threadPool.shutdown();
 		long s = System.currentTimeMillis();
-		for(int i=0;i<10;i++){
+		for(int i=0;i<1000;i++){
 			try {
-				System.out.println(IDGenerate.getInstance().getIDStr("random_test",4,100));
+				System.out.println(IDClient.getInstance().getRandomID());
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
 		}
 		System.out.println((System.currentTimeMillis()-s));
+		
 //		IDGenerate.getInstance().shutdown();
 //		try {
 //			threadPool.awaitTermination(30000, TimeUnit.MILLISECONDS);

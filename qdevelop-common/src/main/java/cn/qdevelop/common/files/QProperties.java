@@ -16,7 +16,7 @@ import org.apache.log4j.Logger;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 
-import cn.qdevelop.common.QLogFactory;
+import cn.qdevelop.common.QLog;
 import cn.qdevelop.common.utils.QString;
 
 /**
@@ -28,7 +28,7 @@ import cn.qdevelop.common.utils.QString;
  * @date 2013-9-4 下午12:23:38
  */
 public class QProperties {
-	private final static Logger log  = QLogFactory.getLogger(QProperties.class);
+	private final static Logger log  = QLog.getLogger(QProperties.class);
 
 	/**
 	 * @Fields serialVersionUID : TODO

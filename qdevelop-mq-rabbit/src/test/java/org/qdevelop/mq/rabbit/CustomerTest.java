@@ -10,15 +10,15 @@ public class CustomerTest {
 		MQCustomer.getInstance().register(new ICustomer(){
 			@Override
 			public String getQueueName() {
-				return "Janson";
+				return "app_member_identity_deal";
 			}
 
 			@Override
 			public boolean handleDelivery(String consumerTag, Envelope envelope,
 					BasicProperties properties, Serializable body) {
 //				Object[] v = (Object[])body;
-				System.out.println(body);
-				return true;
+				System.out.println(properties.getContentType()+" == "+body);
+				return false;
 			}
 		});
 	}

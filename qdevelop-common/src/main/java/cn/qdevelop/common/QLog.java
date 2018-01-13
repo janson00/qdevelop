@@ -25,7 +25,7 @@ import cn.qdevelop.common.utils.QString;
  * @author Janson
  * 
  */
-public class QLogFactory {
+public class QLog {
 	public static Pattern isArgs = Pattern.compile("(\\{)SYSNAME(\\})");
 	private static String logConfig = "qdevelop-log.properties$";
 	private static AtomicBoolean isInit = new AtomicBoolean(false);

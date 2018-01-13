@@ -3,7 +3,7 @@ package cn.qdevelop.core;
 import java.sql.SQLException;
 import java.util.List;
 
-import cn.qdevelop.common.QLogFactory;
+import cn.qdevelop.common.QLog;
 import cn.qdevelop.common.exception.QDevelopException;
 import cn.qdevelop.common.files.QProperties;
 import cn.qdevelop.core.db.SQLConfigParser;
@@ -43,7 +43,7 @@ public class AppTest
      */
     public void testApp() throws SQLException
     {
-    	QLogFactory.getLogger(this.getClass());
+    	QLog.getLogger(this.getClass());
     	QProperties.getInstance();
     	UpdateBean ub = new UpdateBean();
     	ub.setFullSql("xxxxxx");

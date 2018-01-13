@@ -71,7 +71,14 @@ public class MQCustomer {
 			channel.basicConsume(customer.getQueueName(),false,new QueueingConsumer(channel){
 				public void handleDelivery(String consumerTag,Envelope envelope,
 						AMQP.BasicProperties properties,byte[] body){
-					if(customer.handleDelivery(consumerTag, envelope, properties, toSerializable(body))){
+					Serializable vals = null;
+					if(properties.getContentType().equals("application/json")){
+						vals = new String(body);
+					}else{
+						vals = toSerializable(body);
+					}
+					
+					if(customer.handleDelivery(consumerTag, envelope, properties, vals)){
 						try {
 							channel.basicAck(envelope.getDeliveryTag(), false);
 						} catch (IOException e) {

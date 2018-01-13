@@ -40,9 +40,10 @@ public class JedisClient {
 		}
 		return jedisClient;
 	}
+	private final String defaultPath = "plugin-config/qdevelop-redis.properties";
 	
 	public JedisClient() {	
-		jedisConfig = new JedisConfig();
+		jedisConfig = new JedisConfig(defaultPath,JedisClient.class);
 		if(jedisConfig.SHARDED){
 			initialShardedPool();
 		}else{
@@ -51,7 +52,25 @@ public class JedisClient {
 	}
 	
 	public JedisClient(String config) {	
-		jedisConfig = new JedisConfig(config);
+		jedisConfig = new JedisConfig(config,JedisClient.class);
+		if(jedisConfig.SHARDED){
+			initialShardedPool();
+		}else{
+			initialPool();
+		}
+	}
+	
+	public JedisClient(String config,Class<?> callClass) {	
+		jedisConfig = new JedisConfig(config,callClass);
+		if(jedisConfig.SHARDED){
+			initialShardedPool();
+		}else{
+			initialPool();
+		}
+	}
+	
+	public JedisClient(Class<?> callClass) {	
+		jedisConfig = new JedisConfig(defaultPath,callClass);
 		if(jedisConfig.SHARDED){
 			initialShardedPool();
 		}else{

@@ -19,7 +19,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.apache.log4j.Logger;
 
-import cn.qdevelop.common.QLogFactory;
+import cn.qdevelop.common.QLog;
 import cn.qdevelop.common.files.QFileLoader;
 import cn.qdevelop.plugin.common.IDRequest;
 import cn.qdevelop.plugin.common.IDResponse;
@@ -28,7 +28,7 @@ import cn.qdevelop.plugin.idgenerate.bean.IDRequestBean;
 
 public class IDClient {
 
-	protected static Logger log = QLogFactory.getLogger(IDClient.class);
+	protected static Logger log = QLog.getLogger(IDClient.class);
 
 	private static IDClient _IDClient = new IDClient();
 	private static String SERVER_IP;
@@ -54,7 +54,7 @@ public class IDClient {
 	 * @throws Exception
 	 */
 	public String getUserID() throws Exception {
-		return getIDStr(new IDRequestBean("user",6,10));
+		return getIDStr(new IDRequestBean("user",6,5));
 	}
 
 	/**
@@ -86,8 +86,19 @@ public class IDClient {
 	 * @throws Exception
 	 */
 	public String getOrderID() throws Exception {
-		IDRequestBean req = new IDRequestBean("order",5,5);
-		req.setDateRanke(true);
+		IDRequestBean req = new IDRequestBean("order",5,10);
+		req.setDateRange(true);
+		return getIDStr(req);
+	}
+	
+	/**
+	 * 获取支付ID
+	 * @return
+	 * @throws Exception
+	 */
+	public String getPaymentID() throws Exception {
+		IDRequestBean req = new IDRequestBean("payment",5,5);
+		req.setDateRange(true);
 		return getIDStr(req);
 	}
 
@@ -98,9 +109,14 @@ public class IDClient {
 	 * @throws Exception
 	 */
 	public String getCouponID() throws Exception {
-		return getIDStr(new IDRequestBean("coupon",8,5));
+		return getIDStr(new IDRequestBean("coupon",8,10));
 	}
 
+	
+	public String getIDStr(String name, final int digit, final int buffer) throws Exception{
+		IDRequestBean rb = new IDRequestBean(name,digit,buffer);
+		return getIDStr(rb);
+	}
 
 
 	/**

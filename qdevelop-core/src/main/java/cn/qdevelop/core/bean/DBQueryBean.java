@@ -121,7 +121,6 @@ public class DBQueryBean implements IDBQuery{
 
 	@Override
 	public void clear() {
-		// TODO Auto-generated method stub
 		
 	}
 	

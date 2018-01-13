@@ -22,5 +22,5 @@ public interface ICustomer {
    * @return                true：反馈回执，消息处理完毕；false：不反馈回执，可以继续再次处理。
    */
   public boolean handleDelivery(String consumerTag,Envelope envelope,AMQP.BasicProperties properties,Serializable body);
-  
+    
 }

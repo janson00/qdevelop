@@ -4,12 +4,12 @@ import java.util.Properties;
 
 import org.apache.log4j.Logger;
 
-import cn.qdevelop.common.QLogFactory;
+import cn.qdevelop.common.QLog;
 import cn.qdevelop.common.files.QSource;
 
 public class JedisConfig {
 
-	protected static Logger log = QLogFactory.getLogger(JedisConfig.class);
+	protected static Logger log = QLog.getLogger(JedisConfig.class);
 
 	public  String REDIS_IP;
 	public  int REDIS_PORT;
@@ -25,16 +25,16 @@ public class JedisConfig {
 
 
 
-	public  JedisConfig() {
-		init("plugin-config/qdevelop-redis.properties");
+//	public  JedisConfig() {
+//		init("plugin-config/qdevelop-redis.properties",JedisConfig.class);
+//	}
+
+	public JedisConfig(String configPath,Class<?> callClass) {
+		init(configPath,callClass);
 	}
 
-	public JedisConfig(String configPath) {
-		init(configPath);
-	}
-
-	public void init(String configPath){
-		Properties pro = QSource.getInstance().loadProperties(configPath,JedisConfig.class);
+	public void init(String configPath,Class<?> callClass){
+		Properties pro = QSource.getInstance().loadProperties(configPath,callClass);
 		if(pro!=null){
 			log.info("loading redis config from redis.properties.......");
 			JEDIS_SWITCH = Boolean.parseBoolean(pro.getProperty("jedis.cache.switch"));

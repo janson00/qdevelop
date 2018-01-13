@@ -12,7 +12,7 @@ import java.util.regex.Pattern;
 import org.apache.log4j.Logger;
 import org.dom4j.Element;
 
-import cn.qdevelop.common.QLogFactory;
+import cn.qdevelop.common.QLog;
 import cn.qdevelop.common.exception.QDevelopException;
 import cn.qdevelop.common.utils.QString;
 import cn.qdevelop.core.bean.DBResultBean;
@@ -29,7 +29,7 @@ import cn.qdevelop.core.standard.IUpdateHook;
 
 public class DatabaseFactory {
 	public static DatabaseFactory getInstance(){return new DatabaseFactory();}
-	private final static Logger log  = QLogFactory.getLogger(DatabaseFactory.class);
+	private final static Logger log  = QLog.getLogger(DatabaseFactory.class);
 
 
 	/**
@@ -261,7 +261,7 @@ public class DatabaseFactory {
 	}
 	
 	/**
-	 * 插入并返回自增ID的方法
+	 * 插入并返回自增ID的方法;
 	 * @param query
 	 * @param conn
 	 * @return

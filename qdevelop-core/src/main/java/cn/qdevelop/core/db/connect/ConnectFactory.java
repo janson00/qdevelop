@@ -17,7 +17,7 @@ import org.dom4j.DocumentException;
 import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
 
-import cn.qdevelop.common.QLogFactory;
+import cn.qdevelop.common.QLog;
 import cn.qdevelop.common.exception.QDevelopException;
 import cn.qdevelop.common.files.QSource;
 import cn.qdevelop.common.files.SearchFileFromJars;
@@ -28,7 +28,7 @@ import cn.qdevelop.core.Contant;
 
 public class ConnectFactory {
 
-	private final static Logger log  = QLogFactory.getLogger(ConnectFactory.class);
+	private final static Logger log  = QLog.getLogger(ConnectFactory.class);
 
 	final static ConcurrentHashMap<String,IConnect> connCache = new  ConcurrentHashMap<String,IConnect>();
 
@@ -208,6 +208,7 @@ public class ConnectFactory {
 
 	public static void clear(){
 		shutdown();
+		databaseConfig.clearContent();
 		databaseConfig=null;
 	}
 

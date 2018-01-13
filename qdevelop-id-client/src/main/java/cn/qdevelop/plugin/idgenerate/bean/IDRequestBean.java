@@ -20,7 +20,7 @@ public class IDRequestBean implements IDRequest {
 	public int digit;
 	public int buffer;
 	public String dateFomatter;
-	public boolean isRandom,isDateRanke;
+	public boolean isRandom,isDateRange;
 	public Long[] rollVals;
 	
 	public IDRequestBean(){
@@ -91,8 +91,8 @@ public class IDRequestBean implements IDRequest {
 	}
 
 	@Override
-	public boolean isDateRanke() {
-		return isDateRanke;
+	public boolean isDateRange() {
+		return isDateRange;
 	}
 
 	@Override
@@ -100,7 +100,7 @@ public class IDRequestBean implements IDRequest {
 		return dateFomatter;
 	}
 	
-	public void setDateRanke(boolean isDateRanke){
-		this.isDateRanke = isDateRanke;
+	public void setDateRange(boolean isDateRange){
+		this.isDateRange = isDateRange;
 	}
 }
