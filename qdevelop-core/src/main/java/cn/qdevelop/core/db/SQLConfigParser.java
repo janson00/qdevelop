@@ -392,8 +392,10 @@ public class SQLConfigParser {
 		for(String key : params){
 			String val = String.valueOf(query.get(key));
 			boolean isDBColumn = tableStruts!=null && tableStruts.get(clearColumnName.matcher(key).replaceAll(""))!=null && !isFunctionValue.matcher(val).find();
-			if(dbQuery.isComplexBuild() && isComplexValue.matcher(val).find() && !isFunctionValue.matcher(val).find() ){
-				ComplexParserBean cpb = parserComplexVales(getSQLkey(key,sqlModel),val,isDBColumn);
+			String columnKey = getSQLkey(key,sqlModel);
+			//	XXX	
+			if(columnKey.length()>0 && dbQuery.isComplexBuild() && isComplexValue.matcher(val).find() && !isFunctionValue.matcher(val).find()){
+				ComplexParserBean cpb = parserComplexVales(columnKey,val,isDBColumn);
 				if(cpb.getColumn()!=null){
 					for(int i=0;i<cpb.getColumn().length;i++){
 						columns.add(clearColumnName.matcher(cpb.getColumn()[i]).replaceAll(""));
@@ -584,11 +586,13 @@ public class SQLConfigParser {
 			sb.append(_s);
 		return sb.toString();
 	}
-
+	private static Pattern ss = Pattern.compile("=(.+)?$| ");
 	private String getSQLkey(String key,String sql){
-		String target="$["+key+"]";
-		String tmp = sql.substring(0,sql.indexOf(target));
-		tmp = tmp.substring(tmp.lastIndexOf(" ")+1,tmp.lastIndexOf("="));
+		String target=new StringBuilder().append("$[").append(key).append("]").toString();
+		int idx = sql.indexOf(target);
+		if(idx < 0)return "";
+		String tmp = sql.substring(0,idx);
+		tmp = ss.matcher(tmp.substring(tmp.lastIndexOf(" "))).replaceAll("");
 		return tmp;
 	}
 
@@ -636,8 +640,27 @@ public class SQLConfigParser {
 					.append(" where ").append(wherePrefix.matcher(sqlTemplate).replaceAll("")).toString();
 		}
 	}
+	
 
-	//	public static void main(String[] args) {
+//		public static void main(String[] args) {
+//			Pattern ss = Pattern.compile("=(.+)?$| ");
+//			System.out.println(ss.matcher("asd='").replaceAll(""));
+//			System.out.println(ss.matcher("asd=").replaceAll(""));
+//			System.out.println(ss.matcher(" ").replaceAll(""));
+//		}
+//			String[] sqls = new String[]{
+//					"select * from aa where $[xxx] and asd;",
+//					"select * from aa where xxx='$[xxx]' and asd;"
+//			};
+//			String key = "xxx";
+//			for(String sql : sqls){
+//				String target = new StringBuilder().append("$[").append(key).append("]").toString();
+//				String tmp = sql.substring(0,sql.indexOf(target));
+//				tmp = tmp.substring(tmp.lastIndexOf(" ")).replaceAll("=.+$| ", "");
+//				System.out.println(tmp);
+//			}
+//			
+//		}
 	//		SQLConfigParser scp = 	new SQLConfigParser();
 	//		String s = scp.cleanNULLArgs("select * from AAA where id =$[id] And name='$[name]' and sasd.user_Name= '$[user_Name]'","name");
 	//		System.out.println(s);

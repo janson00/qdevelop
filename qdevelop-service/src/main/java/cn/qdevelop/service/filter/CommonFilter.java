@@ -17,6 +17,8 @@ import javax.servlet.annotation.WebFilter;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.lang.StringEscapeUtils;
+
 import cn.qdevelop.common.files.QSource;
 import cn.qdevelop.core.QDevelopUtils;
 import cn.qdevelop.service.interfacer.IService;
@@ -40,10 +42,14 @@ public class CommonFilter  implements Filter{
 		request.setAttribute("__startTime", System.currentTimeMillis());
 		HttpServletRequest req = (HttpServletRequest)request;
 		String cookie = req.getHeader("Cookie");
+		
 		/**给每个访问打唯一标识，一年过期时间**/
 		if(cookie == null || !isMark.matcher(cookie).find()){
 			QServiceUitls.setCookie((HttpServletResponse)response, "sid", java.util.UUID.randomUUID().toString(), 60*60*24*365);
 		}
+		
+//		StringEscapeUtils.escapeHtml(""); 
+
 		
 		/*当有假结果数据时，优先使用假结果数据集*/
 		if(apiDatas!=null){
@@ -73,7 +79,9 @@ public class CommonFilter  implements Filter{
 	public void destroy() {
 	}
 	private static Pattern clean = Pattern.compile("^\\/");
+	
 	Map<String,String> apiDatas = null;
+	
 	private void initApiData(){
 		Properties prop = QSource.getInstance().loadProperties("plugin-config/api-demo-datas.properties",this.getClass());
 		if(prop!=null && prop.size()>0){

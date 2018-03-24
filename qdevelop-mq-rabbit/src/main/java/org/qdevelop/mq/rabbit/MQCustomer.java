@@ -7,7 +7,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Properties;
 
-import org.qdevelop.mq.rabbit.utils.MQConfig;
+import org.apache.log4j.Logger;
 
 import com.rabbitmq.client.AMQP;
 import com.rabbitmq.client.Channel;
@@ -16,20 +16,36 @@ import com.rabbitmq.client.ConnectionFactory;
 import com.rabbitmq.client.Envelope;
 import com.rabbitmq.client.QueueingConsumer;
 
+import cn.qdevelop.common.QLog;
+import cn.qdevelop.common.clazz.ClazzUtils;
+import cn.qdevelop.common.files.QSource;
+
 public class MQCustomer {
+	protected static Logger log = QLog.getLogger(MQCustomer.class);
+
 	private static MQCustomer _MQCustomer;
+	
 	public static MQCustomer getInstance(){
 		if(_MQCustomer == null){
 			_MQCustomer = new MQCustomer();
+			_MQCustomer.init("plugin-config/rabbit-mq.properties",ClazzUtils.getCallClass(MQCustomer.class));
 		}
 		return _MQCustomer;
 	}
+	
+	public static MQCustomer getInstance(String config){
+		if(_MQCustomer == null){
+			_MQCustomer = new MQCustomer();
+			_MQCustomer.init(config,ClazzUtils.getCallClass(MQCustomer.class));
+		}
+		return _MQCustomer;
+	}
+	
 	private ArrayList<Connection> collection = new ArrayList<Connection>();
 
 	ConnectionFactory factory;
 	
 	public MQCustomer(){
-		init("plugin-config/rabbit-mq.properties");
 	}
 
 	/**
@@ -37,13 +53,13 @@ public class MQCustomer {
 	 * @param config
 	 */
 	public MQCustomer(String config){
-		init(config);
+		init(config,ClazzUtils.getCallClass(MQCustomer.class));
 	}
 
-	private void init(String config){
-		Properties props = new Properties();
+	private void init(String config,Class<?> callClass ){
+		log.info("load MQ config "+config+" from "+callClass.getName());
+		Properties props = QSource.getInstance().loadProperties(config,callClass);
 		try {
-			props.load(new MQConfig().getSourceAsStream(config));
 			factory = new ConnectionFactory();  
 			factory.setHost(props.getProperty("mq_server_host"));
 			factory.setPort(Integer.parseInt(props.getProperty("mq_server_port")));
@@ -51,10 +67,7 @@ public class MQCustomer {
 			factory.setPassword(props.getProperty("mq_server_password"));
 			factory.setVirtualHost(props.getProperty("mq_server_virtualhost"));
 			System.out.println("connect MQ : "+props.getProperty("mq_server_host"));
-		} catch (IOException e) {
-			e.printStackTrace();
-			System.exit(0);
-		} catch (Exception e) {
+		}  catch (Exception e) {
 			e.printStackTrace();
 			System.exit(0);
 		}

@@ -150,6 +150,8 @@ public class QSource {
 //		return null;
 //	}
 	
+	private final static Pattern isFromJar = Pattern.compile("\\.jar(\\!\\/)?"); 
+	private final static Pattern clearFromJar = Pattern.compile("\\!\\/.+$"); 
 	/**
 	 * 加载配置文件
 	 * @param configName
@@ -159,14 +161,18 @@ public class QSource {
 		try {
 			InputStream res = getSourceAsStream(configName);
 			if(res!=null){
+				System.out.println("loadProperties success ["+configName+"] from "+getProjectPath());
 				Properties prop = new Properties();
 				prop.load(res);
 				return prop;
 			}
+			if(callClass==null){
+				System.out.println("loadProperties fail ["+configName+"]  from : "+callClass);
+				return null;
+			}
 			String runPath = callClass.getProtectionDomain().getCodeSource().getLocation().getPath();
-			System.out.println("load from : "+runPath);
-			if(runPath.endsWith(".jar")){
-				File jarPath = new File(runPath);
+			if(isFromJar.matcher(runPath).find()){
+				File jarPath = new File(clearFromJar.matcher(runPath).replaceAll(""));
 				Properties prop = new Properties();
 				InputStream result = null;
 				if (jarPath.exists() && jarPath.isFile()) {
@@ -177,9 +183,10 @@ public class QSource {
 						while (entrys.hasMoreElements()) {
 							JarEntry jarEntry = entrys.nextElement();
 							if (jarEntry.getName().endsWith(configName)) {
-								System.out.println("load jar["+file.getName()+"] resource:\t" + jarEntry.getName());
+								System.out.println("loadProperties success ["+configName+"] from : "+file.getName());
 								result = file.getInputStream(jarEntry);
 								prop.load(result);
+								return prop;
 							}
 						}
 					} catch (IOException e) {
@@ -193,7 +200,8 @@ public class QSource {
 						}
 					}
 				}
-				return prop;
+			}else{
+				System.out.println("loadProperties fail ["+configName+"]  from : "+runPath);
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -240,6 +248,10 @@ public class QSource {
 
 	
 //	public static void main(String[] args) {
+//		String s = "file:/Users/janson/workspace/.metadata/.plugins/org.eclipse.wst.server.core/tmp0/wtpwebapps/web-test/WEB-INF/lib/qdevelop-service-2.0.0.jar";
+//		System.out.println(isFromJar.matcher(s).find());
+//		System.out.println(clearFromJar.matcher(s).replaceAll(""));
+//	}
 //		Properties prop = QSource.getInstance().loadProperties("qdevelop-log.properties", Closeables.class);
 //		if(prop!=null){
 //			System.out.println(prop.toString());

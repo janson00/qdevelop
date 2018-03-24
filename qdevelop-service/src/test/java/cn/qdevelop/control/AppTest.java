@@ -1,5 +1,9 @@
 package cn.qdevelop.control;
 
+import org.apache.commons.lang.StringEscapeUtils;
+
+import cn.qdevelop.common.exception.QDevelopException;
+import cn.qdevelop.core.DatabaseFactory;
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
@@ -33,6 +37,19 @@ public class AppTest
      */
     public void testApp()
     {
-        assertTrue( true );
+    	String sql = "where a=? and b=?";
+    	Object[] args = new Object[]{"janson",100};
+    	
+    	System.out.format(sql.replaceAll("\\?", "%s"),args);
+    	
+    	System.out.println(StringEscapeUtils.escapeHtml("<script>alert(1)</script><img src=\"http://baidu.com\"/>"));
+    	System.out.println(StringEscapeUtils.escapeSql("select * from /**da**/ asd"));
+    	
+    	try {
+			DatabaseFactory.getInstance().queryDatabaseCount(null);
+		} catch (QDevelopException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
     }
 }

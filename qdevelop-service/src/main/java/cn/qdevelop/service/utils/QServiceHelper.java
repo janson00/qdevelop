@@ -21,6 +21,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang.ArrayUtils;
+import org.apache.commons.lang.StringEscapeUtils;
 import org.dom4j.Element;
 
 import cn.qdevelop.common.exception.QDevelopException;
@@ -79,6 +80,7 @@ public class QServiceHelper {
 		}
 		return paramMap;
 	}
+	
 
 	public IOutput getOutput(HttpServletRequest request,HttpServletResponse response){
 		String uri = request.getRequestURI();
@@ -144,9 +146,9 @@ public class QServiceHelper {
 	private static Pattern isDouble = Pattern.compile("^(([><=&\\^!\\|]+)?[0-9]+?(\\.[0-9]+?)?)+?$");
 	private static Pattern isTime = Pattern.compile("^(([><=&\\^!\\|]+)?[0-9]{4}-[0-9]{2}-[0-9]{2}( [0-9]{2}:[0-9]{2}:[0-9]{2})?)+?$");
 
+	//(?:--)|
 	private static Pattern isAttackValue =
-			Pattern.compile(
-					"(?:--)|(/\\*(?:.|[\\n\\r])*?\\*/)|(\\b(select|update|delete|insert|trancate|char|substr|ascii|declare|exec|master|into|drop|execute)\\b)",
+			Pattern.compile("(/\\*(?:.|[\\n\\r])*?\\*/)|(\\b(select|update|delete|insert|trancate|char|substr|ascii|declare|exec|master|into|drop|execute)\\b)",
 					Pattern.CASE_INSENSITIVE);
 
 	/**
@@ -180,6 +182,7 @@ public class QServiceHelper {
 						if(!checkVal(itor.getKey(),itor.getValue(),struts,out)){
 							return false;
 						}
+						args.put(itor.getKey(), StringEscapeUtils.escapeHtml(itor.getValue()));
 					}
 				}else{//否则只检查sql配置所需要的参数
 					for(String key : acb.getArgs()){
@@ -194,6 +197,7 @@ public class QServiceHelper {
 						if(!checkVal(key,v,struts,out)){
 							return false;
 						}
+						args.put(key, StringEscapeUtils.escapeHtml(v));
 					}
 				}
 			} catch (QDevelopException e) {
@@ -210,6 +214,7 @@ public class QServiceHelper {
 					out.setErrMsg("请求参数[",itor.getKey(),"=",itor.getValue(),"]可能含有恶意字符");
 					return false;
 				}
+				args.put(itor.getKey(), StringEscapeUtils.escapeHtml(itor.getValue()));
 			}
 		}
 		return true;

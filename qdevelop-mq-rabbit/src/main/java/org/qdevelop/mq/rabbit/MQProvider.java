@@ -8,34 +8,49 @@ import java.util.Properties;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.atomic.AtomicBoolean;
 
+import org.apache.log4j.Logger;
 import org.qdevelop.mq.rabbit.utils.MQBean;
-import org.qdevelop.mq.rabbit.utils.MQConfig;
 
 import com.rabbitmq.client.Channel;
 import com.rabbitmq.client.Connection;
 import com.rabbitmq.client.ConnectionFactory;
 import com.rabbitmq.client.MessageProperties;
 
+import cn.qdevelop.common.QLog;
+import cn.qdevelop.common.clazz.ClazzUtils;
+import cn.qdevelop.common.files.QSource;
+
 public class MQProvider  extends ConcurrentLinkedQueue<MQBean>{
+	protected static Logger log = QLog.getLogger(MQProvider.class);
+
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = -2312239022403219259L;
 	private  AtomicBoolean isRunning = new AtomicBoolean(false);
 	private static MQProvider _MQPublisher ;
+	
 	public static MQProvider getInstance(){
 		if(_MQPublisher == null){
 			_MQPublisher = new MQProvider();
+			_MQPublisher.initFactory("plugin-config/rabbit-mq.properties", ClazzUtils.getCallClass(MQProvider.class));
+		}
+		return _MQPublisher;
+	}
+	
+	public static MQProvider getInstance(String config){
+		if(_MQPublisher == null){
+			_MQPublisher = new MQProvider();
+			_MQPublisher.initFactory(config, ClazzUtils.getCallClass(MQProvider.class));
 		}
 		return _MQPublisher;
 	}
 
 	public MQProvider(){
-		initFactory("plugin-config/rabbit-mq.properties");
 	}
 
 	public MQProvider(String config){
-		initFactory(config);
+		initFactory(config,ClazzUtils.getCallClass(MQProvider.class));
 	}
 
 
@@ -119,20 +134,18 @@ public class MQProvider  extends ConcurrentLinkedQueue<MQBean>{
 		isRunning.set(false);
 	}
 
-	private void initFactory(String config) {
-		Properties props = new Properties();
+	private void initFactory(String config,Class<?> callClass) {
+		Properties props = QSource.getInstance().loadProperties(config,callClass);
 		try {
-			props.load(new MQConfig().getSourceAsStream(config));
+			log.info("load MQ config "+config+" from "+callClass.getName());
+//			props.load(new MQConfig().getSourceAsStream(config));
 			factory = new ConnectionFactory();  
 			factory.setHost(props.getProperty("mq_server_host"));
 			factory.setPort(Integer.parseInt(props.getProperty("mq_server_port")));
 			factory.setUsername(props.getProperty("mq_server_username"));
 			factory.setPassword(props.getProperty("mq_server_password"));
 			factory.setVirtualHost(props.getProperty("mq_server_virtualhost"));
-		} catch (IOException e) {
-			e.printStackTrace();
-			System.exit(0);
-		} catch (Exception e) {
+		}catch (Exception e) {
 			e.printStackTrace();
 			System.exit(0);
 		}

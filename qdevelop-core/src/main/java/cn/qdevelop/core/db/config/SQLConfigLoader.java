@@ -169,7 +169,13 @@ public class SQLConfigLoader extends ConcurrentHashMap<String,Element>{
 						System.exit(0);
 					}
 				}
-				initProperty(property,fileName);
+				try {
+					initProperty(property,fileName);
+				} catch (Exception e) {
+					System.err.println(fileName);
+					System.err.println(property.asXML());
+					e.printStackTrace();
+				}
 			}
 		}
 	}
@@ -250,9 +256,9 @@ public class SQLConfigLoader extends ConcurrentHashMap<String,Element>{
 				sql.addAttribute("is-full-param", "true");
 			}
 		}
-		if(property.attributeValue("is-master")==null){
-			property.addAttribute("is-master", isSelect?"false":"true");
-		}
+//		if(property.attributeValue("is-master")==null){
+//			property.addAttribute("is-master", isSelect?"false":"true");
+//		}
 		//是否需要转义编译SQL
 		if(property.attributeValue("is-complex-build")==null){
 			property.addAttribute("is-complex-build", "true");

@@ -27,6 +27,7 @@ import cn.qdevelop.core.standard.IDBUpdate;
 import cn.qdevelop.core.standard.IUpdateHook;
 
 public class DatabaseImpl {
+	
 	private final static Logger log  = QLog.getLogger(DatabaseImpl.class);
 
 	public IDBResult queryDB(Connection conn,IDBQuery query,IDBResult result) throws QDevelopException{

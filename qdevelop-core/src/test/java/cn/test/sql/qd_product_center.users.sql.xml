@@ -1,14 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- xml中常用转义符写法： （ & &amp; ）（ < &lt; ） （ > &gt; ） -->
 <SQLConfig>
-	<property index="users-search-action" connect="user-connect-rw" is-complex-build="false"
+	<property index="users-search-action" connect="user-connect-rw" is-complex-build="true"
 		explain="users查询">
 		<!-- <formatter> <date-formatter result-key="utime" date-style="yyyy-MM-dd 
 			HH:mm:ss"/> <prop-formatter result-key="status" prop-key="users_status_dict"/> 
 			<prop-formatter result-key="age" prop-key="users_age_dict"/> <date-formatter 
 			result-key="ctime" date-style="yyyy-MM-dd HH:mm:ss"/> </formatter> -->
 		<sql>select * from users usr
-			where usr.status = $[status] and {DYNAMIC}</sql>
+			where usr.status = $[status] and $[mySelf] and {DYNAMIC}
+			
+			</sql>
 	</property>
 
 	<property index="users-query-action" connect="user-connect-rw"

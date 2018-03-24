@@ -17,7 +17,8 @@ public class DataBaseFactoryTest extends TestCase {
 		query.put("index", "users-search-action");
 		query.put("status", "1");
 		query.put("usr.pid", "11");
-		query.put("age", "2");
+		query.put("age", "2|3|4");
+		query.put("mySelf", "2 > 0");
 		query.put("user_name", ">='2012-01-01 00:00:00'&<='2012-01-01 23:59:59'");
 		query.put("page_size", 10);
 		try {

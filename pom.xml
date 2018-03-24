@@ -30,27 +30,20 @@
 		</repository>
 		<!-- <repository> <id>qdevelop</id> <url>http://mvn.e-platform.cn/nexus/content/repositories/qdevelop</url> 
 			</repository> -->
+		<!-- <repository> <id>qdevelop</id> <url>http://mvn.e-platform.cn/nexus/content/repositories/qdevelop</url> 
+			</repository> -->
 
 	</repositories>
 
 	<distributionManagement>
-
+		<!-- <snapshotRepository> <id>develop</id> <url>http://192.168.86.8:8081/nexus/content/repositories/develop/</url> 
+			</snapshotRepository> -->
 		<repository>
 			<id>qdevelop</id>
 			<url>http://192.168.86.8:8081/nexus/content/repositories/qdevelop/</url>
 		</repository>
-		<snapshotRepository>
-			<id>develop</id>
-			<url>http://192.168.86.8:8081/nexus/content/repositories/develop/</url>
-		</snapshotRepository>
-		<!-- <snapshotRepository>
-			<id>qdevelop</id>
-			<url>http://mvn.e-platform.cn/nexus/content/repositories/qdevelop</url>
-		</snapshotRepository>
-		<repository>
-			<id>e-platform</id>
-			<url>http://mvn.e-platform.cn/nexus/content/repositories/e-platform</url>
-		</repository> -->
+		<!-- <repository> <id>e-platform</id> <url>http://mvn.e-platform.cn/nexus/content/repositories/e-platform</url> 
+			</repository> -->
 	</distributionManagement>
 
 	<build>

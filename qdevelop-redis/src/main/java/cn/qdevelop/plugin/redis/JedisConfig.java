@@ -36,7 +36,7 @@ public class JedisConfig {
 	public void init(String configPath,Class<?> callClass){
 		Properties pro = QSource.getInstance().loadProperties(configPath,callClass);
 		if(pro!=null){
-			log.info("loading redis config from redis.properties.......");
+			log.info("loading redis config from "+callClass.getName());
 			JEDIS_SWITCH = Boolean.parseBoolean(pro.getProperty("jedis.cache.switch"));
 			REDIS_IP = pro.getProperty("redis.ip");
 			REDIS_PORT = Integer.parseInt(pro.getProperty("redis.port"));
@@ -48,9 +48,9 @@ public class JedisConfig {
 			TEST_ON_RETURN = Boolean.parseBoolean(pro.getProperty("redis.pool.testOnReturn"));
 			SHARDED = Boolean.parseBoolean(pro.getProperty("redis.sharded"));
 			DBINDEX = Integer.parseInt(pro.getProperty("redis.dbindex"));
-			log.info("redis config load Completed :"+REDIS_IP);
+			log.info("redis redis config load Completed :"+REDIS_IP);
 		}else{
-			log.error("redis config not defound : "+configPath);
+			log.error("load redis config not defound : "+configPath);
 		}
 	}
 }

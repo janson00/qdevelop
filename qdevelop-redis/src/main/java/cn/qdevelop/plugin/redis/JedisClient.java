@@ -14,6 +14,7 @@ import java.util.Map;
 
 import com.alibaba.fastjson.JSON;
 
+import cn.qdevelop.common.clazz.ClazzUtils;
 import cn.qdevelop.common.utils.XYUtil;
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPool;
@@ -40,10 +41,17 @@ public class JedisClient {
 		}
 		return jedisClient;
 	}
+	
+	public static JedisClient getInstance(String config){
+		if (jedisClient == null) {
+			jedisClient = new JedisClient(config,ClazzUtils.getCallClass(JedisClient.class));
+		}
+		return jedisClient;
+	}
 	private final String defaultPath = "plugin-config/qdevelop-redis.properties";
 	
 	public JedisClient() {	
-		jedisConfig = new JedisConfig(defaultPath,JedisClient.class);
+		jedisConfig = new JedisConfig(defaultPath,ClazzUtils.getCallClass(JedisClient.class));
 		if(jedisConfig.SHARDED){
 			initialShardedPool();
 		}else{
@@ -52,7 +60,7 @@ public class JedisClient {
 	}
 	
 	public JedisClient(String config) {	
-		jedisConfig = new JedisConfig(config,JedisClient.class);
+		jedisConfig = new JedisConfig(config,ClazzUtils.getCallClass(JedisClient.class));
 		if(jedisConfig.SHARDED){
 			initialShardedPool();
 		}else{

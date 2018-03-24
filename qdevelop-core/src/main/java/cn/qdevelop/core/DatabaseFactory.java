@@ -51,7 +51,7 @@ public class DatabaseFactory {
 		if(config==null)throw new QDevelopException(1003,"["+index+"] SQL配置【"+index+"】不存在");
 		return ConnectFactory.getInstance(config.attributeValue("connect")).getConnection();
 	}
-	private static Pattern cleanPrevSql = Pattern.compile("^select .+ from", Pattern.CASE_INSENSITIVE);
+	private static Pattern cleanPrevSql = Pattern.compile("^select .+ from ", Pattern.CASE_INSENSITIVE);
 	private static Pattern from = Pattern.compile(" from ", Pattern.CASE_INSENSITIVE);
 	
 	/**清除统计中无效参数**/
@@ -81,8 +81,8 @@ public class DatabaseFactory {
 				i++;
 			}
 			if(i<2){
-				dbQuery.setPreparedSql(cleanPrevSql.matcher(sql).replaceAll("select count(1) as cn from"));
-				dbQuery.setSql(cleanPrevSql.matcher(dbQuery.getSql()).replaceAll("select count(1) as cn from"));
+				dbQuery.setPreparedSql(cleanPrevSql.matcher(sql).replaceAll("select count(1) as cn from "));
+				dbQuery.setSql(cleanPrevSql.matcher(dbQuery.getSql()).replaceAll("select count(1) as cn from "));
 			}else{
 				dbQuery.setPreparedSql("select count(1) as cn from ("+dbQuery.getPreparedSql()+") qdevelop_temp");
 				dbQuery.setSql("select count(1) as cn from ("+dbQuery.getSql()+") qdevelop_temp");
