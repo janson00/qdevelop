@@ -10,7 +10,7 @@ public class CustomerTest {
 		MQCustomer.getInstance().register(new ICustomer(){
 			@Override
 			public String getQueueName() {
-				return "app_member_identity_deal";
+				return "Janson";
 			}
 
 			@Override
@@ -18,7 +18,7 @@ public class CustomerTest {
 					BasicProperties properties, Serializable body) {
 //				Object[] v = (Object[])body;
 				System.out.println(properties.getContentType()+" == "+body);
-				return false;
+				return true;
 			}
 		});
 	}

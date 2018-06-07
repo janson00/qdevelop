@@ -85,12 +85,14 @@ public class QServiceHelper {
 	public IOutput getOutput(HttpServletRequest request,HttpServletResponse response){
 		String uri = request.getRequestURI();
 		String type = uri.lastIndexOf(".") == -1 ? "" : uri.substring(uri.lastIndexOf("."));
+		String contentType = request.getHeader("Reponse-Content-Type");
 		if(type.equals(".json")){
 			OutputJson oj = new OutputJson();
-			oj.setOutType("application/json");
+			oj.setOutType(contentType == null ? "application/json" : contentType);
 			return oj;
 		}else if(type.equals(".jsonp")){
 			OutputJson oj = new OutputJson();
+			oj.setOutType(contentType == null ? "text/plain" : contentType);
 			String callback =  request.getParameter("callback");
 			if(callback==null || callback.length()==0){
 				oj.setErrMsg("请求参数[callback]不能为空");

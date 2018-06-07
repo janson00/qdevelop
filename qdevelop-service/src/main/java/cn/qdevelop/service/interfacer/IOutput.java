@@ -15,6 +15,8 @@ public interface IOutput {
 	
 	public String toString();
 	
+	public void setOutType(String outType);
+	
 	public String getOutType();
 	
 	public boolean isBodyOnly();

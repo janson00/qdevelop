@@ -3,7 +3,7 @@
 	
 	<connect index="default">
 		<driver-class>com.mysql.jdbc.Driver</driver-class>
-		<driver-url>jdbc:mysql://127.0.0.1:3306/demo_product_center?useUnicode=true&amp;characterEncoding=utf8&amp;autoReconnect=true&amp;zeroDateTimeBehavior=convertToNull
+		<driver-url>jdbc:mysql://127.0.0.1:3306/demo_product_center?useUnicode=true&amp;characterEncoding=utf8&amp;autoReconnect=true&amp;zeroDateTimeBehavior=convertToNull 
 		</driver-url>
 		<user-name>root</user-name>
 		<password>janson</password>
@@ -12,8 +12,8 @@
 		<max-idle>10</max-idle>
 		<max-wait>1000</max-wait>
 		<test-query>select 1</test-query>
-		<test-borrow>false</test-borrow>
-		<test-return>false</test-return>
+		<test-borrow>true</test-borrow>
+		<test-return>true</test-return>
 		<test-while-idle>true</test-while-idle>
 	</connect>
 	
@@ -28,8 +28,8 @@
 		<max-idle>10</max-idle>
 		<max-wait>1000</max-wait>
 		<test-query>select 1</test-query>
-		<test-borrow>false</test-borrow>
-		<test-return>false</test-return>
+		<test-borrow>true</test-borrow>
+		<test-return>true</test-return>
 		<test-while-idle>true</test-while-idle>
 	</connect>
 </database-config>

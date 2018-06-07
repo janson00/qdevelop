@@ -4,9 +4,12 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
+import java.util.Date;
 import java.util.Properties;
 import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.concurrent.TimeoutException;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.log4j.Logger;
 import org.qdevelop.mq.rabbit.utils.MQBean;
@@ -28,6 +31,7 @@ public class MQProvider  extends ConcurrentLinkedQueue<MQBean>{
 	 */
 	private static final long serialVersionUID = -2312239022403219259L;
 	private  AtomicBoolean isRunning = new AtomicBoolean(false);
+	private AtomicInteger count  = new AtomicInteger(0);
 	private static MQProvider _MQPublisher ;
 	
 	public static MQProvider getInstance(){
@@ -70,6 +74,13 @@ public class MQProvider  extends ConcurrentLinkedQueue<MQBean>{
 				}
 			}.start();
 		}
+		if(count.getAndIncrement() > 100000){//高并发请求发送状态下，会导致内存暴增，同步缓冲1秒，提高整体并发
+			try {
+				Thread.sleep(1000);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+		}
 	}
 
 	private byte[] toByte(Serializable obj){
@@ -81,6 +92,7 @@ public class MQProvider  extends ConcurrentLinkedQueue<MQBean>{
 			oo = new ObjectOutputStream(bo);  
 			oo.writeObject(obj);  
 			bytes = bo.toByteArray();  
+			obj = null;
 		} catch (Exception e) {  
 			e.printStackTrace();  
 		} finally{
@@ -108,25 +120,37 @@ public class MQProvider  extends ConcurrentLinkedQueue<MQBean>{
 		Connection connection = null;
 		Channel channel = null;
 		MQBean mq = null;
+		AtomicInteger idx  = new AtomicInteger(0);
 		try {
+			
 			connection = factory.newConnection();  
 			channel = connection.createChannel(); 
 			while(!this.isEmpty()){
 				mq = super.poll();
 				channel.basicPublish("", mq.getQueueName(), MessageProperties.PERSISTENT_BASIC, mq.getMsg());
+				count.getAndDecrement();
+				mq.setMsg(null);
 				mq=null;
+				if(idx.getAndIncrement() % 10000 == 0){
+					System.out.println("["+this.size()+","+count.get()+"] "+new Date());
+				}
+//					System.gc();
+//					System.out.println(">> "+idx.get());
+//				}
 			}
 		} catch (IOException e) {
 			if(mq!=null){
 				this.offer(mq);
 			}
 			e.printStackTrace();
+		} catch (TimeoutException e) {
+			e.printStackTrace();
 		}finally{
 			if(connection!=null || channel!=null){
 				try {
 					channel.close();  
 					connection.close();
-				} catch (IOException e) {
+				} catch (Exception e) {
 					e.printStackTrace();
 				}
 			}

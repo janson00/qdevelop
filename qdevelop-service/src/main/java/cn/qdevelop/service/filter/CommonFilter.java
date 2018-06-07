@@ -17,8 +17,6 @@ import javax.servlet.annotation.WebFilter;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.commons.lang.StringEscapeUtils;
-
 import cn.qdevelop.common.files.QSource;
 import cn.qdevelop.core.QDevelopUtils;
 import cn.qdevelop.service.interfacer.IService;

@@ -115,7 +115,7 @@ public class QDevelopHelper {
 //			fw.write("\r\n");fw.write("	</property>-->");
 //			fw.write("\r\n");
 			
-			fw.write("\r\n");fw.write("	<property index=\""+tableName+"-query-action\" connect=\""+connName+"\" explain=\""+tableName+"查询\">");
+			fw.write("\r\n");fw.write("	<property index=\""+tableName+"_query_action\" connect=\""+connName+"\" explain=\""+tableName+"查询\">");
 			if(formatter.size()>0){
 				fw.write("\r\n");fw.write("		<!--");
 				fw.write("\r\n");fw.write("		<formatter>");
@@ -130,7 +130,7 @@ public class QDevelopHelper {
 			fw.write("\r\n");fw.write("	</property>");
 			fw.write("\r\n");
 			
-			fw.write("\r\n");fw.write("	<property index=\""+tableName+"-add-action\" connect=\""+connName+"\" explain=\""+tableName+"插入\">");
+			fw.write("\r\n");fw.write("	<property index=\""+tableName+"_add_action\" connect=\""+connName+"\" explain=\""+tableName+"插入\">");
 			fw.write("\r\n");fw.write("		<sql repeat=\"\"  repeat-concat=\"^\" fetch-zero-err=\"true\">");
 			fw.write("\r\n");fw.write("			"+insertSQL.toString());
 			fw.write("\r\n");fw.write("		</sql>");
@@ -140,7 +140,7 @@ public class QDevelopHelper {
 			}
 			fw.write("\r\n");fw.write("	</property>");
 			fw.write("\r\n");
-			fw.write("\r\n");fw.write("	<property index=\""+tableName+"-store-action\" connect=\""+connName+"\" explain=\""+tableName+"修改\">");
+			fw.write("\r\n");fw.write("	<property index=\""+tableName+"_store_action\" connect=\""+connName+"\" explain=\""+tableName+"修改\">");
 			fw.write("\r\n");fw.write("		<sql  repeat=\"\"  repeat-concat=\"^\" fetch-zero-err=\"true\">");
 			fw.write("\r\n");fw.write("			"+updateSQL.toString());
 			fw.write("\r\n");fw.write("		</sql>");
@@ -148,7 +148,7 @@ public class QDevelopHelper {
 			fw.write("\r\n");fw.write("	</property>");
 			fw.write("\r\n");
 			fw.write("\r\n");fw.write("	<!--");
-			fw.write("\r\n");fw.write("	<property index=\""+tableName+"-remove-action\" connect=\""+connName+"\" explain=\""+tableName+"删除\">");
+			fw.write("\r\n");fw.write("	<property index=\""+tableName+"_remove_action\" connect=\""+connName+"\" explain=\""+tableName+"删除\">");
 			fw.write("\r\n");fw.write("		<sql  repeat=\"\" repeat-concat=\"^\" fetch-zero-err=\"true\">");
 			fw.write("\r\n");fw.write("			"+deleteSQL.toString());
 			fw.write("\r\n");fw.write("		</sql>");

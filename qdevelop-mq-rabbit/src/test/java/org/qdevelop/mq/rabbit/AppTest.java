@@ -39,7 +39,7 @@ public class AppTest
         @Override
         public boolean handleDelivery(String consumerTag, Envelope envelope,
             BasicProperties properties, Serializable body) {
-          System.out.println(body);
+          System.out.println(".... "+body);
           assertEquals(body.toString(), "TEST");
           return true;
         }

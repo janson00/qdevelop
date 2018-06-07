@@ -641,8 +641,13 @@ public class SQLConfigParser {
 		}
 	}
 	
+	
+	
 
-//		public static void main(String[] args) {
+		public static void main(String[] args) {
+			SQLConfigParser scp = 	new SQLConfigParser();
+
+		
 //			Pattern ss = Pattern.compile("=(.+)?$| ");
 //			System.out.println(ss.matcher("asd='").replaceAll(""));
 //			System.out.println(ss.matcher("asd=").replaceAll(""));
@@ -661,10 +666,9 @@ public class SQLConfigParser {
 //			}
 //			
 //		}
-	//		SQLConfigParser scp = 	new SQLConfigParser();
-	//		String s = scp.cleanNULLArgs("select * from AAA where id =$[id] And name='$[name]' and sasd.user_Name= '$[user_Name]'","name");
-	//		System.out.println(s);
-	//	}
+			String s = scp.cleanNULLArgs("SELECT a.*,b.loginName,(CASE WHEN b.headImgUrl IS NULL THEN '' ELSE b.headImgUrl END) AS headImgUrl,c.deptName FROM zmt_bc.sale_record a LEFT JOIN zmt_sc.sc_employee b ON a.saleId=b.id LEFT JOIN zmt_sc.sc_department c ON a.deptId=c.id WHERE a.deptId=$[deptId] AND a.orderStatus=0 AND a.orderNewStatus='CLAIM_SUCCESS' AND a.isRefund=0 ORDER BY a.claimSucTime DESC","deptId");
+			System.out.println(s);
+		}
 	////		System.out.println(cleanNULLArgs("select * from AAA where id =$[id] and name= '$[name]' and userName= '$[userName]'","id"));
 	////		System.out.println(cleanNULLArgs("select * from AAA where id =$[id] And name='$[name]' and user_Name= '$[user_Name]'","name"));
 	//		System.out.println(cleanNULLArgs("update aa set Id=$[id],Name='$[name]',userName= '$[userName]' where id =$[id] and name= '$[name]' and userName= '$[userName]'","id"));

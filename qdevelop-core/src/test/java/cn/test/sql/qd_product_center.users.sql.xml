@@ -1,16 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- xml中常用转义符写法： （ & &amp; ）（ < &lt; ） （ > &gt; ） -->
 <SQLConfig>
-	<property index="users-search-action" connect="user-connect-rw" is-complex-build="true"
-		explain="users查询">
+	<property index="users-search-action" connect="user-connect-rw"
+		is-complex-build="true" explain="users查询">
 		<!-- <formatter> <date-formatter result-key="utime" date-style="yyyy-MM-dd 
 			HH:mm:ss"/> <prop-formatter result-key="status" prop-key="users_status_dict"/> 
 			<prop-formatter result-key="age" prop-key="users_age_dict"/> <date-formatter 
 			result-key="ctime" date-style="yyyy-MM-dd HH:mm:ss"/> </formatter> -->
 		<sql>select * from users usr
-			where usr.status = $[status] and $[mySelf] and {DYNAMIC}
-			
-			</sql>
+			where usr.status = $[status] and $[mySelf]
+			and {DYNAMIC}
+
+		</sql>
 	</property>
 
 	<property index="users-query-action" connect="user-connect-rw"
@@ -22,13 +23,17 @@
 
 		<sql>select uid,utime,user_name,status,age,ctime,mobile from users
 			where
-			uid=$[uid] and utime=$[utime] and user_name='$[user_name]' and status=$[status]
-			and age=$[age] and ctime=$[ctime] and mobile='$[mobile]'
+			uid=$[uid] and utime=$[utime] and user_name='$[user_name]' and
+			status=$[status]
+			and age=$[age] and ctime=$[ctime] and
+			mobile='$[mobile]'
 		</sql>
 	</property>
 
-	<property index="users-add-action" connect="user-connect-rw" explain="users插入">
-		<sql repeat="" repeat-concat="^" fetch-zero-err="true"  is-full-param="false">
+	<property index="users-add-action" connect="user-connect-rw"
+		explain="users插入">
+		<sql repeat="" repeat-concat="^" fetch-zero-err="true"
+			is-full-param="false">
 			insert into
 			users(utime,user_name,status,age,ctime,mobile) value
 			($[utime],'$[user_name]',$[status],$[age],$[ctime],'$[mobile]')
@@ -38,14 +43,31 @@
 
 	<property index="users-store-action" connect="user-connect-rw"
 		explain="users修改">
-		<sql repeat="" repeat-concat="^" fetch-zero-err="true" is-full-param="false">
+		<sql repeat="" repeat-concat="^" fetch-zero-err="true"
+			is-full-param="false">
 			update users set
 			utime=$[utime],user_name='$[user_name]',status=$[status],age=$[age],ctime=$[ctime],mobile='$[mobile]'
 			where uid=$[uid]
 		</sql>
 	</property>
 
-	<!-- <property index="users-remove-action" connect="default" explain="users删除"> 
-		<sql repeat="" repeat-concat="^" fetch-zero-err="true"> delete from users 
-		where uid=$[uid] </sql> </property> -->
+	<poperty index="getLastOrders" connect="user-connect-rw"
+		explain="查询最近成交的订单，按认领成功时间倒叙排序，包括会员卡">
+		
+		<result-formatter>
+			<date-formatter result-key="claimSucTime" date-style="yyyy-MM-dd HH:mm:ss"></date-formatter>
+		</result-formatter>
+	</poperty>
+
+	<property index="users-remove-action" connect="user-connect-rw"
+		explain="users删除">
+		<sql is-full-param="false">SELECT a.*,b.loginName,(CASE WHEN b.headImgUrl
+			IS NULL THEN '' ELSE b.headImgUrl END) AS headImgUrl,c.deptName FROM
+			zmt_bc.sale_record a LEFT JOIN zmt_sc.sc_employee b ON a.saleId=b.id
+			LEFT JOIN zmt_sc.sc_department c ON a.deptId=c.id WHERE
+			a.deptId=$[deptId] AND a.orderStatus=0 AND
+			a.orderNewStatus='CLAIM_SUCCESS' AND a.isRefund=0 ORDER BY
+			a.claimSucTime DESC
+		</sql>
+	</property>
 </SQLConfig>

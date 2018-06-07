@@ -6,6 +6,7 @@ import java.io.ObjectInputStream;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Properties;
+import java.util.concurrent.TimeoutException;
 
 import org.apache.log4j.Logger;
 
@@ -110,6 +111,8 @@ public class MQCustomer {
 			collection.add(connection);
 		} catch (IOException e) {
 			e.printStackTrace();
+		} catch (TimeoutException e1) {
+			e1.printStackTrace();
 		}
 	}
 

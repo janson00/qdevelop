@@ -133,6 +133,9 @@
       <key-value-formatter cacheIndex="page_type_options!select" cacheKey="page_type_id" cacheValue="page_type_code" targetKey="page_type" targetName="page_type_code"></key-value-formatter>
     </result-formatter>
   </poperty>
+  <poperty index="users-remove-action" connect="user-connect-rw" explain="users删除" file="/target/test-classes/cn/test/sql/qd_product_center.users.sql.xml" is-open="false" name-space="" is-complex-build="true" is-convert-null="false" is-need-total="false" is-select="true">
+    <sql is-full-param="false" params="deptId" is-select="true" tables="" fetch-zero-err="true">SELECT a.*,b.loginName,(CASE WHEN b.headImgUrl IS NULL THEN '' ELSE b.headImgUrl END) AS headImgUrl,c.deptName FROM zmt_bc.sale_record a LEFT JOIN zmt_sc.sc_employee b ON a.saleId=b.id LEFT JOIN zmt_sc.sc_department c ON a.deptId=c.id WHERE a.deptId=$[deptId] AND a.orderStatus=0 AND a.orderNewStatus='CLAIM_SUCCESS' AND a.isRefund=0 ORDER BY a.claimSucTime DESC</sql>
+  </poperty>
   <poperty index="url_redirect_oa!insert" explain="url_redirect添加" connect="web" file="/target/test-classes/cn/test/other/url_redirect.sql.xml" is-open="false" name-space="" is-complex-build="true" is-convert-null="false" is-need-total="false" is-select="false">
     <param-formatter>
       <param key="uid" value="${user.uid}"></param>

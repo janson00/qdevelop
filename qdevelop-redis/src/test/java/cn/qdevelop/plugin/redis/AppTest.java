@@ -1,5 +1,7 @@
 package cn.qdevelop.plugin.redis;
 
+import java.util.regex.Pattern;
+
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
@@ -34,6 +36,15 @@ public class AppTest
      */
     public void testApp()
     {
+    	
+    	Pattern isLikeWXNumber = Pattern.compile("[a-zA-Z]{3,}[0-9]{3,}");
+    	String[] s = new String[]{
+    		"a0","aa1","a11","Aa","aaa111"
+    			
+    	};
+    	for(String z : s){
+    		System.out.println(isLikeWXNumber.matcher(z).find());
+    	}
 //    	Test t = new Test();
         assertTrue( true );
     }
