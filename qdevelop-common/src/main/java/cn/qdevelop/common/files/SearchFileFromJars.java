@@ -61,7 +61,7 @@ public abstract class SearchFileFromJars {
 			}
 			String classPath = System.getProperty("java.class.path");
 			String[] jars;
-			if(isWindows()){
+			if(QSource.isWindow){
 				jars = classPath.split(";");
 			}else{
 				jars = classPath.split(":");
@@ -74,19 +74,7 @@ public abstract class SearchFileFromJars {
 		}catch(Exception e){
 			e.printStackTrace();
 		}
-		//		System.out.println("load environmentJars >>>>>>>>>>>>>>>>");
 		return all;
-	}
-
-	private static Boolean isWindow  ;
-	private static boolean isWindows(){
-		if(isWindow!=null)return isWindow.booleanValue();
-		if (System.getProperties().getProperty("os.name").toUpperCase().indexOf("WINDOWS") != -1) {
-			isWindow = new Boolean(true);
-		}else{
-			isWindow = new Boolean(false);
-		}
-		return isWindow.booleanValue();
 	}
 
 	private static Pattern clean = Pattern.compile("\\.\\/");

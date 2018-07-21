@@ -21,6 +21,9 @@ import java.util.regex.Pattern;
  * 
  */
 public class QSource {
+	
+		public static boolean isWindow =  System.getProperties().getProperty("os.name").toUpperCase().indexOf("WINDOWS") != -1;
+
 		private static QSource _QSource = new QSource();
 	
 		public static QSource getInstance() {
@@ -136,20 +139,6 @@ public class QSource {
 		return new File(url.toURI());
 	}
 
-//	public Properties loadProperties(String configName){
-//		try {
-//			InputStream idSvrConfig = getSourceAsStream(configName);
-//			if(idSvrConfig!=null){
-//				Properties prop = new Properties();
-//				prop.load(idSvrConfig);
-//				return prop;
-//			}
-//		} catch (Exception e) {
-//			e.printStackTrace();
-//		} 
-//		return null;
-//	}
-	
 	private final static Pattern isFromJar = Pattern.compile("\\.jar(\\!\\/)?"); 
 	private final static Pattern clearFromJar = Pattern.compile("\\!\\/.+$"); 
 	/**
@@ -240,26 +229,12 @@ public class QSource {
 		projectPath = toCommonPath(path);
 	}
 	
-	private static String toCommonPath(String path){
-		String t = path.replaceAll("\\\\", "/");
-		if(!t.startsWith("/")) return "/"+t;
-		return t;
+	public static String toCommonPath(String path){
+		if(isWindow){
+			path = path.replaceAll("\\\\", "/");
+		}
+		if(!path.startsWith("/")) return "/"+path;
+		return path;
 	}
-
 	
-//	public static void main(String[] args) {
-//		String s = "file:/Users/janson/workspace/.metadata/.plugins/org.eclipse.wst.server.core/tmp0/wtpwebapps/web-test/WEB-INF/lib/qdevelop-service-2.0.0.jar";
-//		System.out.println(isFromJar.matcher(s).find());
-//		System.out.println(clearFromJar.matcher(s).replaceAll(""));
-//	}
-//		Properties prop = QSource.getInstance().loadProperties("qdevelop-log.properties", Closeables.class);
-//		if(prop!=null){
-//			System.out.println(prop.toString());
-//		}
-//	}
-
-
-	
-	
-
 }

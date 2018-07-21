@@ -34,7 +34,7 @@ public  abstract class SearchFileFromProject {
 			}
 		}
 	}
-
+	
 	public final void searchFiles(File f,Pattern search){
 		if(f.isDirectory()){
 			File[] fs ;
@@ -42,14 +42,14 @@ public  abstract class SearchFileFromProject {
 			for(File _f : fs){
 				if(_f.isDirectory()){
 					if(!isFindClassPath.booleanValue() || _f.getAbsolutePath().indexOf("classes") > -1){
-						if(search.matcher(_f.getAbsolutePath()).find()){
+						if(search.matcher(QSource.toCommonPath(_f.getAbsolutePath())).find()){
 							disposeFileDirectory(_f);
 						}
 					}
 					searchFiles(_f,search);
 				}else{
 					if(!isFindClassPath.booleanValue() || _f.getAbsolutePath().indexOf("classes") > -1){
-						if(search.matcher(_f.getAbsolutePath()).find()){
+						if(search.matcher(QSource.toCommonPath(_f.getAbsolutePath())).find()){
 							disposeFile(_f);
 						}
 					}

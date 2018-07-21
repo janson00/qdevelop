@@ -88,7 +88,6 @@ public class QProperties {
 		}.searchProjectFiles("props/.+\\.properties$");
 	}
 
-
 	/**
 	 * 当有值
 	 * 
