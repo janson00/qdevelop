@@ -19,6 +19,7 @@ import org.dom4j.Element;
 
 import cn.qdevelop.common.QLog;
 import cn.qdevelop.common.exception.QDevelopException;
+import cn.qdevelop.common.files.QProperties;
 import cn.qdevelop.common.files.QSource;
 import cn.qdevelop.common.files.SearchFileFromJars;
 import cn.qdevelop.common.files.SearchFileFromProject;
@@ -38,6 +39,9 @@ public class SQLConfigLoader extends ConcurrentHashMap<String,Element>{
 	public static SQLConfigLoader getInstance(){return _SQLConfigLoader;}
 
 	private static HashSet<String> tablesIndex;
+	
+	private	String is_full_param = "true",is_complex_build="true",is_convert_null="false",is_need_total = "false",fetch_zero_err = "true";
+
 
 	public SQLConfigLoader(){
 		cleanSplit = Pattern.compile("[0-9a-zA-Z\\_]+");
@@ -48,6 +52,14 @@ public class SQLConfigLoader extends ConcurrentHashMap<String,Element>{
 		cleanPrefix = Pattern.compile("^.*(/|\\\\)");
 		tablesIndex = new HashSet<String>();
 		projectIndex = QSource.getProjectPath().length();
+		
+		is_full_param = QProperties.getInstance().getValue("sqlconfig_is_full_param", "true");
+		is_complex_build = QProperties.getInstance().getValue("sqlconfig_is_complex_build", "true");
+		is_convert_null = QProperties.getInstance().getValue("sqlconfig_is_convert_null", "false");
+		is_need_total = QProperties.getInstance().getValue("sqlconfig_is_need_total", "false");
+		fetch_zero_err = QProperties.getInstance().getValue("sqlconfig_fetch_zero_err", "true");
+//		System.out.println(QProperties.getInstance().getValue("sqlconfig_fetch_zero_err", "true"));
+		
 		long s = System.currentTimeMillis();
 		loadConfigFromJars();
 		loadConfigFromProject();
@@ -249,11 +261,11 @@ public class SQLConfigLoader extends ConcurrentHashMap<String,Element>{
 				}
 			}
 			if(sql.attributeValue("fetch-zero-err")==null){
-				sql.addAttribute("fetch-zero-err", "true");
+				sql.addAttribute("fetch-zero-err", fetch_zero_err);
 			}
 			addTables(sql.attributeValue("tables"),property.attributeValue("connect"));
 			if(sql.attributeValue("is-full-param")==null){
-				sql.addAttribute("is-full-param", "true");
+				sql.addAttribute("is-full-param", is_full_param);
 			}
 		}
 //		if(property.attributeValue("is-master")==null){
@@ -261,15 +273,15 @@ public class SQLConfigLoader extends ConcurrentHashMap<String,Element>{
 //		}
 		//是否需要转义编译SQL
 		if(property.attributeValue("is-complex-build")==null){
-			property.addAttribute("is-complex-build", "true");
+			property.addAttribute("is-complex-build", is_complex_build);
 		}
 		//是否需要覆盖空值数据进行展示，字符串转为空串，数值型转为-1
 		if(property.attributeValue("is-convert-null")==null){
-			property.addAttribute("is-convert-null", "false");
+			property.addAttribute("is-convert-null", is_convert_null);
 		}
 		//查询是否返回总记录数
 		if(property.attributeValue("is-need-total")==null){
-			property.addAttribute("is-need-total", "false");
+			property.addAttribute("is-need-total", is_need_total);
 		}
 
 		property.addAttribute("is-select", isSelect.toString());

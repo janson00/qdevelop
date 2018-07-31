@@ -51,7 +51,8 @@ public class LeftJoinMultiFormatter extends AbstractResultFormatter implements I
 	@Override
 	public void formatter(Map<String, Object> data) {
 		Object val = data.get(resultKey);
-		if(val!=null){
+//		StringUtils.isEmpty(String.valueOf(val));
+		if(val!=null&&String.valueOf(val).length()>0){
 			conditions.add(String.valueOf(val));
 		}
 	}
@@ -65,6 +66,7 @@ public class LeftJoinMultiFormatter extends AbstractResultFormatter implements I
 		for(String v : conditions){
 			sb.append("|").append(v);
 		}
+//		System.out.println(">>>>>>> "+sb.toString());
 		if(sb.length()==0)return;
 		query.put(formatterKey, sb.substring(1));
 		query.put("page", 1);
@@ -78,6 +80,7 @@ public class LeftJoinMultiFormatter extends AbstractResultFormatter implements I
 			int size  = formatterResult.getSize();
 			if(size==0)return;
 			DatabaseFactory.getInstance().formatterResult(formatterIndex, formatterResult);
+//			System.out.println(JSONObject.toJSONString(formatterResult));	
 			HashMap<String,List<Map<String,Object>>> tmp = new HashMap<String,List<Map<String,Object>>>();
 			for(int i=0;i<size;i++){
 				Map<String,Object> data = formatterResult.getResult(i);
@@ -110,6 +113,9 @@ public class LeftJoinMultiFormatter extends AbstractResultFormatter implements I
 					if(tranVal!=null){
 						fr.put("__"+rname, tranVal);
 					}
+				}
+				if(data.get(nodeName)!=null){
+					fr.put(nodeName,data.get(nodeName));
 				}
 				array.add(fr);
 			}

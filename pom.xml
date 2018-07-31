@@ -19,14 +19,15 @@
 			<!--阿里云maven私服，加速下载通用包 -->
 			<url>http://maven.aliyun.com/nexus/content/groups/public</url>
 		</repository>
-
+		<!-- 192.168.86.8 -->
+		<!-- 61.148.195.18 -->
 		<repository>
 			<id>qdevelop</id>
-			<url>http://192.168.86.8:8081/nexus/content/repositories/qdevelop/</url>
+			<url>http://61.148.195.18:8081/nexus/content/repositories/qdevelop/</url>
 		</repository>
 		<repository>
 			<id>develop</id>
-			<url>http://192.168.86.8:8081/nexus/content/repositories/develop/</url>
+			<url>http://61.148.195.18:8081/nexus/content/repositories/develop/</url>
 		</repository>
 		<!-- <repository> <id>qdevelop</id> <url>http://mvn.e-platform.cn/nexus/content/repositories/qdevelop</url> 
 			</repository> -->
@@ -40,7 +41,7 @@
 			</snapshotRepository> -->
 		<repository>
 			<id>qdevelop</id>
-			<url>http://192.168.86.8:8081/nexus/content/repositories/qdevelop/</url>
+			<url>http://61.148.195.18:8081/nexus/content/repositories/qdevelop/</url>
 		</repository>
 		<!-- <repository> <id>e-platform</id> <url>http://mvn.e-platform.cn/nexus/content/repositories/e-platform</url> 
 			</repository> -->

@@ -183,6 +183,17 @@ public class QProperties {
 	public String getString(String key) {
 		return getProperty(key);
 	}
+	
+	/**
+	 * 从配置中读取配置值，如果配置文件中无此值时，用默认值
+	 * @param key
+	 * @param defaultValue
+	 * @return
+	 */
+	public String getValue(String key,String defaultValue) {
+		 String  val = getProperty(key);
+		 return val!=null && val.length()>0 ? val : defaultValue;
+	}
 
 	public int getInt(String key) throws NumberFormatException {
 		return (int) getDouble(key);
