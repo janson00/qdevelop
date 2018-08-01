@@ -184,7 +184,7 @@ public class QServiceHelper {
 						if(!checkVal(itor.getKey(),itor.getValue(),struts,out)){
 							return false;
 						}
-						args.put(itor.getKey(), StringEscapeUtils.escapeHtml(itor.getValue()));
+						args.put(itor.getKey(), escapeHtml(itor.getValue()));
 					}
 				}else{//否则只检查sql配置所需要的参数
 					for(String key : acb.getArgs()){
@@ -199,7 +199,7 @@ public class QServiceHelper {
 						if(!checkVal(key,v,struts,out)){
 							return false;
 						}
-						args.put(key, StringEscapeUtils.escapeHtml(v));
+						args.put(key, escapeHtml(v));
 					}
 				}
 			} catch (QDevelopException e) {
@@ -216,10 +216,43 @@ public class QServiceHelper {
 					out.setErrMsg("请求参数[",itor.getKey(),"=",itor.getValue(),"]可能含有恶意字符");
 					return false;
 				}
-				args.put(itor.getKey(), StringEscapeUtils.escapeHtml(itor.getValue()));
+				args.put(itor.getKey(), escapeHtml(itor.getValue()));
 			}
 		}
 		return true;
+	}
+	
+	/**
+	 * 将值中的特俗字符替换了
+	 * @param val
+	 * @return
+	 */
+	private static String escapeHtml(String val){
+		char [] tmp = StringEscapeUtils.unescapeHtml(val).toCharArray();
+		StringBuilder sb = new StringBuilder();
+		for(int i=0;i<tmp.length;i++){
+			switch(tmp[i]){
+			case '<':
+				sb.append("&lt;");
+				break;
+			case '>':
+				sb.append("&gt;");
+				break;
+			case '&':
+				sb.append("&amp;");
+				break;
+			case '\'':
+				sb.append("&apos;");
+				break;
+			case '"':
+				sb.append("&quot;");
+				break;
+			default:
+				sb.append(tmp[i]);
+			}
+		}
+		val=null;
+		return sb.toString();
 	}
 
 	private boolean checkVal(String key,String val,Map<String,DBStrutsLeaf> struts,IOutput out){
@@ -373,11 +406,12 @@ public class QServiceHelper {
 		return r;
 	}
 
-	//	public static void main(String[] args) {
-	//		System.out.println(isDouble.matcher("1.21").find());
-	//		System.out.println(isDouble.matcher("1.1").find());
-	//		System.out.println(isDouble.matcher("11").find());
-	//		System.out.println(isDouble.matcher("1a1").find());
-	//	}
+		public static void main(String[] args) {
+			
+			System.out.println(escapeHtml("<dsdf>端口：24260"));
+			System.out.println(isDouble.matcher("1.1").find());
+			System.out.println(isDouble.matcher("11").find());
+			System.out.println(isDouble.matcher("1a1").find());
+		}
 
 }

@@ -464,7 +464,7 @@ public class SQLConfigParser {
 		dbQuery.setColumns(columns.toArray(new String[]{}));
 		dbQuery.setValues(values.toArray(new Object[]{}));
 	}
-
+	
 	private static Pattern clear = Pattern.compile("[^&\\|]");
 	private static Pattern express = Pattern.compile("[^!<>%\\*=]");
 	private static Pattern clearColumnName = Pattern.compile("^.+?\\.|`");
@@ -488,9 +488,13 @@ public class SQLConfigParser {
 		fullParserVale.append(" ");
 		if(tmp.length>1)parserVale.append("(");
 		if(tmp.length>1)fullParserVale.append("(");
+		
 		for(int i=0;i<tmp.length;i++){
 			String v = tmp[i];
 			String e = express.matcher(v.length()>2?v.substring(0,2):v).replaceAll("");
+			if(e.length()==0 && v.length()>1){//兼容处理末尾是模糊查询的需求
+				e=express.matcher(v.substring(v.length()-1)).replaceAll("");
+			}
 			if(i>0){
 				if(exp[i-1] == '&'){
 					parserVale.append(" and ");
