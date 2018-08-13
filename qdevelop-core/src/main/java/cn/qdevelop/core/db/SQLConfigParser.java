@@ -362,13 +362,13 @@ public class SQLConfigParser {
 			}else{
 				dbQuery.setConverNull(Boolean.parseBoolean(config.attributeValue("is-convert-null")));
 			}
-			
+
 			if(query.get("is-need-totle")!=null){
 				dbQuery.setNeedTotle(Boolean.parseBoolean(String.valueOf(query.get("is-need-totle"))));
 			}else{
 				dbQuery.setNeedTotle(Boolean.parseBoolean(config.attributeValue("is-need-totle")));
 			}
-			
+
 			query=null;
 			return dbQuery;
 		} catch (QDevelopException e) {
@@ -381,7 +381,10 @@ public class SQLConfigParser {
 	private static final Pattern isComplexValue = Pattern.compile("%|&|>|<|!|\\||\\*|=");
 	private static final Pattern isFunctionValue = Pattern.compile(".+\\(.+?\\)|.+\\(\\)");
 	private static final Pattern clearPreparedSql = Pattern.compile("'\\?'");
-	
+
+	//动态替换正则，提升一丢丢效率
+	private static final Map<String,Pattern> patternCache = new ConcurrentHashMap<String,Pattern>();
+
 	private void reBuildPreparedSql(DBQueryBean dbQuery ,Map<String,?> query,String[] params) throws QDevelopException{
 		Map<String, DBStrutsLeaf> tableStruts = dbQuery.getTableStruts() ;
 		ArrayList<String> columns = new ArrayList<String>();
@@ -403,8 +406,13 @@ public class SQLConfigParser {
 					}
 				}
 				String target = append(" [a-z|A-Z|`|\\_|\\.]+='?\\$\\[", key,"\\]'?");
-				sqlModel = sqlModel.replaceAll(target, cpb.getParseFullValue());
-				preparedSql = preparedSql.replaceAll(target, cpb.getParseVale());
+				Pattern relpaceReg = patternCache.get(target);
+				if(relpaceReg==null){
+					relpaceReg = Pattern.compile(target);
+					patternCache.put(target, relpaceReg);
+				}
+				sqlModel =relpaceReg.matcher(sqlModel).replaceAll(cpb.getParseFullValue()); //sqlModel.replaceAll(target, cpb.getParseFullValue());
+				preparedSql = relpaceReg.matcher(preparedSql).replaceAll(cpb.getParseVale());//preparedSql.replaceAll(target, cpb.getParseVale());
 			}else{
 				sqlModel = sqlModel.replace("$["+key+"]", val);
 				preparedSql = preparedSql.replace("$["+key+"]",isDBColumn ? "?" : val);
@@ -464,14 +472,31 @@ public class SQLConfigParser {
 		dbQuery.setColumns(columns.toArray(new String[]{}));
 		dbQuery.setValues(values.toArray(new Object[]{}));
 	}
-	
+
 	private static Pattern clear = Pattern.compile("[^&\\|]");
 	private static Pattern express = Pattern.compile("[^!<>%\\*=]");
+	private static Pattern isPureInSearchReg = Pattern.compile("[^&\\|<>%\\*=]");
 	private static Pattern clearColumnName = Pattern.compile("^.+?\\.|`");
-	private ComplexParserBean parserComplexVales(String key, String value,boolean isDBColumn) throws QDevelopException {
+	private static Pattern isPureInSearchRegEqual = Pattern.compile("^\\|+?$");
+	
+	public ComplexParserBean parserComplexVales(String key, String value,boolean isDBColumn) throws QDevelopException {
 		ComplexParserBean cpb = new ComplexParserBean();
-		String[] tmp = value.split("&|\\|");
+		boolean isNotPaser;
+		//XXX 判断全部是or查询，改用in的方式
+		String t = isPureInSearchReg.matcher(value).replaceAll("");
+		if(t.length()>0 && isPureInSearchRegEqual.matcher(t).find()){
+			isNotPaser = value.startsWith("!");
+			StringBuilder sb = new StringBuilder();
+			sb.append(" ").append(key).append(isNotPaser?" not":"").append(" in ('").append((isNotPaser?value.substring(1):value).replaceAll("\\|", "','")).append("')");
+			cpb.setKey(key);
+			cpb.setParseVale(sb.toString());
+			cpb.setParseFullValue(sb.toString());
+			cpb.setColumn(null);
+			cpb.setValues(null);
+			return cpb;
+		}
 		char[] exp = clear.matcher(value).replaceAll("").toCharArray();
+		String[] tmp = value.split("&|\\|");
 		if(tmp.length != exp.length + 1 )throw new QDevelopException(1001,"表达式有错误"+key+":"+value);
 		String[] columns = null;
 		String[] values = null;
@@ -488,13 +513,11 @@ public class SQLConfigParser {
 		fullParserVale.append(" ");
 		if(tmp.length>1)parserVale.append("(");
 		if(tmp.length>1)fullParserVale.append("(");
-		
+
 		for(int i=0;i<tmp.length;i++){
 			String v = tmp[i];
-			String e = express.matcher(v.length()>2?v.substring(0,2):v).replaceAll("");
-			if(e.length()==0 && v.length()>1){//兼容处理末尾是模糊查询的需求
-				e=express.matcher(v.substring(v.length()-1)).replaceAll("");
-			}
+			isNotPaser = v.startsWith("!");
+			String e = express.matcher(isNotPaser?v.substring(1):v).replaceAll("");
 			if(i>0){
 				if(exp[i-1] == '&'){
 					parserVale.append(" and ");
@@ -504,24 +527,16 @@ public class SQLConfigParser {
 					fullParserVale.append(" or ");
 				}
 			}
-			String cv = isComplexValue.matcher(v).replaceAll("");
-
+			String cv = isComplexValue.matcher(isNotPaser?v.substring(1):v).replaceAll("");
 			if(e.length() == 0){
 				if(isDBColumn){
-					parserVale.append(key).append("=?");
+					parserVale.append(key).append(isNotPaser?"<>?":"=?");
 				}else{
-					parserVale.append(key).append("='").append(cv).append("'");
+					parserVale.append(key).append(isNotPaser?"<>":"=").append("'").append(cv).append("'");
 				}
-				fullParserVale.append(key).append("='").append(cv).append("'");
+				fullParserVale.append(key).append(isNotPaser?"<>":"=").append("'").append(cv).append("'");
 			}else if(e.length() == 1){
-				if(e.equals("!")){
-					if(isDBColumn){
-						parserVale.append(key).append("<>?");
-					}else{
-						parserVale.append(key).append("<>'").append(cv).append("'");
-					}
-					fullParserVale.append(key).append("<>'").append(cv).append("'");
-				}else if(e.equals(">")||e.equals("<")){
+				if(e.equals(">")||e.equals("<")){
 					if(isDBColumn){
 						parserVale.append(key).append(e).append("?");
 					}else{
@@ -529,19 +544,19 @@ public class SQLConfigParser {
 					}
 					fullParserVale.append(key).append(e).append(cv);
 				}else if(e.equals("%")||e.equals("*")){
-					cv = v.replaceAll("\\*", "%");
+					cv = (isNotPaser?v.substring(1):v).replaceAll("\\*", "%");
 					if(isDBColumn){
-						parserVale.append(key).append(" like ").append("?");
+						parserVale.append(key).append(isNotPaser?" not":"").append(" like ").append("?");
 					}else{
-						parserVale.append(key).append(" like '").append(cv).append("'");
+						parserVale.append(key).append(isNotPaser?" not":"").append(" like '").append(cv).append("'");
 					}
-					fullParserVale.append(key).append(" like '").append(cv).append("'");
+					fullParserVale.append(key).append(isNotPaser?" not":"").append(" like '").append(cv).append("'");
 				}else{
 					throw new QDevelopException(1001,"非法参数请求 "+key+"="+value);
 				}
 			}else if(e.length() > 1){
 				if(isLike.matcher(e).find()){
-					cv = v.replaceAll("\\*", "%");
+					cv = (isNotPaser?v.substring(1):v).replaceAll("\\*", "%");
 					if(isDBColumn){
 						parserVale.append(key).append(e.startsWith("!")?" not":"").append(" like ").append("?");
 					}else{
@@ -612,6 +627,7 @@ public class SQLConfigParser {
 	private final static Pattern isInsert = Pattern.compile("^insert ",Pattern.CASE_INSENSITIVE);
 	private final static Pattern wherePrefix = Pattern.compile("^.+ where ",Pattern.CASE_INSENSITIVE);
 	private final static Pattern whereSubfix = Pattern.compile(" where .+$",Pattern.CASE_INSENSITIVE);
+	private final static Pattern cleanErrClear = Pattern.compile(", +,");
 	/**
 	 * 根据参数动态清理sql语句中对应的变量
 	 * @param sqlTemplate
@@ -626,7 +642,8 @@ public class SQLConfigParser {
 				clear = Pattern.compile(",?`?'?\\$?\\[?\\b("+argsName+")\\b\\]?'?`?",Pattern.CASE_INSENSITIVE);
 				patternInsertCache.put(argsName, clear);
 			}
-			return clearPrefix.matcher(clear.matcher(sqlTemplate).replaceAll(" ")).replaceAll("(");
+			//			return clearPrefix.matcher(clear.matcher(sqlTemplate).replaceAll(" ")).replaceAll("(");
+			return cleanErrClear.matcher(clearPrefix.matcher(clear.matcher(sqlTemplate).replaceAll(" ")).replaceAll("(")).replaceAll(",");
 		}else if(isSelect.matcher(sqlTemplate).find()){
 			Pattern clear = patternSelectCache.get(argsName);
 			if(clear == null){
@@ -644,33 +661,46 @@ public class SQLConfigParser {
 					.append(" where ").append(wherePrefix.matcher(sqlTemplate).replaceAll("")).toString();
 		}
 	}
-	
-	
-	
 
-//		public static void main(String[] args) {
-//			SQLConfigParser scp = 	new SQLConfigParser();
-//			Pattern ss = Pattern.compile("=(.+)?$| ");
-//			System.out.println(ss.matcher("asd='").replaceAll(""));
-//			System.out.println(ss.matcher("asd=").replaceAll(""));
-//			System.out.println(ss.matcher(" ").replaceAll(""));
-//		}
-//			String[] sqls = new String[]{
-//					"select * from aa where $[xxx] and asd;",
-//					"select * from aa where xxx='$[xxx]' and asd;"
-//			};
-//			String key = "xxx";
-//			for(String sql : sqls){
-//				String target = new StringBuilder().append("$[").append(key).append("]").toString();
-//				String tmp = sql.substring(0,sql.indexOf(target));
-//				tmp = tmp.substring(tmp.lastIndexOf(" ")).replaceAll("=.+$| ", "");
-//				System.out.println(tmp);
+
+
+
+//			public static void main(String[] args) {
+//				System.out.println(isPureInSearchRegEqual.matcher("|").find());
+//				System.out.println(isPureInSearchRegEqual.matcher("!||").find());
 //			}
-//			
-//		}
-//			String s = scp.cleanNULLArgs("SELECT a.*,b.loginName,(CASE WHEN b.headImgUrl IS NULL THEN '' ELSE b.headImgUrl END) AS headImgUrl,c.deptName FROM zmt_bc.sale_record a LEFT JOIN zmt_sc.sc_employee b ON a.saleId=b.id LEFT JOIN zmt_sc.sc_department c ON a.deptId=c.id WHERE a.deptId=$[deptId] AND a.orderStatus=0 AND a.orderNewStatus='CLAIM_SUCCESS' AND a.isRefund=0 ORDER BY a.claimSucTime DESC","deptId");
-//			System.out.println(s);
-//		}
+	////			String[] s = new String[]{"commissionPre","goodsName","isGiftPacks","isOut","price","isKill"};
+	////			String y = "insert into fx_goods_virtual (commissionPre,virtualGoodsCode,goodsName, isGiftPacks,price,isOut,remark,isKill,status,commissionAmount) value ($[commissionPre],'$[virtualGoodsCode]','$[goodsName]',$[isGiftPacks],$[price],$[isOut],'$[remark]',$[isKill],$[status],$[commissionAmount])";
+	////			for(String a : s){
+	////				y = cleanNULLArgs(y,a);
+	////				System.out.println(y);
+	////			}
+	//			SQLConfigParser scp = 	new SQLConfigParser();
+	//			
+	//			
+	//		}
+	//			SQLConfigParser scp = 	new SQLConfigParser();
+	//			Pattern ss = Pattern.compile("=(.+)?$| ");
+	//			System.out.println(ss.matcher("asd='").replaceAll(""));
+	//			System.out.println(ss.matcher("asd=").replaceAll(""));
+	//			System.out.println(ss.matcher(" ").replaceAll(""));
+	//		}
+	//			String[] sqls = new String[]{
+	//					"select * from aa where $[xxx] and asd;",
+	//					"select * from aa where xxx='$[xxx]' and asd;"
+	//			};
+	//			String key = "xxx";
+	//			for(String sql : sqls){
+	//				String target = new StringBuilder().append("$[").append(key).append("]").toString();
+	//				String tmp = sql.substring(0,sql.indexOf(target));
+	//				tmp = tmp.substring(tmp.lastIndexOf(" ")).replaceAll("=.+$| ", "");
+	//				System.out.println(tmp);
+	//			}
+	//			
+	//		}
+	//			String s = scp.cleanNULLArgs("SELECT a.*,b.loginName,(CASE WHEN b.headImgUrl IS NULL THEN '' ELSE b.headImgUrl END) AS headImgUrl,c.deptName FROM zmt_bc.sale_record a LEFT JOIN zmt_sc.sc_employee b ON a.saleId=b.id LEFT JOIN zmt_sc.sc_department c ON a.deptId=c.id WHERE a.deptId=$[deptId] AND a.orderStatus=0 AND a.orderNewStatus='CLAIM_SUCCESS' AND a.isRefund=0 ORDER BY a.claimSucTime DESC","deptId");
+	//			System.out.println(s);
+	//		}
 	////		System.out.println(cleanNULLArgs("select * from AAA where id =$[id] and name= '$[name]' and userName= '$[userName]'","id"));
 	////		System.out.println(cleanNULLArgs("select * from AAA where id =$[id] And name='$[name]' and user_Name= '$[user_Name]'","name"));
 	//		System.out.println(cleanNULLArgs("update aa set Id=$[id],Name='$[name]',userName= '$[userName]' where id =$[id] and name= '$[name]' and userName= '$[userName]'","id"));

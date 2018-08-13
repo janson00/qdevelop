@@ -178,9 +178,13 @@ public class QServiceHelper {
 					Iterator<Entry<String,String>> iter = args.entrySet().iterator();
 					while(iter.hasNext()){
 						Entry<String,String> itor = iter.next();
+						
 						if(ignoreColumns!=null && ArrayUtils.contains(ignoreColumns, itor.getKey())){
 							continue;
 						}
+//						if(itor.getValue().length()==0){
+//							continue;
+//						}
 						if(!checkVal(itor.getKey(),itor.getValue(),struts,out)){
 							return false;
 						}
@@ -227,7 +231,8 @@ public class QServiceHelper {
 	 * @param val
 	 * @return
 	 */
-	private static String escapeHtml(String val){
+	private String escapeHtml(String val){
+		if(val==null)return null;
 		char [] tmp = StringEscapeUtils.unescapeHtml(val).toCharArray();
 		StringBuilder sb = new StringBuilder();
 		for(int i=0;i<tmp.length;i++){
@@ -405,13 +410,4 @@ public class QServiceHelper {
 		getCheckArgsByIndexCache.put(index, acb);
 		return r;
 	}
-
-		public static void main(String[] args) {
-			
-			System.out.println(escapeHtml("<dsdf>端口：24260"));
-			System.out.println(isDouble.matcher("1.1").find());
-			System.out.println(isDouble.matcher("11").find());
-			System.out.println(isDouble.matcher("1a1").find());
-		}
-
 }

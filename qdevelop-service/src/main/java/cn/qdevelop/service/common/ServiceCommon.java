@@ -21,22 +21,25 @@ import cn.qdevelop.service.APIControl;
 import cn.qdevelop.service.interfacer.IOutput;
 import cn.qdevelop.service.interfacer.IService;
 
-@WebServlet(urlPatterns="/api/sys/common/*",
+@WebServlet(urlPatterns="/rest/*",
 loadOnStartup=1,initParams={  
 		@WebInitParam(name=IService.INIT_VALID_REQUIRED , value="index"),
 		@WebInitParam(name=IService.INIT_VALID_IGNORE , value="index")
 })
-public class CommonApiService  extends APIControl{
+public class ServiceCommon  extends APIControl{
 
 	private static final long serialVersionUID = -4735365187166909846L;
 
 	private static Pattern getIndex = Pattern.compile("^.+\\/|\\.(json|jsonp)$");
-	private static Pattern isOpenPath = Pattern.compile("\\/?common-api-sqls\\/");
+	private String rightPath = "xxx";
 	@Override
 	public void init(Map<String, String> args) {
+		String uri = getRequest().getRequestURI();
+		String contextPath = getRequest().getContextPath(); 
 		String index = getIndex.matcher(getRequest().getRequestURI()).replaceAll("");
-		System.out.println(getRequest().getContextPath() +" >> "+getRequest().getRequestURI());
 		args.put("index", index);
+		rightPath = uri.substring(contextPath.length()+6, uri.lastIndexOf("/"));
+//		System.out.println(rightPath);
 	}
 
 
@@ -44,8 +47,8 @@ public class CommonApiService  extends APIControl{
 	protected String execute(Map<String, String> args, IOutput output) {
 		try {
 			String path = SQLConfigParser.getInstance().getAttrValue(args.get("index"), "file");
-			if(!isOpenPath.matcher(path).find()){
-				output.setErrMsg("非法访问请求，只能访问common-api-sqls下文件");
+			if(path.indexOf(rightPath) == -1){
+				output.setErrMsg("非法访问请求，只能访问"+rightPath+"下文件配置");
 				return null;
 			}
 			boolean isSelect = SQLConfigParser.getInstance().isSelectByIndex(args.get("index"));

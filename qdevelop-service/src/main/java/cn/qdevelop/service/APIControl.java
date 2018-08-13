@@ -37,7 +37,6 @@ public abstract class APIControl extends HttpServlet implements IService{
 	private ThreadLocal<HttpServletResponse> httpServletResponse = new ThreadLocal<HttpServletResponse>();
 	private ThreadLocal<HttpServletRequest> httpServletRequest = new ThreadLocal<HttpServletRequest>();
 
-//	private  ThreadLocal<String[]> checkColumns = new ThreadLocal<String[]>(),ignoreColumns = new ThreadLocal<String[]>();
 	private String[] checkColumns,ignoreColumns;
 	private  Boolean jumpValidate = new Boolean(false);
 	private ThreadLocal<IOutput> out  = new ThreadLocal<IOutput>();

@@ -103,6 +103,8 @@ public class DatabaseFactory {
 			log.info("queryDatabaseCount:"+index+" use:"+(System.currentTimeMillis()-s)+"ms");
 		}
 	}
+	
+
 
 	/**
 	 * 查询数据库
@@ -203,7 +205,7 @@ public class DatabaseFactory {
 		return false;
 	}
 	/**
-	 * @deprecated 
+	 * 
 	 *  更新数据库；框架提供整体事务控制，提供链接关闭功能
 	 *
 	 * @param query

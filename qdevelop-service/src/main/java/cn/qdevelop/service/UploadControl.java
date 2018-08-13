@@ -35,7 +35,7 @@ public abstract class UploadControl extends HttpServlet  implements IService{
 	private static final long serialVersionUID = -726532824668251561L;
 	private ThreadLocal<HttpServletResponse> httpServletResponse = new ThreadLocal<HttpServletResponse>();
 	private ThreadLocal<HttpServletRequest> httpServletRequest = new ThreadLocal<HttpServletRequest>();
-//	private static MultipartConfig config = UploadControl.class.getAnnotation(MultipartConfig.class);
+	//	private static MultipartConfig config = UploadControl.class.getAnnotation(MultipartConfig.class);
 	private String[] checkColumns,ignoreColumns;
 	private ThreadLocal<IOutput> out  = new ThreadLocal<IOutput>();
 
@@ -101,35 +101,37 @@ public abstract class UploadControl extends HttpServlet  implements IService{
 			init(args);
 			if(new QServiceUitls().validParameters(args,out.get(),checkColumns,ignoreColumns)){
 				Collection<Part> parts = request.getParts();
-//				String[] storeNames = new String[parts.size()];
+				//				String[] storeNames = new String[parts.size()];
 				ArrayList<String> storeNames = new ArrayList<String>();
-				for(Part part : parts){
-					String fileName = this.getFileName(part.getHeader("Content-Disposition"));
-					System.out.println(fileName);
-					if(null!=fileName && !(fileName).trim().equals("")){
-						String[] allowType = setFileAllowType();
-						if(allowType!=null){
-							String type = fileName.substring(fileName.lastIndexOf("."));
-							if(!ArrayUtils.contains(allowType, type)){
-								part.delete();
-								out.get().setErrMsg("上传文件格式不在允许范围之内，允许格式为：",ArrayUtils.toString(allowType));
-								QServiceUitls.output(out.get().toString(),RETURN_OUT_JSON,request,response);
-								return;
+				if(parts != null){
+					for(Part part : parts){
+						String fileName = this.getFileName(part.getHeader("Content-Disposition"));
+						System.out.println(fileName);
+						if(null!=fileName && !(fileName).trim().equals("")){
+							String[] allowType = setFileAllowType();
+							if(allowType!=null){
+								String type = fileName.substring(fileName.lastIndexOf("."));
+								if(!ArrayUtils.contains(allowType, type)){
+									part.delete();
+									out.get().setErrMsg("上传文件格式不在允许范围之内，允许格式为：",ArrayUtils.toString(allowType));
+									QServiceUitls.output(out.get().toString(),RETURN_OUT_JSON,request,response);
+									return;
+								}
 							}
-						}
 
-						String STORE_ROOT = setFileStoreRootPath();
-						if(STORE_ROOT == null){
-							STORE_ROOT = "";
+							String STORE_ROOT = setFileStoreRootPath();
+							if(STORE_ROOT == null){
+								STORE_ROOT = "";
+							}
+							String storeName = getUploadFileSaveName(fileName,QServiceUitls.getCookie("sid",request),STORE_ROOT);
+							if(disposeFile(part.getInputStream(),fileName,storeName,part.getSize())){
+								checkPath(storeName,STORE_ROOT);
+								part.write(STORE_ROOT+storeName);
+								log.info("store file: "+STORE_ROOT+storeName);
+							}
+							storeNames.add(storeName);
+							part.delete();
 						}
-						String storeName = getUploadFileSaveName(fileName,QServiceUitls.getCookie("sid",request),STORE_ROOT);
-						if(disposeFile(part.getInputStream(),fileName,storeName,part.getSize())){
-							checkPath(storeName,STORE_ROOT);
-							part.write(STORE_ROOT+storeName);
-							log.info("store file: "+STORE_ROOT+storeName);
-						}
-						storeNames.add(storeName);
-						part.delete();
 					}
 				}
 				execute(args,storeNames.toArray(new String[]{}),out.get());

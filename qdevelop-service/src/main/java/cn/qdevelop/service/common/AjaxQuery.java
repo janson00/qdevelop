@@ -1,6 +1,7 @@
 package cn.qdevelop.service.common;
 
 import java.util.Map;
+import java.util.regex.Pattern;
 
 import cn.qdevelop.common.exception.QDevelopException;
 import cn.qdevelop.core.DatabaseFactory;
@@ -14,12 +15,20 @@ import cn.qdevelop.service.interfacer.IService;
 //        @WebInitParam(name=IService.INIT_VALID_REQUIRED,value="index"),
 //        @WebInitParam(name=IService.INIT_VALID_IGNORE,value="index")
 //})
-//@WebServlet("/svr/ajax/query")
+//@WebServlet("/xxx/*/common/*")
 public class AjaxQuery extends APIControl{
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 435444758591154555L;
+	private static Pattern getIndex = Pattern.compile("^.+\\/|\\.(json|jsonp)$");
+
+	@Override
+	public void init(Map<String, String> args) {
+		System.out.println(getRequest().getRequestURI());
+		String index = getIndex.matcher(getRequest().getRequestURI()).replaceAll("");
+		args.put("index", index);
+	}
 
 	@Override
 	protected String execute(Map<String, String> query,IOutput out) {
@@ -40,10 +49,6 @@ public class AjaxQuery extends APIControl{
 		return IService.RETURN_OUT_JSON;
 	}
 
-	@Override
-	public void init(Map<String, String> args) {
-		
-	}
 
 	
 
