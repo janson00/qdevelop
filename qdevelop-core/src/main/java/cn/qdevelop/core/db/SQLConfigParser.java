@@ -41,6 +41,8 @@ public class SQLConfigParser {
 	private final static Map<String,ArrayList<IUpdateHook>> resultHookByIndex = new ConcurrentHashMap<String,ArrayList<IUpdateHook>>();
 
 	private final static Pattern isNumber = Pattern.compile("^[0-9]+?$");
+	
+	public final static String[] specilQueryKey = new String[]{"index","page","limit","order"}; 
 
 	/**
 	 * 判断是否是查询
@@ -89,6 +91,7 @@ public class SQLConfigParser {
 		paramFormatters = new ArrayList<IParamFormatter>(itors.size());
 		for(Element item : itors){
 			String name = item.getName();
+			item.addAttribute("index", index);
 			IParamFormatter paramFormatter = FormatterLoader.getInstance().getParamFormatter(name);
 			if(paramFormatter == null){
 				throw new QDevelopException(1001,"param-formatter配置不存在："+item.asXML());
@@ -119,6 +122,7 @@ public class SQLConfigParser {
 		updateHooks = new ArrayList<IUpdateHook>(itors.size());
 		for(Element item : itors){
 			String name = item.getName();
+			item.addAttribute("index", index);
 			IUpdateHook updateHook = FormatterLoader.getInstance().getUpdateHook(name);
 			if(updateHook == null){
 				throw new QDevelopException(1001,"update-hook配置不存在："+item.asXML());
@@ -157,6 +161,7 @@ public class SQLConfigParser {
 		resultFormatters = new ArrayList<IResultFormatter>(itors.size());
 		for(Element item : itors){
 			String name = item.getName();
+			item.addAttribute("index", index);
 			IResultFormatter resultFormatter = FormatterLoader.getInstance().getResultFormatter(name);
 			if(resultFormatter == null){
 				throw new QDevelopException(1001,"result-formatter配置不存在："+item.asXML());
@@ -478,7 +483,7 @@ public class SQLConfigParser {
 	private static Pattern isPureInSearchReg = Pattern.compile("[^&\\|<>%\\*=]");
 	private static Pattern clearColumnName = Pattern.compile("^.+?\\.|`");
 	private static Pattern isPureInSearchRegEqual = Pattern.compile("^\\|+?$");
-	
+
 	public ComplexParserBean parserComplexVales(String key, String value,boolean isDBColumn) throws QDevelopException {
 		ComplexParserBean cpb = new ComplexParserBean();
 		boolean isNotPaser;
@@ -544,7 +549,7 @@ public class SQLConfigParser {
 					}
 					fullParserVale.append(key).append(e).append(cv);
 				}else if(e.equals("%")||e.equals("*")){
-					cv = (isNotPaser?v.substring(1):v).replaceAll("\\*", "%");
+					cv = likeReplace.matcher((isNotPaser?v.substring(1):v)).replaceAll("%");
 					if(isDBColumn){
 						parserVale.append(key).append(isNotPaser?" not":"").append(" like ").append("?");
 					}else{
@@ -556,7 +561,7 @@ public class SQLConfigParser {
 				}
 			}else if(e.length() > 1){
 				if(isLike.matcher(e).find()){
-					cv = (isNotPaser?v.substring(1):v).replaceAll("\\*", "%");
+					cv = likeReplace.matcher((isNotPaser?v.substring(1):v)).replaceAll("%");
 					if(isDBColumn){
 						parserVale.append(key).append(e.startsWith("!")?" not":"").append(" like ").append("?");
 					}else{
@@ -587,6 +592,7 @@ public class SQLConfigParser {
 		cpb.setValues(values);
 		return cpb;
 	}
+	private static Pattern likeReplace = Pattern.compile("[%\\*]+"); 
 	private static Pattern isLike = Pattern.compile("^\\!?(%|\\*)+$");
 
 	private String escapeExprSpecialWord(String keyword) {  
@@ -661,68 +667,4 @@ public class SQLConfigParser {
 					.append(" where ").append(wherePrefix.matcher(sqlTemplate).replaceAll("")).toString();
 		}
 	}
-
-
-
-
-//			public static void main(String[] args) {
-//				System.out.println(isPureInSearchRegEqual.matcher("|").find());
-//				System.out.println(isPureInSearchRegEqual.matcher("!||").find());
-//			}
-	////			String[] s = new String[]{"commissionPre","goodsName","isGiftPacks","isOut","price","isKill"};
-	////			String y = "insert into fx_goods_virtual (commissionPre,virtualGoodsCode,goodsName, isGiftPacks,price,isOut,remark,isKill,status,commissionAmount) value ($[commissionPre],'$[virtualGoodsCode]','$[goodsName]',$[isGiftPacks],$[price],$[isOut],'$[remark]',$[isKill],$[status],$[commissionAmount])";
-	////			for(String a : s){
-	////				y = cleanNULLArgs(y,a);
-	////				System.out.println(y);
-	////			}
-	//			SQLConfigParser scp = 	new SQLConfigParser();
-	//			
-	//			
-	//		}
-	//			SQLConfigParser scp = 	new SQLConfigParser();
-	//			Pattern ss = Pattern.compile("=(.+)?$| ");
-	//			System.out.println(ss.matcher("asd='").replaceAll(""));
-	//			System.out.println(ss.matcher("asd=").replaceAll(""));
-	//			System.out.println(ss.matcher(" ").replaceAll(""));
-	//		}
-	//			String[] sqls = new String[]{
-	//					"select * from aa where $[xxx] and asd;",
-	//					"select * from aa where xxx='$[xxx]' and asd;"
-	//			};
-	//			String key = "xxx";
-	//			for(String sql : sqls){
-	//				String target = new StringBuilder().append("$[").append(key).append("]").toString();
-	//				String tmp = sql.substring(0,sql.indexOf(target));
-	//				tmp = tmp.substring(tmp.lastIndexOf(" ")).replaceAll("=.+$| ", "");
-	//				System.out.println(tmp);
-	//			}
-	//			
-	//		}
-	//			String s = scp.cleanNULLArgs("SELECT a.*,b.loginName,(CASE WHEN b.headImgUrl IS NULL THEN '' ELSE b.headImgUrl END) AS headImgUrl,c.deptName FROM zmt_bc.sale_record a LEFT JOIN zmt_sc.sc_employee b ON a.saleId=b.id LEFT JOIN zmt_sc.sc_department c ON a.deptId=c.id WHERE a.deptId=$[deptId] AND a.orderStatus=0 AND a.orderNewStatus='CLAIM_SUCCESS' AND a.isRefund=0 ORDER BY a.claimSucTime DESC","deptId");
-	//			System.out.println(s);
-	//		}
-	////		System.out.println(cleanNULLArgs("select * from AAA where id =$[id] and name= '$[name]' and userName= '$[userName]'","id"));
-	////		System.out.println(cleanNULLArgs("select * from AAA where id =$[id] And name='$[name]' and user_Name= '$[user_Name]'","name"));
-	//		System.out.println(cleanNULLArgs("update aa set Id=$[id],Name='$[name]',userName= '$[userName]' where id =$[id] and name= '$[name]' and userName= '$[userName]'","id"));
-	//		System.out.println(cleanNULLArgs("update aa set Id=$[id],Name='$[name]',userName= '$[userName]' where id =$[id] and name= '$[name]' and user_Name= '$[user_Name]'","name"));
-	//		System.out.println(cleanNULLArgs("update aa set Id=$[id],Name='$[name]',   user_Name= '$[user_Name]' where id =$[id] and name= '$[name]' and user_Name= '$[user_Name]'","user_Name"));
-	//
-	//		//		System.out.println(cleanNULLArgs("insert into AA(id,name,user_Name) values($[id],'$[name]','$[user_Name]')","name"));
-	////		System.out.println(cleanNULLArgs("insert into AA(id,name,user_Name) values($[id],'$[name]','$[user_Name]')","id"));
-	//	}
-	//		SQLConfigParser scp = 	new SQLConfigParser();
-	//		String sql = "select * from mytest e where e.source='$[source]' and e.ep_user_id=$[ep_user_id] and 9=9";
-	//		String key = "ep_user_id";
-	//		System.out.println(scp.getSQLkey(key, sql));
-	//
-	//		try {
-	//
-	//			ComplexParserBean cpb = scp.parserComplexVales("e.t", "1|2|3", true);
-	//			System.out.println(cpb.toString());
-	//		} catch (QDevelopException e) {
-	//			// TODO Auto-generated catch block
-	//			e.printStackTrace();
-	//		}
-	//	}
-
 }

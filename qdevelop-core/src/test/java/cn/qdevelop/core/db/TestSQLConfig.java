@@ -50,20 +50,29 @@ public class TestSQLConfig  extends TestCase{
 			assertEquals(cpb.getParseVale(), " key not like ?");
 			
 			cpb = scp.parserComplexVales("key", "!1%&1", true);
-			assertEquals(cpb.getParseVale(), " (key not like ? and key=?)");
+//			System.out.println(">>>>>"+cpb.getParseFullValue());
+			assertEquals(cpb.getParseFullValue(), " (key not like '1%' and key='1')");
+			
 			cpb = scp.parserComplexVales("key", ">1|<2", true);
-			assertEquals(cpb.getParseVale(), " (key>? or key<?)");
+//			System.out.println(">>>>>"+cpb.getParseFullValue());
+			assertEquals(cpb.getParseFullValue(), " (key>1 or key<2)");
 			
 			cpb = scp.parserComplexVales("key", "1|!2&3", true);
-			assertEquals(cpb.getParseVale(), " (key=? or key<>? and key=?)");
+//			System.out.println(">>>>>"+cpb.getParseFullValue());
+			assertEquals(cpb.getParseFullValue(), " (key='1' or key<>'2' and key='3')");
 
 			cpb = scp.parserComplexVales("key", "1|2|3|4", true);
-			assertEquals(cpb.getParseVale(), " key in ('1','2','3','4')");
+			assertEquals(cpb.getParseFullValue(), " key in ('1','2','3','4')");
 			
 			cpb = scp.parserComplexVales("key", ">='2010-09-09'&<='2010-10-09'", true);
-			assertEquals(cpb.getParseVale(), " (key>=? and key<=?)");
-//			System.out.println(">>>>>"+cpb.getParseVale());
+//			System.out.println(">>>>>"+cpb.getParseFullValue());
+			assertEquals(cpb.getParseFullValue(), " (key>='2010-09-09' and key<='2010-10-09')");
+			
+			cpb = scp.parserComplexVales("key", "139%***4927", true);
+//			System.out.println(">>>>>"+cpb.getParseFullValue());
 //			System.out.println(cpb.toString());
+			assertEquals(cpb.getParseFullValue(), " key like '139%4927'");
+			
 		} catch (QDevelopException e) {
 			e.printStackTrace();
 		}

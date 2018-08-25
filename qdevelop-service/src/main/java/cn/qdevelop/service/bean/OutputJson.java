@@ -10,7 +10,7 @@ import cn.qdevelop.service.interfacer.IOutput;
 
 public class OutputJson implements IOutput{
 	/**返回结果状态标识，default 0 正常**/
-	int tag = 0;
+	int tag = 0,formatType = 0;
 	String errMsg;
 	Object data;
 	HashMap<String,Object> attr = null;
@@ -62,8 +62,14 @@ public class OutputJson implements IOutput{
 
 	public String toString(){
 		StringBuffer out = new StringBuffer();
-		out.append(jsonpCallback==null?"":jsonpCallback+"(").append("{");
-		if(isBodyOnly()){
+		switch(getFormatType()){
+		case 2:
+			out.append(jsonpCallback==null?"":jsonpCallback+"(");
+			out.append(JSON.toJSONString(this.getData()));
+			out.append(jsonpCallback==null?"":");");
+			break;
+		case 1:
+			out.append(jsonpCallback==null?"":jsonpCallback+"(").append("{");
 			out.append("\"data\":").append(JSON.toJSONString(this.getData()));
 			if(attr!=null){
 				Iterator<Entry<String,Object>> iter = attr.entrySet().iterator();
@@ -72,7 +78,11 @@ public class OutputJson implements IOutput{
 					out.append(",\"").append(itor.getKey()).append("\":").append(JSON.toJSONString(itor.getValue()));
 				}
 			}
-		}else{
+			out.append(",\"errMsg\":\"").append(this.getErrMsg()).append("\"");
+			out.append("}").append(jsonpCallback==null?"":");");
+			break;
+		default:
+			out.append(jsonpCallback==null?"":jsonpCallback+"(").append("{");
 			out.append("\"tag\":").append(this.getTag()).append(",")
 			.append("\"data\":{\"result\":").append(JSON.toJSONString(this.getData()));
 			if(attr!=null){
@@ -83,8 +93,9 @@ public class OutputJson implements IOutput{
 				}
 			}
 			out.append("},\"errMsg\":\"").append(this.getErrMsg()).append("\"");
+			out.append("}").append(jsonpCallback==null?"":");");
 		}
-		out.append("}").append(jsonpCallback==null?"":");");
+
 		return out.toString();
 	}
 
@@ -106,12 +117,12 @@ public class OutputJson implements IOutput{
 		jsonpCallback = callback;
 	}
 	@Override
-	public boolean isBodyOnly() {
-		return isBodyOnly;
+	public int getFormatType() {
+		return formatType;
 	}
-
-	public void setBodyOnly(boolean isBodyOnly){
-		this.isBodyOnly = isBodyOnly;
+	@Override
+	public void setFormatType(int type) {
+		formatType = type;
 	}
 
 }

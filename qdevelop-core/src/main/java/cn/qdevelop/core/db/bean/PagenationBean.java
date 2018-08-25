@@ -3,7 +3,7 @@ package cn.qdevelop.core.db.bean;
 import cn.qdevelop.core.standard.IPagenation;
 
 public class PagenationBean implements IPagenation{
-	private int page,pageNum;
+	public int page,pageNum;
 	@Override
 	public void setPage(int page) {
 		this.page = page;

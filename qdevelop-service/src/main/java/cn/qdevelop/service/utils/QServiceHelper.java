@@ -226,6 +226,8 @@ public class QServiceHelper {
 		return true;
 	}
 	
+	private static Pattern isCaseScriptAttack = Pattern.compile("<.+>",Pattern.CASE_INSENSITIVE);
+	
 	/**
 	 * 将值中的特俗字符替换了
 	 * @param val
@@ -233,6 +235,9 @@ public class QServiceHelper {
 	 */
 	private String escapeHtml(String val){
 		if(val==null)return null;
+		if(!isCaseScriptAttack.matcher(val).find()){
+			return val;
+		}
 		char [] tmp = StringEscapeUtils.unescapeHtml(val).toCharArray();
 		StringBuilder sb = new StringBuilder();
 		for(int i=0;i<tmp.length;i++){

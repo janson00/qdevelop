@@ -40,7 +40,7 @@ public class SQLConfigLoader extends ConcurrentHashMap<String,Element>{
 
 	private static HashSet<String> tablesIndex;
 	
-	private	String is_full_param = "true",is_complex_build="true",is_convert_null="false",is_need_total = "false",fetch_zero_err = "true";
+	private	String is_full_param = "true",is_complex_build="true",is_convert_null="false",is_need_total = "false",fetch_zero_err = "true",result_format_type = "0";
 
 
 	public SQLConfigLoader(){
@@ -50,6 +50,7 @@ public class SQLConfigLoader extends ConcurrentHashMap<String,Element>{
 		nameSpaceClean = Pattern.compile("\\-[0-9]+?\\..+$");
 		isJarFile = Pattern.compile("\\.jar\\!");
 		cleanPrefix = Pattern.compile("^.*(/|\\\\)");
+		clearJarPrefix = Pattern.compile("^.+\\.jar\\!");
 		tablesIndex = new HashSet<String>();
 		projectIndex = QSource.getProjectPath().length();
 		
@@ -161,7 +162,7 @@ public class SQLConfigLoader extends ConcurrentHashMap<String,Element>{
 	}
 
 
-	private static Pattern cleanPrefix;
+	private static Pattern cleanPrefix,clearJarPrefix;
 	private void initSqlConfig(Iterator<Element> items,String fileName,boolean isJarConfig){
 		log.info("load sqlConfig: "+fileName);
 		while (items.hasNext()) {
@@ -171,10 +172,19 @@ public class SQLConfigLoader extends ConcurrentHashMap<String,Element>{
 				Element ele = this.get(index);
 				if(ele != null ){
 					if(isJarConfig){
-						log.warn("原文件【"+fileName+"】被当前【"+ele.attributeValue("file")+"】文件中index="+index+"的配置覆盖");
+						System.err.println("【"+index+"】 原文件【"+fileName+"】\r\n\t 被当前【"+ele.attributeValue("file")+"】文件中的配置覆盖");
+						if(clearJarPrefix.matcher(fileName).replaceAll("").equals(clearJarPrefix.matcher(ele.attributeValue("file")).replaceAll(""))){
+							System.out.println();
+							log.warn("【"+index+"】 原文件【"+fileName+"】被当前【"+ele.attributeValue("file")+"】文件中的配置覆盖");
+						}else{
+							System.out.println();
+							log.error("【"+index+"】 原文件【"+fileName+"】被当前【"+ele.attributeValue("file")+"】文件中的配置覆盖");
+							System.exit(0);
+						}
 					}else{
 						if(cleanPrefix.matcher(fileName).replaceAll("").equals(cleanPrefix.matcher(ele.attributeValue("file")).replaceAll(""))){
-							log.warn("文件【"+fileName+"】和【"+ele.attributeValue("file")+"】含有重复索引，本次检测跳过，如不是临时编译文件，请手动检查index："+index);
+							System.err.println("【"+index+"】 文件【"+fileName+"】和【"+ele.attributeValue("file")+"】含有重复索引，本次检测跳过，如不是临时编译文件，请手动检查index："+index);
+							log.warn("【"+index+"】 文件【"+fileName+"】和【"+ele.attributeValue("file")+"】含有重复索引，本次检测跳过，如不是临时编译文件，请手动检查index："+index);
 							continue;
 						}
 						log.error("当前文件【"+fileName+"】\n和文件【"+ele.attributeValue("file")+"】\n存在重复索引 index : "+index+" ！");
@@ -283,7 +293,10 @@ public class SQLConfigLoader extends ConcurrentHashMap<String,Element>{
 		if(property.attributeValue("is-need-total")==null){
 			property.addAttribute("is-need-total", is_need_total);
 		}
-
+		//result_format_type
+		if(property.attributeValue("result-format-type")==null){
+			property.addAttribute("result-format-type", result_format_type);
+		}
 		property.addAttribute("is-select", isSelect.toString());
 
 
@@ -418,34 +431,4 @@ public class SQLConfigLoader extends ConcurrentHashMap<String,Element>{
 			tablesIndex.add(t+"@"+connect);
 		}
 	}
-
-//	public static void main(String[] args) {
-//		String[] ss = new String[]{
-//				"select a.product_name,a.uid,a.price,b.action from products a , products_log b on a.pid=b.pid and 9=9",
-//				"select a.product_name,a.uid,a.price,b.action from products a left join products_log b on a.pid=b.pid and 9=9",
-//				"select a.product_name,a.uid,a.price,b.action from (select * from products where 1=1) a ,(select * from  products_log) b on a.pid=b.pid and 9=9",
-//		"select a.product_name,a.uid,a.price,b.action from (select a.product_name,a.uid from products a,product_relation b where 1=1) a ,(select a.product_name,a.uid from  products_log) b on a.pid=b.pid and 9=9"		};
-//		for(String s : ss){
-//			System.out.println(s);
-//			String tab = SQLConfigLoader.getInstance().getSelectTableNames(s);
-//			System.out.println(tab);	
-//		};
-//	}
-
-	//		public static void main(String[] args) {
-	//			parseSelectTableNames(" select customer_inventory_id,1,inventory_quantity,'签收入库',now(),0    from customer_inventory t left join custsdad cs on ");
-	//		}
-	//		//		Pattern cleanTableName = Pattern.compile("\\)| .+$|`");
-	//		//		System.out.println(cleanTableName.matcher("customer_inventory_log    select customer_inventory_id,1,inventory_quantity,'签收入库',now(),0    from customer_inventory").replaceAll(""));
-	//		Pattern o = Pattern.compile("\n|\t| +");
-	//		Pattern t = Pattern.compile(" +");
-	//		Element e = SQLConfigLoader.getInstance().get("test_query");
-	//		System.out.println(SQLConfigLoader.getInstance().cleanSQL(e.elementText("sql")));
-	//		//		String s = "update brand set `brand_name`='$[brand_name]',`english_name`='$[english_name]',`brand_type`=$[brand_type],`logo`='$[logo]',`first_letter`='$[first_letter]',`pc_level1_id`=$[pc_level1_id],`pc_level2_id`=$[pc_level2_id],`pc_level3_id`=$[pc_level3_id],`sort`=$[sort],`remark`='$[remark]',`uid`=$[uid],`uname`='$[uname]',`utime`=NOW() where brand_id=$[brand_id]";
-	//		//		Pattern prestSqlClean = Pattern.compile("'?\\$\\[{1}[0-9a-zA-Z._]+\\]{1}'?",Pattern.CASE_INSENSITIVE);
-	//		//		System.out.println(prestSqlClean.matcher(s).replaceAll("?"));
-	//		//		System.out.println(e.asXML());
-	//		//			System.out.println(StringEscapeUtils.unescapeXml("update order_use_stock set status=3 where order_id=? and status &lt;&gt; 3"));
-	//	}
-
 }

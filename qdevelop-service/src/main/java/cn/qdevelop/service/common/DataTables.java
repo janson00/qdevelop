@@ -32,7 +32,7 @@ public class DataTables extends APIControl{
 			int pageSize = limit == null ? 10 : Integer.parseInt(limit);
 			IDBResult rb = DatabaseFactory.getInstance().queryDatabase(query);
 			int recordsFiltered = rb.getSize() == pageSize ? page*pageSize+1 : (page-1)*pageSize + rb.getSize();
-			result.setBodyOnly(true);
+			result.setFormatType(IOutput.SIMPLE_TYPE);
 			result.setData(rb);
 			result.addAttr("draw", draw);
 			result.addAttr("recordsTotal", rb.getSize());

@@ -42,15 +42,31 @@ public class ServiceCommon  extends APIControl{
 //		System.out.println(rightPath);
 	}
 
-
+	private static Pattern isWithNonCondition = Pattern.compile(" where "+Contant.AUTO_SEARCH_MARK+"$",Pattern.CASE_INSENSITIVE);
 	@Override
 	protected String execute(Map<String, String> args, IOutput output) {
 		try {
+			//System.out.println(args);
 			String path = SQLConfigParser.getInstance().getAttrValue(args.get("index"), "file");
 			if(path.indexOf(rightPath) == -1){
 				output.setErrMsg("非法访问请求，只能访问"+rightPath+"下文件配置");
 				return null;
 			}
+			
+			/***********处理输出结果集样式************/
+			int resultFormatType =  0;
+			if(args.get("result-format-type")!=null){
+				resultFormatType = Integer.parseInt(args.get("result-format-type"));
+				args.remove("result-format-type");
+			}else{
+				String rft = SQLConfigParser.getInstance().getAttrValue(args.get("index"), "result-format-type");
+				if(rft!=null){
+					resultFormatType = Integer.parseInt(rft);
+				}
+			}
+			output.setFormatType(resultFormatType);
+			/*************************************/
+			
 			boolean isSelect = SQLConfigParser.getInstance().isSelectByIndex(args.get("index"));
 			if(isSelect){
 				if(args.get("page")==null){
@@ -73,7 +89,7 @@ public class ServiceCommon  extends APIControl{
 				try {
 					dbf.formatterParameters(args);
 					IDBQuery dbQuery = SQLConfigParser.getInstance().getDBQueryBean(args, conn);
-					if(dbQuery.getSql().indexOf(Contant.AUTO_SEARCH_MARK)>-1){
+					if(isWithNonCondition.matcher(dbQuery.getSql()).find()){
 						output.setErrMsg("当前查询接口有风险，不能够直接使用，请先明确配置变量名称！");
 						return null;
 					}

@@ -128,5 +128,6 @@
 		<module>qdevelop-link-wrapper</module>
 		<module>qdevelop-redis</module>
 		<module>qdevelop-words</module>
+		<module>qdevelop-auth</module>
 	</modules>
 </project>

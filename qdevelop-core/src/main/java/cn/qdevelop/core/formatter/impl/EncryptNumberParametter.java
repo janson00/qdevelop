@@ -14,7 +14,7 @@ import cn.qdevelop.core.formatter.AbstractParamFormatter;
  * @author janson
  *
  */
-public class EncryptNumberFormatter  extends AbstractParamFormatter{
+public class EncryptNumberParametter  extends AbstractParamFormatter{
 	String paramKey;
 	
 	@Override

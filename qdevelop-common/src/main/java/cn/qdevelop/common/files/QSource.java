@@ -190,7 +190,7 @@ public class QSource {
 					}
 				}
 			}else{
-				System.out.println("loadProperties fail ["+configName+"]  from : "+runPath);
+				System.err.println("loadProperties fail ["+configName+"]  from : "+runPath);
 			}
 		} catch (Exception e) {
 			e.printStackTrace();

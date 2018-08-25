@@ -15,6 +15,7 @@ import org.dom4j.Element;
 import cn.qdevelop.common.QLog;
 import cn.qdevelop.common.exception.QDevelopException;
 import cn.qdevelop.common.utils.QString;
+import cn.qdevelop.core.bean.DBArgs;
 import cn.qdevelop.core.bean.DBResultBean;
 import cn.qdevelop.core.db.SQLConfigParser;
 import cn.qdevelop.core.db.config.SQLConfigLoader;
@@ -43,7 +44,7 @@ public class DatabaseFactory {
 		String index=null;
 		if(query.getClass().equals(String.class)){
 			index = (String)query;
-		}else if(query.getClass().equals(Map.class)||query.getClass().equals(HashMap.class)){
+		}else if(query.getClass().equals(Map.class)||query.getClass().equals(HashMap.class)||query.getClass().equals(DBArgs.class)){
 			index = String.valueOf(((Map<String,?>)query).get("index"));
 		}
 		if(index==null)throw new QDevelopException(1002,"请求没有index");
@@ -321,7 +322,7 @@ public class DatabaseFactory {
 			} catch (SQLException e) {
 				e.printStackTrace();
 			}
-			this.closeConnection(conn);
+			ConnectFactory.close(conn);
 		}
 		return 0;
 	}
@@ -539,7 +540,7 @@ public class DatabaseFactory {
 	 * 关闭链接
 	 * @param conn
 	 */
-	public void closeConnection(Connection conn){
+	public static void closeConnection(Connection conn){
 		ConnectFactory.close(conn);
 	}
 

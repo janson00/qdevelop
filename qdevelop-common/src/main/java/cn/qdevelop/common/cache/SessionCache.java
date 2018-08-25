@@ -5,13 +5,11 @@ package cn.qdevelop.common.cache;
 
 import java.util.HashMap;
 
-import cn.qdevelop.common.extend.ICache;
-
 /**
  * @author square
  *
  */
-public class SessionCache implements ICache<String,Object>{
+public class SessionCache{
 	private final ThreadLocal<HashMap<String, Object>> sessionCache = new ThreadLocal<HashMap<String, Object>>();
 
 	public  void init() {
@@ -29,11 +27,9 @@ public class SessionCache implements ICache<String,Object>{
 		return sessionCache.get().get(key);
 	}
 
-	@Override
 	public void remove(String key) {
 	}
 
-	@Override
 	public void reload() {
 		
 	}

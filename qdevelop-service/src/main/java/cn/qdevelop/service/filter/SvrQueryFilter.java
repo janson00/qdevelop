@@ -88,11 +88,11 @@ public class SvrQueryFilter  implements Filter{
 		return ipRules.toString();
 	}
 
-	public static void main(String[] args) {
-		//		Pattern isTarget = Pattern.compile("^(192.168.1.[0-9]+?)|(127.0.0.1)$");
-		//		System.out.println(isTarget.matcher("192.168.1.2").find());
-		System.out.println(getIp());
-
-	}
+//	public static void main(String[] args) {
+//		//		Pattern isTarget = Pattern.compile("^(192.168.1.[0-9]+?)|(127.0.0.1)$");
+//		//		System.out.println(isTarget.matcher("192.168.1.2").find());
+//		System.out.println(getIp());
+//
+//	}
 
 }

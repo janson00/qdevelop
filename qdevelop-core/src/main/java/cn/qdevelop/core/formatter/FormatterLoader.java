@@ -89,6 +89,7 @@ public class FormatterLoader{
 			Element property = iter.next();
 			String name = property.attributeValue("name");
 			String clazz = property.attributeValue("class");
+//			System.out.println(name+"   >>>> "+clazz);
 			@SuppressWarnings("unchecked")
 			List<Element> attrs = property.elements();
 			Map<String,String> base = new HashMap<String,String>();

@@ -1,24 +1,34 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <data-formatter>
 
- 	<param-formatter name="param-parameter" class="cn.qdevelop.core.formatter.impl.ParamFormatter">		
+ 	<param-formatter name="param-parametter" class="cn.qdevelop.core.formatter.impl.ParamFormatter">		
 	</param-formatter>
 	
 	<!-- 根据条件，查询数据表中一条记录中的某些字段数据值，作为参数去请求其他操作 -->
-	<param-formatter name="query-data-parameter" class="cn.qdevelop.core.formatter.impl.QueryDataParametter">	
+	<param-formatter name="query-data-parametter" class="cn.qdevelop.core.formatter.impl.QueryDataParametter">	
 		<index>需要请求数据的index索引</index>
 		<columns>需要将数据记录中哪些字段作为参数使用，支持as用法</columns>
 		<where-key>当前请求中哪些参数作为条件请求</where-key>	
 	</param-formatter>
 	
 	<!-- 对数值参数加密存储，例手机号，身份证，银行卡号等敏感信息 -->
-	<param-formatter name="encrypt-num-parameter" class="cn.qdevelop.core.formatter.impl.EncryptNumberFormatter">	
+	<param-formatter name="encrypt-num-parametter" class="cn.qdevelop.core.formatter.impl.EncryptNumberParametter">	
 		<param-key>需要加密的参数key</param-key>	
 	</param-formatter>
 	
 	<!-- 对数值加密数值进行解密，例手机号，身份证，银行卡号等敏感信息 -->
 	<result-formatter name="decrypt-num-formatter" class="cn.qdevelop.core.formatter.impl.DecryptNumberFormatter">
 		<result-key>需要解密的结果集字段名</result-key>
+	</result-formatter>
+	
+	
+	<!--  -->
+	<param-formatter name="extra-json-parametter" class="cn.qdevelop.core.formatter.impl.ExtraJsonParametter">	
+		<extra-key>需要将其他的参数变成的参数名</extra-key>	
+	</param-formatter>
+	
+	<result-formatter name="extra-json-formatter" class="cn.qdevelop.core.formatter.impl.ExtraJsonFormatter">
+		<result-key>存放json扩展字段的名字</result-key>
 	</result-formatter>
 	
 	<!--【AOP机制】基于查询结果的结果集处理-->

@@ -26,7 +26,7 @@ public class AjaxQueryCount extends APIControl{
 	@Override
 	protected String execute(Map<String, String> query,IOutput result) {
 		try {
-			result.setBodyOnly(true);
+			result.setFormatType(IOutput.SIMPLE_TYPE);
 			int count = DatabaseFactory.getInstance().queryDatabaseCount(query);
 			result.setData(count);
 		} catch (QDevelopException e) {

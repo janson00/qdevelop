@@ -8,27 +8,34 @@ public class DBStrutsLeaf {
 		return columnName;
 	}
 	public void setColumnName(String columnName) {
-		this.columnName = columnName;
+		this.columnName = clearColumnName(columnName);
 	}
+
 	public String getColumnTypeName() {
 		return columnTypeName;
 	}
+	private String clearColumnName(String columnName){
+		if(columnName.indexOf(" ")>-1){
+			return columnName.substring(0,columnName.indexOf(" "));
+		}
+		return columnName;
+	}
 	public void setColumnTypeName(String columnTypeName) {
-		this.columnTypeName = columnTypeName;
-		
-		if(columnTypeName.equalsIgnoreCase("int") || columnTypeName.equalsIgnoreCase("tinyint")){
+		this.columnTypeName = clearColumnName(columnTypeName);
+
+		if(this.columnTypeName.equalsIgnoreCase("int") || this.columnTypeName.equalsIgnoreCase("tinyint")){
 			type = 1;
-		}else if(columnTypeName.equalsIgnoreCase("varchar") || columnTypeName.equalsIgnoreCase("char")  || columnTypeName.equalsIgnoreCase("text")){
+		}else if(this.columnTypeName.equalsIgnoreCase("varchar") || this.columnTypeName.equalsIgnoreCase("char")  || this.columnTypeName.equalsIgnoreCase("text")){
 			type = 2;
-		}else if(columnTypeName.equalsIgnoreCase("decimal")  || columnTypeName.equalsIgnoreCase("double")){
+		}else if(this.columnTypeName.equalsIgnoreCase("decimal")  || this.columnTypeName.equalsIgnoreCase("double")){
 			type = 3;
-		}else if( columnTypeName.equalsIgnoreCase("date")){
+		}else if(this.columnTypeName.equalsIgnoreCase("date")){
 			type = 4;
-		}else if(columnTypeName.equalsIgnoreCase("datetime")){
+		}else if(this.columnTypeName.equalsIgnoreCase("datetime")){
 			type = 5;
-		}else if(columnTypeName.equalsIgnoreCase("bigint")){
+		}else if(this.columnTypeName.equalsIgnoreCase("bigint")){
 			type = 6;
-		}else if( columnTypeName.equalsIgnoreCase("float")){
+		}else if(this.columnTypeName.equalsIgnoreCase("float")){
 			type = 7;
 		}
 	}
@@ -50,9 +57,9 @@ public class DBStrutsLeaf {
 	public void setAutoIncrement(boolean isAutoIncrement) {
 		this.isAutoIncrement = isAutoIncrement;
 	}
-	
+
 	public int getColumnType(){
 		return type;
 	}
-	
+
 }

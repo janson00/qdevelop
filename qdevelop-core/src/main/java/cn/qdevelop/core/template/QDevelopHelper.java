@@ -131,7 +131,7 @@ public class QDevelopHelper {
 			fw.write("\r\n");
 			
 			fw.write("\r\n");fw.write("	<property index=\""+tableName+"_add_action\" connect=\""+connName+"\" explain=\""+tableName+"插入\">");
-			fw.write("\r\n");fw.write("		<sql repeat=\"\"  repeat-concat=\"^\" fetch-zero-err=\"true\">");
+			fw.write("\r\n");fw.write("		<sql repeat=\"\"  repeat-concat=\"^\" fetch-zero-err=\"true\" is-full-param=\"false\">");
 			fw.write("\r\n");fw.write("			"+insertSQL.toString());
 			fw.write("\r\n");fw.write("		</sql>");
 			//			fw.write("\r\n");fw.write("		<sql>"+insertSQL.toString()+"</sql>");
@@ -141,7 +141,7 @@ public class QDevelopHelper {
 			fw.write("\r\n");fw.write("	</property>");
 			fw.write("\r\n");
 			fw.write("\r\n");fw.write("	<property index=\""+tableName+"_store_action\" connect=\""+connName+"\" explain=\""+tableName+"修改\">");
-			fw.write("\r\n");fw.write("		<sql  repeat=\"\"  repeat-concat=\"^\" fetch-zero-err=\"true\">");
+			fw.write("\r\n");fw.write("		<sql  repeat=\"\"  repeat-concat=\"^\" fetch-zero-err=\"true\" is-full-param=\"false\">");
 			fw.write("\r\n");fw.write("			"+updateSQL.toString());
 			fw.write("\r\n");fw.write("		</sql>");
 			//			fw.write("\r\n");fw.write("		<sql fetch-zero-err=\"true\">"+updateSQL.toString()+"</sql>");

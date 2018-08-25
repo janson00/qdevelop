@@ -127,7 +127,7 @@ public class ConnectFactory {
 			Element configs = (Element) databaseConfig.selectSingleNode(append("/database-config/connect[@index='",config,"']"));
 			if(configs==null && config.endsWith("_R"))configs = (Element) databaseConfig.selectSingleNode(append("/database-config/connect[@index='",config.substring(0,config.length()-2),"']"));
 			if(configs==null)throw new QDevelopException(1001,"数据库配置["+config+"]不存在！请检查src/databaseConfig.xml");
-			connection=new DBCPConnect(configs);
+			connection=new DruidConnect(configs);
 			connection.printInfo();
 			connCache.put(config, connection);
 		} catch (Exception e) {
