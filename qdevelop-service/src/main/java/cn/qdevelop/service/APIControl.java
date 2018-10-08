@@ -30,9 +30,6 @@ import cn.qdevelop.service.utils.QServiceHelper;
  *
  */
 public abstract class APIControl extends HttpServlet implements IService{
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 7445553533896016332L;
 	private ThreadLocal<HttpServletResponse> httpServletResponse = new ThreadLocal<HttpServletResponse>();
 	private ThreadLocal<HttpServletRequest> httpServletRequest = new ThreadLocal<HttpServletRequest>();

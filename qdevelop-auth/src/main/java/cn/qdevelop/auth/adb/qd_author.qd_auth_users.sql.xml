@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- xml中常用转义符写法： （ & &amp; ）（ < &lt; ） （ > &gt; ） -->
+<SQLConfig>
+	<property index="qd_auth_users_query_action" connect="qd_author_read"
+		explain="qd_auth_users查询">
+
+		<formatter>
+			<!-- <prop-formatter result-key="status" prop-key="qd_auth_users_status_dict"/> -->
+			<date-formatter result-key="last_login_time"
+				date-style="yyyy-MM-dd HH:mm:ss" />
+			<date-formatter result-key="update_time" date-style="yyyy-MM-dd HH:mm:ss" />
+			<date-formatter result-key="create_time" date-style="yyyy-MM-dd HH:mm:ss" />
+			<left-join-formatter result-key="dept_id"
+				left-join="userDeptInfos" on-key="dept_id" columns="dept_name" />
+		</formatter>
+
+		<sql>select * from qd_auth_users where {DYNAMIC}</sql>
+	</property>
+	
+	<property index="qd_auth_users_simple" connect="qd_author_read"
+		explain="qd_auth_users查询">
+		<sql>select uid,user_name,dept_id from qd_auth_users where {DYNAMIC}</sql>
+	</property>
+
+	<property index="qd_auth_users_add_action" connect="qd_author_write"
+		explain="qd_auth_users插入">
+		<sql repeat="" repeat-concat="^" fetch-zero-err="true"
+			is-full-param="false">
+			insert into
+			qd_auth_users(login_passwd,company_id,open_id,status,last_login_time,login_times,user_name,dept_id,permit_id,update_time,login_name,create_time)
+			value
+			(md5(concat('$[login_name]','$[login_passwd]')),$[company_id],'$[open_id]',$[status],$[last_login_time],$[login_times],'$[user_name]',$[dept_id]
+			,$[permit_id],$[update_time],'$[login_name]',$[create_time])
+		</sql>
+		<!--<sql>insert other_table(uid) value({qd_auth_users.LAST_INSERT_ID})</sql> -->
+	</property>
+
+	<property index="qd_auth_users_store_action" connect="qd_author_write"
+		explain="qd_auth_users修改">
+		<sql repeat="" repeat-concat="^" fetch-zero-err="true"
+			is-full-param="false">
+			update
+			qd_auth_users set company_id=$[company_id],open_id='$[open_id]',status=$[status],user_name='$[user_name]',dept_id=$[dept_id],permit_id=$[permit_id],
+			update_time=now(),login_name='$[login_name]'
+			where uid=$[uid]
+		</sql>
+	</property>
+	
+	<property index="qd_auth_users_reset_password" connect="qd_author_write"
+		explain="qd_auth_users修改">
+		<sql repeat="" repeat-concat="^" fetch-zero-err="true"
+			is-full-param="true">
+			update qd_auth_users set login_name='$[login_name]',login_passwd = md5(concat('$[login_name]','$[login_passwd]')),update_time=now() where uid=$[uid]
+		</sql>
+	</property>
+	
+
+	<property index="qd_auth_user_permit" connect="qd_author_write"
+		explain="qd_auth_users删除">
+		<sql repeat="" repeat-concat="^" fetch-zero-err="true">
+			update qd_auth_users set permit_id='$[permit_id]',update_time=now()  where uid=$[uid]
+		</sql>
+		<sql repeat="" repeat-concat="^" fetch-zero-err="false">
+			delete from qd_auth_user_permit_relation where uid=$[uid]
+		</sql>
+		<sql repeat="permit_id" repeat-concat=";"  fetch-zero-err="true">
+			insert into qd_auth_user_permit_relation(permit_id,uid) value($[permit_id],$[uid]) 
+		</sql>
+	</property>
+</SQLConfig>

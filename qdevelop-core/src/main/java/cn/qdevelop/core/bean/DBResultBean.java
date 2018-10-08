@@ -42,6 +42,7 @@ public class DBResultBean extends ArrayList<Map<String, Object>> implements IDBR
 	public String getString(int idx, String columnName) {
 		if(idx>=getSize())return null;
 		Object val = this.get(idx).get(columnName);
+		if(val == null )return null;
 		if(val.getClass().getName().equals("java.lang.String")){
 			return (String)val;
 		}else{
@@ -53,6 +54,7 @@ public class DBResultBean extends ArrayList<Map<String, Object>> implements IDBR
 	public Integer getInteger(int idx, String columnName) {
 		if(idx>=getSize())return null;
 		Object val = this.get(idx).get(columnName);
+		if(val == null )return null;
 		if(val.getClass().getName().equals("java.lang.Integer")){
 			return (Integer)val;
 		}else{
@@ -64,6 +66,7 @@ public class DBResultBean extends ArrayList<Map<String, Object>> implements IDBR
 	public Long getLong(int idx, String columnName) {
 		if(idx>=getSize())return null;
 		Object val = this.get(idx).get(columnName);
+		if(val == null )return null;
 		if(val.getClass().getName().equals("java.lang.Long")){
 			return (Long)val;
 		}else{
@@ -75,6 +78,7 @@ public class DBResultBean extends ArrayList<Map<String, Object>> implements IDBR
 	public Double getDouble(int idx, String columnName) {
 		if(idx>=getSize())return null;
 		Object val = this.get(idx).get(columnName);
+		if(val == null )return null;
 		if(val.getClass().getName().equals("java.lang.Double")){
 			return (Double)val;
 		}else{
@@ -119,7 +123,7 @@ public class DBResultBean extends ArrayList<Map<String, Object>> implements IDBR
 	}
 
 	@Override
-	public boolean isExsitData() {
+	public boolean hasData() {
 		return super.size() > 0;
 	}
 

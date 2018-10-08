@@ -1,0 +1,151 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<sql-config-debug>
+  <poperty index="userPermitRelations" connect="qd_author_read" explain="qd_auth_users查询" is-convert-null="true" file="qdevelop-auth-2.0.0.jar!cn/qdevelop/auth/service/qd_author.qd_auth_users.sql.xml" is-open="false" name-space="qdevelop-auth" is-complex-build="true" is-need-total="false" result-format-type="0" is-select="true">
+    <sql params="uid" is-select="true" tables="qd_auth_user_permit_relation" fetch-zero-err="true" is-full-param="true">select * from qd_auth_user_permit_relation where uid=$[uid]</sql>
+  </poperty>
+  <poperty index="qd_auth_users_query_action" connect="qd_author_read" explain="qd_auth_users查询" file="qdevelop-auth-2.0.0.jar!cn/qdevelop/auth/adb/qd_author.qd_auth_users.sql.xml" is-open="false" name-space="qdevelop-auth" is-complex-build="true" is-convert-null="false" is-need-total="false" result-format-type="0" is-select="true">
+    <sql is-select="true" tables="qd_auth_users" fetch-zero-err="true" is-full-param="true">select * from qd_auth_users where 9=9</sql>
+    <result-formatter>
+      <date-formatter result-key="last_login_time" date-style="yyyy-MM-dd HH:mm:ss"></date-formatter>
+      <date-formatter result-key="update_time" date-style="yyyy-MM-dd HH:mm:ss"></date-formatter>
+      <date-formatter result-key="create_time" date-style="yyyy-MM-dd HH:mm:ss"></date-formatter>
+      <left-join-formatter result-key="dept_id" left-join="userDeptInfos" on-key="dept_id" columns="dept_name"></left-join-formatter>
+    </result-formatter>
+  </poperty>
+  <poperty index="qd_auth_users_store_action" connect="qd_author_write" explain="qd_auth_users修改" file="qdevelop-auth-2.0.0.jar!cn/qdevelop/auth/adb/qd_author.qd_auth_users.sql.xml" is-open="false" name-space="qdevelop-auth" is-complex-build="true" is-convert-null="false" is-need-total="false" result-format-type="0" is-select="false">
+    <sql repeat-concat="^" fetch-zero-err="true" is-full-param="false" params="company_id|open_id|status|user_name|dept_id|permit_id|login_name|uid" is-select="false" tables="qd_auth_users">update qd_auth_users set company_id=$[company_id],open_id='$[open_id]',status=$[status],user_name='$[user_name]',dept_id=$[dept_id],permit_id=$[permit_id], update_time=now(),login_name='$[login_name]' where uid=$[uid]</sql>
+  </poperty>
+  <poperty index="qd_auth_menu" connect="qd_author_read" explain="qd_auth_menu查询" file="qdevelop-auth-2.0.0.jar!cn/qdevelop/auth/adb/qd_author.qd_auth_menu.sql.xml" is-open="false" name-space="qdevelop-auth" is-complex-build="true" is-convert-null="false" is-need-total="false" result-format-type="0" is-select="true">
+    <sql is-select="true" tables="qd_auth_menu" fetch-zero-err="true" is-full-param="true">select menu_id,menu_name,menu_icon,menu_link,parent_id from qd_auth_menu where 9=9 and status=1</sql>
+    <result-formatter>
+      <left-join-multi-formatter result-key="menu_id" left-join="qd_auth_menu" on-key="parent_id" columns="menu_id,menu_name,menu_icon,menu_link" node-name="child"></left-join-multi-formatter>
+    </result-formatter>
+  </poperty>
+  <poperty index="qd_auth_user_permit_relation_store_action" connect="qd_author_write" explain="qd_auth_user_permit_relation修改" file="qdevelop-auth-2.0.0.jar!cn/qdevelop/auth/adb/qd_author.qd_auth_user_permit_relation.sql.xml" is-open="false" name-space="qdevelop-auth" is-complex-build="true" is-convert-null="false" is-need-total="false" result-format-type="0" is-select="false">
+    <sql repeat-concat="^" fetch-zero-err="true" is-full-param="false" params="uid|permit_id|up_id" is-select="false" tables="qd_auth_user_permit_relation">update qd_auth_user_permit_relation set uid=$[uid],permit_id=$[permit_id] where up_id=$[up_id]</sql>
+  </poperty>
+  <poperty index="qd_auth_dept_add_action" connect="qd_author_write" explain="qd_auth_dept插入" file="qdevelop-auth-2.0.0.jar!cn/qdevelop/auth/adb/qd_author.qd_auth_dept.sql.xml" is-open="false" name-space="qdevelop-auth" is-complex-build="true" is-convert-null="false" is-need-total="false" result-format-type="0" is-select="false">
+    <sql repeat-concat="^" fetch-zero-err="true" is-full-param="false" params="update_time|status|create_time|dept_name|parent_id" is-select="false" tables="qd_auth_dept">insert into qd_auth_dept(update_time,status,create_time,dept_name,parent_id) value ($[update_time],$[status],$[create_time],'$[dept_name]',$[parent_id])</sql>
+  </poperty>
+  <poperty index="userInfos" connect="qd_author_read" explain="qd_auth_users查询" file="qdevelop-auth-2.0.0.jar!cn/qdevelop/auth/service/qd_author.qd_auth_users.sql.xml" is-open="false" name-space="qdevelop-auth" is-complex-build="true" is-convert-null="false" is-need-total="false" result-format-type="0" is-select="true">
+    <sql params="uid" is-select="true" tables="qd_auth_users" fetch-zero-err="true" is-full-param="true">select * from qd_auth_users where uid=$[uid]</sql>
+    <result-formatter>
+      <date-formatter result-key="last_login_time" date-style="yyyy-MM-dd HH:mm:ss"></date-formatter>
+      <left-join-formatter result-key="dept_id" left-join="userDeptInfos" on-key="dept_id" columns="dept_name,parent_id"></left-join-formatter>
+    </result-formatter>
+  </poperty>
+  <poperty index="qd_auth_menu_permit_query_action" connect="qd_author_read" explain="qd_auth_menu_permit查询" file="qdevelop-auth-2.0.0.jar!cn/qdevelop/auth/adb/qd_author.qd_auth_menu_permit.sql.xml" is-open="false" name-space="qdevelop-auth" is-complex-build="true" is-convert-null="false" is-need-total="false" result-format-type="0" is-select="true">
+    <sql params="qamp_id|uid|menu_id|permit_id|sys_name|permit|permit_link" is-select="true" tables="qd_auth_menu_permit" fetch-zero-err="true" is-full-param="true">select uid,menu_id,permit_id,sys_name,permit,permit_link,qamp_id from qd_auth_menu_permit where qamp_id=$[qamp_id] and uid=$[uid] and menu_id=$[menu_id] and permit_id=$[permit_id] and sys_name='$[sys_name]' and permit=$[permit] and permit_link='$[permit_link]'</sql>
+  </poperty>
+  <poperty index="qd_auth_menu_store_action" connect="qd_author_write" explain="qd_auth_menu修改" file="qdevelop-auth-2.0.0.jar!cn/qdevelop/auth/adb/qd_author.qd_auth_menu.sql.xml" is-open="false" name-space="qdevelop-auth" is-complex-build="true" is-convert-null="false" is-need-total="false" result-format-type="0" is-select="false">
+    <sql repeat-concat="^" fetch-zero-err="true" is-full-param="false" params="status|sys_name|menu_icon|menu_name|menu_link|parent_id|menu_id" is-select="false" tables="qd_auth_menu">update qd_auth_menu set update_time=now(),status=$[status],sys_name='$[sys_name]',menu_icon='$[menu_icon]',menu_name='$[menu_name]',menu_link='$[menu_link]',parent_id=$[parent_id] where menu_id=$[menu_id]</sql>
+  </poperty>
+  <poperty index="query_menu_permit_menu_id" connect="qd_author_read" explain="qd_auth_menu查询" is-convert-null="true" file="qdevelop-auth-2.0.0.jar!cn/qdevelop/auth/adb/qd_author.qd_auth_menu.sql.xml" is-open="false" name-space="qdevelop-auth" is-complex-build="true" is-need-total="false" result-format-type="0" is-select="true">
+    <sql params="uid|permit_id" is-select="true" tables="qd_auth_menu_permit" fetch-zero-err="true" is-full-param="true">select distinct menu_id from qd_auth_menu_permit where (uid=$[uid] or permit_id=$[permit_id]) and menu_id &gt; 0</sql>
+  </poperty>
+  <poperty index="userDeptInfos" connect="qd_author_read" explain="qd_auth_users查询" is-convert-null="true" file="qdevelop-auth-2.0.0.jar!cn/qdevelop/auth/service/qd_author.qd_auth_users.sql.xml" is-open="false" name-space="qdevelop-auth" is-complex-build="true" is-need-total="false" result-format-type="0" is-select="true">
+    <sql params="dept_id" is-select="true" tables="qd_auth_dept" fetch-zero-err="true" is-full-param="true">select * from qd_auth_dept where dept_id=$[dept_id]</sql>
+  </poperty>
+  <poperty index="qd_auth_users_reset_password" connect="qd_author_write" explain="qd_auth_users修改" file="qdevelop-auth-2.0.0.jar!cn/qdevelop/auth/adb/qd_author.qd_auth_users.sql.xml" is-open="false" name-space="qdevelop-auth" is-complex-build="true" is-convert-null="false" is-need-total="false" result-format-type="0" is-select="false">
+    <sql repeat-concat="^" fetch-zero-err="true" is-full-param="true" params="login_name|login_name|login_passwd|uid" is-select="false" tables="qd_auth_users">update qd_auth_users set login_name='$[login_name]',login_passwd=md5(concat('$[login_name]','$[login_passwd]')),update_time=now() where uid=$[uid]</sql>
+  </poperty>
+  <poperty index="loginWithMenuPerimit" connect="qd_author_read" explain="qd_auth_users查询" file="qdevelop-auth-2.0.0.jar!cn/qdevelop/auth/service/qd_author.qd_auth_users.sql.xml" is-open="false" name-space="qdevelop-auth" is-complex-build="true" is-convert-null="false" is-need-total="false" result-format-type="0" is-select="true">
+    <sql params="uid|permit_id" is-select="true" tables="qd_auth_menu_permit|qd_auth_menu" fetch-zero-err="true" is-full-param="true">select distinct qap.permit_link,qap.permit,qam.menu_link as link from qd_auth_menu_permit qap left join qd_auth_menu qam on qap.menu_id=qam.menu_id where qap.uid=$[uid] or qap.permit_id=$[permit_id]</sql>
+  </poperty>
+  <poperty index="qd_auth_permit_add_action" connect="qd_author_write" explain="qd_auth_permit插入" file="qdevelop-auth-2.0.0.jar!cn/qdevelop/auth/adb/qd_author.qd_auth_permit.sql.xml" is-open="false" name-space="qdevelop-auth" is-complex-build="true" is-convert-null="false" is-need-total="false" result-format-type="0" is-select="false">
+    <sql repeat-concat="^" fetch-zero-err="true" params="permit_name|sys_name" is-select="false" tables="qd_auth_permit" is-full-param="true">insert into qd_auth_permit(permit_name,sys_name) value ('$[permit_name]','$[sys_name]')</sql>
+  </poperty>
+  <poperty index="qd_auth_dept_store_action" connect="qd_author_write" explain="qd_auth_dept修改" file="qdevelop-auth-2.0.0.jar!cn/qdevelop/auth/adb/qd_author.qd_auth_dept.sql.xml" is-open="false" name-space="qdevelop-auth" is-complex-build="true" is-convert-null="false" is-need-total="false" result-format-type="0" is-select="false">
+    <sql repeat-concat="^" fetch-zero-err="true" is-full-param="false" params="update_time|status|create_time|dept_name|parent_id|dept_id" is-select="false" tables="qd_auth_dept">update qd_auth_dept set update_time=$[update_time],status=$[status],create_time=$[create_time],dept_name='$[dept_name]',parent_id=$[parent_id] where dept_id=$[dept_id]</sql>
+  </poperty>
+  <poperty index="qd_auth_menu_add_action" connect="qd_author_write" explain="qd_auth_menu插入" file="qdevelop-auth-2.0.0.jar!cn/qdevelop/auth/adb/qd_author.qd_auth_menu.sql.xml" is-open="false" name-space="qdevelop-auth" is-complex-build="true" is-convert-null="false" is-need-total="false" result-format-type="0" is-select="false">
+    <sql repeat-concat="^" fetch-zero-err="true" is-full-param="false" params="status|sys_name|menu_icon|menu_name|menu_link|parent_id" is-select="false" tables="qd_auth_menu">insert into qd_auth_menu(status,sys_name,menu_icon,menu_name,menu_link,parent_id) value ($[status],'$[sys_name]','$[menu_icon]','$[menu_name]','$[menu_link]',$[parent_id])</sql>
+  </poperty>
+  <poperty index="qd_auth_menu_permit_simple" connect="qd_author_read" explain="配置手工权限时查询" file="qdevelop-auth-2.0.0.jar!cn/qdevelop/auth/adb/qd_author.qd_auth_menu_permit.sql.xml" is-open="false" name-space="qdevelop-auth" is-complex-build="true" is-convert-null="false" is-need-total="false" result-format-type="0" is-select="true">
+    <sql is-select="true" tables="qd_auth_menu_permit" fetch-zero-err="true" is-full-param="true">select uid,menu_id,permit_id,sys_name,permit,permit_link,qamp_id from qd_auth_menu_permit where 9=9</sql>
+  </poperty>
+  <poperty index="qd_auth_users_add_action" connect="qd_author_write" explain="qd_auth_users插入" file="qdevelop-auth-2.0.0.jar!cn/qdevelop/auth/adb/qd_author.qd_auth_users.sql.xml" is-open="false" name-space="qdevelop-auth" is-complex-build="true" is-convert-null="false" is-need-total="false" result-format-type="0" is-select="false">
+    <sql repeat-concat="^" fetch-zero-err="true" is-full-param="false" params="login_name|login_passwd|company_id|open_id|status|last_login_time|login_times|user_name|dept_id|permit_id|update_time|login_name|create_time" is-select="false" tables="qd_auth_users">insert into qd_auth_users(login_passwd,company_id,open_id,status,last_login_time,login_times,user_name,dept_id,permit_id,update_time,login_name,create_time) value (md5(concat('$[login_name]','$[login_passwd]')),$[company_id],'$[open_id]',$[status],$[last_login_time],$[login_times],'$[user_name]',$[dept_id] ,$[permit_id],$[update_time],'$[login_name]',$[create_time])</sql>
+  </poperty>
+  <poperty index="checkLoginAction" connect="qd_author_read" explain="验证登陆信息" file="qdevelop-auth-2.0.0.jar!cn/qdevelop/auth/service/qd_author.qd_auth_users.sql.xml" is-open="false" name-space="qdevelop-auth" is-complex-build="true" is-convert-null="false" is-need-total="false" result-format-type="0" is-select="true">
+    <sql params="login_name|login_passwd|login_name" is-select="true" tables="qd_auth_users" fetch-zero-err="true" is-full-param="true">select * from qd_auth_users where status=1 and login_passwd=md5(concat('$[login_name]','$[login_passwd]')) and login_name='$[login_name]'</sql>
+    <result-formatter>
+      <left-join-multi-formatter result-key="uid" left-join="userPermitRelations" on-key="uid" columns="permit_id" node-name="child"></left-join-multi-formatter>
+    </result-formatter>
+  </poperty>
+  <poperty index="qd_auth_menu_query_action" connect="qd_author_read" explain="qd_auth_menu查询" is-convert-null="true" file="qdevelop-auth-2.0.0.jar!cn/qdevelop/auth/adb/qd_author.qd_auth_menu.sql.xml" is-open="false" name-space="qdevelop-auth" is-complex-build="true" is-need-total="false" result-format-type="0" is-select="true">
+    <sql is-select="true" tables="qd_auth_menu" fetch-zero-err="true" is-full-param="true">select menu_id,update_time,status,sys_name,menu_icon,create_time,menu_name,menu_link,parent_id from qd_auth_menu where 9=9</sql>
+    <result-formatter>
+      <date-formatter result-key="update_time" date-style="yyyy-MM-dd HH:mm:ss"></date-formatter>
+      <prop-formatter result-key="status" prop-key="qd_auth_status"></prop-formatter>
+      <prop-formatter result-key="sys_name" prop-key="multi_system_name"></prop-formatter>
+      <date-formatter result-key="create_time" date-style="yyyy-MM-dd HH:mm:ss"></date-formatter>
+      <left-join-formatter result-key="parent_id" left-join="qd_auth_menu_simple" on-key="menu_id" columns="menu_name as parent_menu_name,menu_icon as parent_menu_icon"></left-join-formatter>
+    </result-formatter>
+  </poperty>
+  <poperty index="qd_auth_permit_store_action" connect="qd_author_write" explain="qd_auth_permit修改" file="qdevelop-auth-2.0.0.jar!cn/qdevelop/auth/adb/qd_author.qd_auth_permit.sql.xml" is-open="false" name-space="qdevelop-auth" is-complex-build="true" is-convert-null="false" is-need-total="false" result-format-type="0" is-select="false">
+    <sql repeat-concat="^" fetch-zero-err="true" is-full-param="false" params="update_time|permit_name|status|sys_name|permit_id" is-select="false" tables="qd_auth_permit">update qd_auth_permit set update_time=$[update_time],permit_name='$[permit_name]',status=$[status],sys_name='$[sys_name]' where permit_id=$[permit_id]</sql>
+  </poperty>
+  <poperty index="qd_auth_users_simple" connect="qd_author_read" explain="qd_auth_users查询" file="qdevelop-auth-2.0.0.jar!cn/qdevelop/auth/adb/qd_author.qd_auth_users.sql.xml" is-open="false" name-space="qdevelop-auth" is-complex-build="true" is-convert-null="false" is-need-total="false" result-format-type="0" is-select="true">
+    <sql is-select="true" tables="qd_auth_users" fetch-zero-err="true" is-full-param="true">select uid,user_name,dept_id from qd_auth_users where 9=9</sql>
+  </poperty>
+  <poperty index="qd_auth_user_permit_relation_query_action" connect="qd_author_read" explain="qd_auth_user_permit_relation查询" file="qdevelop-auth-2.0.0.jar!cn/qdevelop/auth/adb/qd_author.qd_auth_user_permit_relation.sql.xml" is-open="false" name-space="qdevelop-auth" is-complex-build="true" is-convert-null="false" is-need-total="false" result-format-type="0" is-select="true">
+    <sql params="up_id|uid|permit_id" is-select="true" tables="qd_auth_user_permit_relation" fetch-zero-err="true" is-full-param="true">select uid,up_id,permit_id from qd_auth_user_permit_relation where up_id=$[up_id] and uid=$[uid] and permit_id=$[permit_id]</sql>
+  </poperty>
+  <poperty index="qd_auth_menu_simple" connect="qd_author_read" explain="qd_auth_menu查询" is-convert-null="true" file="qdevelop-auth-2.0.0.jar!cn/qdevelop/auth/adb/qd_author.qd_auth_menu.sql.xml" is-open="false" name-space="qdevelop-auth" is-complex-build="true" is-need-total="false" result-format-type="0" is-select="true">
+    <sql is-select="true" tables="qd_auth_menu" fetch-zero-err="true" is-full-param="true">select menu_id,menu_name,menu_icon,menu_link from qd_auth_menu where 9=9</sql>
+  </poperty>
+  <poperty index="userPermitInfos" connect="qd_author_read" explain="qd_auth_users查询" is-convert-null="true" file="qdevelop-auth-2.0.0.jar!cn/qdevelop/auth/service/qd_author.qd_auth_users.sql.xml" is-open="false" name-space="qdevelop-auth" is-complex-build="true" is-need-total="false" result-format-type="0" is-select="true">
+    <sql params="dept_id" is-select="true" tables="qd_auth_permit" fetch-zero-err="true" is-full-param="true">select * from qd_auth_permit where dept_id=$[dept_id]</sql>
+  </poperty>
+  <poperty index="qd_auth_user_permit_relation_add_action" connect="qd_author_write" explain="qd_auth_user_permit_relation插入" file="qdevelop-auth-2.0.0.jar!cn/qdevelop/auth/adb/qd_author.qd_auth_user_permit_relation.sql.xml" is-open="false" name-space="qdevelop-auth" is-complex-build="true" is-convert-null="false" is-need-total="false" result-format-type="0" is-select="false">
+    <sql repeat-concat="^" fetch-zero-err="true" is-full-param="false" params="uid|permit_id" is-select="false" tables="qd_auth_user_permit_relation">insert into qd_auth_user_permit_relation(uid,permit_id) value ($[uid],$[permit_id])</sql>
+  </poperty>
+  <poperty index="qd_auth_permit_query_action" connect="qd_author_read" explain="qd_auth_permit查询" file="qdevelop-auth-2.0.0.jar!cn/qdevelop/auth/adb/qd_author.qd_auth_permit.sql.xml" is-open="false" name-space="qdevelop-auth" is-complex-build="true" is-convert-null="false" is-need-total="false" result-format-type="0" is-select="true">
+    <sql is-select="true" tables="qd_auth_permit" fetch-zero-err="true" is-full-param="true">select * from qd_auth_permit where 9=9</sql>
+    <result-formatter>
+      <date-formatter result-key="update_time" date-style="yyyy-MM-dd HH:mm:ss"></date-formatter>
+      <date-formatter result-key="create_time" date-style="yyyy-MM-dd HH:mm:ss"></date-formatter>
+    </result-formatter>
+  </poperty>
+  <poperty index="query_menu_permit_menu_result" connect="qd_author_read" explain="qd_auth_menu查询" is-convert-null="true" file="qdevelop-auth-2.0.0.jar!cn/qdevelop/auth/adb/qd_author.qd_auth_menu.sql.xml" is-open="false" name-space="qdevelop-auth" is-complex-build="true" is-need-total="false" result-format-type="0" is-select="true">
+    <sql params="menuIds" is-select="true" tables="qd_auth_menu" fetch-zero-err="true" is-full-param="true">select qa.menu_name,qa.menu_link,qf.menu_name as parent_menu_name,qf.menu_icon as parent_menu_icon from qd_auth_menu qa left join qd_auth_menu qf on qa.parent_id=qf.menu_id where qa.parent_id &gt; 0 and qa.status=1 and qa.menu_id in ($[menuIds]) order by qa.parent_id</sql>
+  </poperty>
+  <poperty index="qd_auth_menu_permit_menu_role_set" connect="qd_author_write" explain="qd_auth_menu_permit删除" file="qdevelop-auth-2.0.0.jar!cn/qdevelop/auth/adb/qd_author.qd_auth_menu_permit.sql.xml" is-open="false" name-space="qdevelop-auth" is-complex-build="true" is-convert-null="false" is-need-total="false" result-format-type="0" is-select="false">
+    <sql repeat-concat="^" fetch-zero-err="false" params="menu_id" is-select="false" tables="qd_auth_menu_permit" is-full-param="true">delete from qd_auth_menu_permit where menu_id=$[menu_id]</sql>
+    <sql repeat="permit_id" repeat-concat=";" fetch-zero-err="false" params="permit_id|menu_id" is-select="false" tables="qd_auth_menu_permit" is-full-param="true">insert into qd_auth_menu_permit(permit_id,permit_link,uid,menu_id) value($[permit_id],'',0,$[menu_id])</sql>
+    <sql repeat="uid" repeat-concat=";" fetch-zero-err="false" params="uid|menu_id" is-select="false" tables="qd_auth_menu_permit" is-full-param="true">insert into qd_auth_menu_permit(permit_id,permit_link,uid,menu_id) value(0,'',$[uid],$[menu_id])</sql>
+  </poperty>
+  <poperty index="qd_auth_menu_closest" connect="qd_author_read" explain="qd_auth_menu查询" file="qdevelop-auth-2.0.0.jar!cn/qdevelop/auth/adb/qd_author.qd_auth_menu.sql.xml" is-open="false" name-space="qdevelop-auth" is-complex-build="true" is-convert-null="false" is-need-total="false" result-format-type="0" is-select="true">
+    <sql is-select="true" tables="qd_auth_menu" fetch-zero-err="true" is-full-param="true">select menu_id,menu_name,menu_icon,menu_link,parent_id from qd_auth_menu where 9=9 and status=1</sql>
+    <result-formatter>
+      <closest-root-formatter parent-key="parent_id" on-key="menu_id" column-key="menu_name" split="-&gt;" deep-max="3"></closest-root-formatter>
+    </result-formatter>
+  </poperty>
+  <poperty index="qd_auth_menu_permit_finder" connect="qd_author_read" explain="qd_auth_menu查询" is-convert-null="true" file="qdevelop-auth-2.0.0.jar!cn/qdevelop/auth/adb/qd_author.qd_auth_menu.sql.xml" is-open="false" name-space="qdevelop-auth" is-complex-build="true" is-need-total="false" result-format-type="0" is-select="true">
+    <sql is-select="true" tables="qd_auth_menu" fetch-zero-err="true" is-full-param="true">select menu_id,update_time,status,sys_name,menu_icon,create_time,menu_name,menu_link,parent_id from qd_auth_menu where 9=9</sql>
+  </poperty>
+  <poperty index="qd_auth_dept_tree" connect="qd_author_read" explain="qd_auth_dept查询" file="qdevelop-auth-2.0.0.jar!cn/qdevelop/auth/adb/qd_author.qd_auth_dept.sql.xml" is-open="false" name-space="qdevelop-auth" is-complex-build="true" is-convert-null="false" is-need-total="false" result-format-type="0" is-select="true">
+    <sql is-select="true" tables="qd_auth_dept" fetch-zero-err="true" is-full-param="true">select dept_id,dept_name,parent_id from qd_auth_dept where status=1 and 9=9</sql>
+    <result-formatter>
+      <left-join-multi-formatter result-key="dept_id" left-join="qd_auth_dept_tree" on-key="parent_id" columns="dept_id,dept_name,parent_id" node-name="child"></left-join-multi-formatter>
+    </result-formatter>
+  </poperty>
+  <poperty index="qd_auth_menu_permit_self_save" connect="qd_author_write" explain="qd_auth_menu_permit删除" file="qdevelop-auth-2.0.0.jar!cn/qdevelop/auth/adb/qd_author.qd_auth_menu_permit.sql.xml" is-open="false" name-space="qdevelop-auth" is-complex-build="true" is-convert-null="false" is-need-total="false" result-format-type="0" is-select="false">
+    <sql repeat-concat="^" fetch-zero-err="false" params="permit_id" is-select="false" tables="qd_auth_menu_permit" is-full-param="true">delete from qd_auth_menu_permit where permit_id=$[permit_id] and uid=0 and menu_id=0</sql>
+    <sql repeat="permit_link" repeat-concat="^" fetch-zero-err="false" params="permit_id|permit_link" is-select="false" tables="qd_auth_menu_permit" is-full-param="true">insert into qd_auth_menu_permit(permit_id,permit_link,uid,menu_id) value($[permit_id],'$[permit_link]',0,0)</sql>
+  </poperty>
+  <poperty index="loginLoggers" connect="qd_author_write" explain="qd_auth_users查询" file="qdevelop-auth-2.0.0.jar!cn/qdevelop/auth/service/qd_author.qd_auth_users.sql.xml" is-open="false" name-space="qdevelop-auth" is-complex-build="true" is-convert-null="false" is-need-total="false" result-format-type="0" is-select="false">
+    <sql params="sid|uid" is-select="false" tables="qd_auth_users" fetch-zero-err="true" is-full-param="true">update qd_auth_users set last_login_time=NOW(),login_times=login_times + 1 , sid='$[sid]' where uid=$[uid]</sql>
+    <sql params="sys_name|uid|login_name|user_name|ip" is-select="false" tables="qd_auth_login_logs" fetch-zero-err="true" is-full-param="true">insert into qd_auth_login_logs(sys_name,uid,login_name,user_name,ip) value('$[sys_name]',$[uid],'$[login_name]','$[user_name]','$[ip]')</sql>
+  </poperty>
+  <poperty index="qd_auth_user_permit" connect="qd_author_write" explain="qd_auth_users删除" file="qdevelop-auth-2.0.0.jar!cn/qdevelop/auth/adb/qd_author.qd_auth_users.sql.xml" is-open="false" name-space="qdevelop-auth" is-complex-build="true" is-convert-null="false" is-need-total="false" result-format-type="0" is-select="false">
+    <sql repeat-concat="^" fetch-zero-err="true" params="permit_id|uid" is-select="false" tables="qd_auth_users" is-full-param="true">update qd_auth_users set permit_id='$[permit_id]',update_time=now() where uid=$[uid]</sql>
+    <sql repeat-concat="^" fetch-zero-err="false" params="uid" is-select="false" tables="qd_auth_user_permit_relation" is-full-param="true">delete from qd_auth_user_permit_relation where uid=$[uid]</sql>
+    <sql repeat="permit_id" repeat-concat=";" fetch-zero-err="true" params="permit_id|uid" is-select="false" tables="qd_auth_user_permit_relation" is-full-param="true">insert into qd_auth_user_permit_relation(permit_id,uid) value($[permit_id],$[uid])</sql>
+  </poperty>
+  <poperty index="qd_auth_menu_permit_self_control" connect="qd_author_read" explain="配置手工权限时查询" file="qdevelop-auth-2.0.0.jar!cn/qdevelop/auth/adb/qd_author.qd_auth_menu_permit.sql.xml" is-open="false" name-space="qdevelop-auth" is-complex-build="true" is-convert-null="false" is-need-total="false" result-format-type="0" is-select="true">
+    <sql params="permit_id" is-select="true" tables="qd_auth_menu_permit" fetch-zero-err="true" is-full-param="true">select distinct permit_link from qd_auth_menu_permit where permit_id=$[permit_id] and uid=0 and menu_id=0</sql>
+  </poperty>
+</sql-config-debug>

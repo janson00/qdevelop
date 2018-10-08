@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- xml中常用转义符写法： （ &  &amp; ）（ <  &lt; ） （ >  &gt; ）-->
+<SQLConfig>
+	<property index="qd_auth_user_permit_relation_query_action" connect="qd_author_read" explain="qd_auth_user_permit_relation查询">
+		<!--<sql>select uid,up_id,permit_id from qd_auth_user_permit_relation where {DYNAMIC}</sql>-->
+		<sql>select uid,up_id,permit_id from qd_auth_user_permit_relation where 
+			 up_id=$[up_id] and uid=$[uid] and permit_id=$[permit_id]
+			</sql>
+	</property>
+
+	<property index="qd_auth_user_permit_relation_add_action" connect="qd_author_write" explain="qd_auth_user_permit_relation插入">
+		<sql repeat=""  repeat-concat="^" fetch-zero-err="true" is-full-param="false">
+			insert into qd_auth_user_permit_relation(uid,permit_id) value ($[uid],$[permit_id])
+		</sql>
+		<!--<sql>insert other_table(up_id) value({qd_auth_user_permit_relation.LAST_INSERT_ID})</sql>-->
+	</property>
+
+	<property index="qd_auth_user_permit_relation_store_action" connect="qd_author_write" explain="qd_auth_user_permit_relation修改">
+		<sql  repeat=""  repeat-concat="^" fetch-zero-err="true" is-full-param="false">
+			update qd_auth_user_permit_relation set uid=$[uid],permit_id=$[permit_id] where up_id=$[up_id]
+		</sql>
+	</property>
+
+	<!--
+	<property index="qd_auth_user_permit_relation_remove_action" connect="qd_author_read" explain="qd_auth_user_permit_relation删除">
+		<sql  repeat="" repeat-concat="^" fetch-zero-err="true">
+			delete from qd_auth_user_permit_relation where up_id=$[up_id]
+		</sql>
+	</property>
+	-->
+</SQLConfig>

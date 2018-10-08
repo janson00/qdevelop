@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- xml中常用转义符写法： （ &  &amp; ）（ <  &lt; ） （ >  &gt; ）-->
+<SQLConfig>
+	<property index="qd_auth_menu_permit_query_action" connect="qd_author_read" explain="qd_auth_menu_permit查询">
+		<!--<sql>select uid,menu_id,permit_id,sys_name,permit,permit_link,qamp_id from qd_auth_menu_permit where {DYNAMIC}</sql>-->
+		<sql>select uid,menu_id,permit_id,sys_name,permit,permit_link,qamp_id from qd_auth_menu_permit where 
+			 qamp_id=$[qamp_id] and uid=$[uid] and menu_id=$[menu_id] and permit_id=$[permit_id]
+			 and sys_name='$[sys_name]' and permit=$[permit] and permit_link='$[permit_link]'
+			</sql>
+	</property>
+	
+	<!-- <property index="qd_auth_menu_permit_sys_menu" connect="qd_author_read" explain="配置手工权限时查询">
+		<sql>select distinct permit_link from qd_auth_menu_permit where permit_id=$[permit_id] and uid=0 and menu_id=0</sql>
+	</property> -->
+
+	<property index="qd_auth_menu_permit_self_control" connect="qd_author_read" explain="配置手工权限时查询">
+		<sql>select distinct permit_link from qd_auth_menu_permit where permit_id=$[permit_id] and uid=0 and menu_id=0</sql>
+	</property>
+	
+	<property index="qd_auth_menu_permit_simple" connect="qd_author_read" explain="配置手工权限时查询">
+		<sql>select uid,menu_id,permit_id,sys_name,permit,permit_link,qamp_id from qd_auth_menu_permit where {DYNAMIC}</sql>
+	</property>
+
+	<property index="qd_auth_menu_permit_self_save" connect="qd_author_write" explain="qd_auth_menu_permit删除">
+		<sql  repeat="" repeat-concat="^" fetch-zero-err="false">
+			delete from qd_auth_menu_permit where permit_id=$[permit_id] and uid=0 and menu_id=0
+		</sql>
+		<sql  repeat="permit_link" repeat-concat="^" fetch-zero-err="false">
+			insert into qd_auth_menu_permit(permit_id,permit_link,uid,menu_id) value($[permit_id],'$[permit_link]',0,0)
+		</sql>
+	</property>
+	
+	<property index="qd_auth_menu_permit_menu_role_set" connect="qd_author_write" explain="qd_auth_menu_permit删除">
+		<sql  repeat="" repeat-concat="^" fetch-zero-err="false">
+			delete from qd_auth_menu_permit where  menu_id=$[menu_id]
+		</sql>
+		<sql  repeat="permit_id" repeat-concat=";" fetch-zero-err="false">
+			insert into qd_auth_menu_permit(permit_id,permit_link,uid,menu_id) value($[permit_id],'',0,$[menu_id])
+		</sql>
+		<sql  repeat="uid" repeat-concat=";" fetch-zero-err="false">
+			insert into qd_auth_menu_permit(permit_id,permit_link,uid,menu_id) value(0,'',$[uid],$[menu_id])
+		</sql>
+	</property>
+	
+	<!-- <property index="qd_auth_menu_permit_menu_role_set" connect="qd_author_write" explain="qd_auth_menu_permit删除">
+		<sql  repeat="" repeat-concat="^" fetch-zero-err="false">
+			delete from qd_auth_menu_permit where permit_id=0 and menu_id=$[menu_id]
+		</sql>
+		<sql  repeat="permit_id" repeat-concat=";" fetch-zero-err="false">
+			insert into qd_auth_menu_permit(permit_id,permit_link,uid,menu_id) value(0,'',0,$[menu_id])
+		</sql>
+	</property> -->
+	
+</SQLConfig>

@@ -31,6 +31,14 @@ import cn.qdevelop.core.standard.IUpdateHook;
 public class DatabaseFactory {
 	public static DatabaseFactory getInstance(){return new DatabaseFactory();}
 	private final static Logger log  = QLog.getLogger(DatabaseFactory.class);
+	
+//	private String callThread;
+//	public DatabaseFactory(){
+//		StackTraceElement[] ste = Thread.currentThread().getStackTrace();
+//		for(StackTraceElement s : ste){
+//			System.out.println(">>> "+s.getClassName());
+//		}
+//	}
 
 
 	/**
@@ -403,7 +411,104 @@ public class DatabaseFactory {
 			throw new QDevelopException(1001,e.getMessage(),e);
 		}
 	}
+	
+	/**
+	 * 更新数据库；多index请求，事务控制
+	 * @param querys
+	 * @return
+	 * @throws QDevelopException
+	 * @throws SQLException 
+	 */
+	public boolean updateDataBaseMulti(List<Map<String, Object>> test) throws QDevelopException{
+		long start = System.currentTimeMillis();
+		StringBuffer indexs = new StringBuffer();
+		
+		HashMap<String,Connection> cache = new HashMap<String,Connection>(test.size());
+		HashMap<String,List<IUpdateHook>> hooks = new HashMap<String,List<IUpdateHook>>(test.size());
+		HashMap<String,IDBUpdate> IDBUpdates = new HashMap<String,IDBUpdate>(test.size());
+		try {
+			for(Map<String,?> q : test){
+				String index = (String)q.get("index");
+				indexs.append(",").append(index);
+				if(index==null)throw new QDevelopException(1002,"请求没有index");
+				if(cache.get(index)==null){
+					Element config = SQLConfigLoader.getInstance().getSQLConfig(index);
+					if(config==null)throw new QDevelopException(1003,"["+index+"] SQL配置【"+index+"】不存在");
+					Connection conn = ConnectFactory.getInstance(config.attributeValue("connect")).getConnection();
+					conn.setAutoCommit(false);
+					cache.put(index, conn);
+				}
+			}
 
+			for(Map<String,?> q : test){
+				formatterParameters(q);
+				String index = (String)q.get("index");
+				Connection conn = cache.get(index);
+				List<IUpdateHook> updateHooks = SQLConfigParser.getInstance().getUpdateHooks(index);
+				if(updateHooks!=null){
+					for(IUpdateHook iuh : updateHooks){
+						iuh.init(conn,q);
+					}
+				}
+				hooks.put(index, updateHooks);
+				IDBUpdate dbUpdate = SQLConfigParser.getInstance().getDBUpdateBean(q, conn);
+				IDBUpdates.put(index, dbUpdate);
+				if(!new DatabaseImpl().updateDB(conn, dbUpdate , updateHooks, false)){
+					throw new QDevelopException(10001,QString.append(q.toString(),"更新失败！"));
+				}
+			}
+			Collection<Connection> itors = cache.values();
+			for(Connection conn : itors){
+				try {
+					conn.commit();
+				} catch (SQLException e1) {
+					e1.printStackTrace();
+				}
+			}
+			for(Map<String,?> q : test){
+				String index = (String)q.get("index");
+				List<IUpdateHook> updateHooks = hooks.get(index);
+				if(updateHooks!=null && updateHooks.size() > 0){
+					Connection conn = cache.get(index);
+					IDBUpdate dbUpdate = IDBUpdates.get(index);
+					for(IUpdateHook iuh : updateHooks){
+						iuh.flush(conn,q, dbUpdate);
+					}
+				}
+			}
+
+		}  catch (Exception e) {
+			Collection<Connection> itors = cache.values();
+			for(Connection conn : itors){
+				try {
+					conn.rollback();
+				} catch (SQLException e1) {
+					e1.printStackTrace();
+				}
+			}
+			throw new QDevelopException(1001,e.getMessage(),e);
+		}finally{
+			Collection<Connection> itors = cache.values();
+			for(Connection conn : itors){
+				try {
+					conn.setAutoCommit(true);
+					conn.close();
+				} catch (SQLException e1) {
+					e1.printStackTrace();
+				}
+			}
+			for(Map<String,?> q : test){
+				q.clear();
+			}
+			hooks.clear();
+			cache.clear();
+			test.clear();
+			IDBUpdates.clear();
+			log.info("updateDataBaseMulti:"+indexs.toString()+" use:"+(System.currentTimeMillis()-start)+"ms");
+		}
+		return true;
+	}
+	
 	/**
 	 * 更新数据库；多index请求，事务控制
 	 * @param querys
@@ -495,6 +600,7 @@ public class DatabaseFactory {
 			}
 			hooks.clear();
 			cache.clear();
+			query = null;;
 			IDBUpdates.clear();
 			log.info("updateDataBaseMulti:"+indexs.toString()+" use:"+(System.currentTimeMillis()-start)+"ms");
 		}

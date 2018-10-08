@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- xml中常用转义符写法： （ & &amp; ）（ < &lt; ） （ > &gt; ） -->
+<SQLConfig>
+	<property index="checkLoginAction" connect="qd_author_read"
+		explain="验证登陆信息">
+		<formatter>
+			<left-join-multi-formatter result-key="uid"
+				left-join="userPermitRelations" on-key="uid" columns="permit_id"
+				node-name="child" />
+		</formatter>
+		<sql>select * from qd_auth_users where status=1 and
+			login_passwd=md5(concat('$[login_name]','$[login_passwd]')) and
+			login_name='$[login_name]'
+		</sql>
+	</property>
+
+	<property index="loginWithMenuPerimit" connect="qd_author_read"
+		explain="qd_auth_users查询">
+		<sql>select distinct qap.permit_link,qap.permit,qam.menu_link as link from qd_auth_menu_permit qap left join qd_auth_menu qam
+		 on qap.menu_id = qam.menu_id where qap.uid=$[uid] or qap.permit_id=$[permit_id]</sql>
+		<!-- <sql>select permit_link,permit from qd_auth_menu_permit where
+			uid=$[uid] or permit_id=$[permit_id]
+		</sql> -->
+	</property>
+
+	<property index="loginLoggers" connect="qd_author_write"
+		explain="qd_auth_users查询">
+		<sql>update qd_auth_users set last_login_time = NOW(),login_times =
+			login_times + 1 , sid='$[sid]' where uid=$[uid]
+		</sql>
+		<sql>insert into
+			qd_auth_login_logs(sys_name,uid,login_name,user_name,ip)
+			value('$[sys_name]',$[uid],'$[login_name]','$[user_name]','$[ip]')
+		</sql>
+	</property>
+
+	<property index="userInfos" connect="qd_author_read" explain="qd_auth_users查询">
+		<!-- <param-formatter> <extra-json-parametter extra-key="extra" /> </param-formatter> -->
+		<formatter>
+			<!-- <prop-formatter result-key="status" prop-key="qd_auth_users_status_dict" 
+				/> -->
+			<date-formatter result-key="last_login_time"
+				date-style="yyyy-MM-dd HH:mm:ss" />
+			<left-join-formatter result-key="dept_id"
+				left-join="userDeptInfos" on-key="dept_id" columns="dept_name,parent_id" />
+		</formatter>
+		<sql>select * from qd_auth_users where uid=$[uid]</sql>
+	</property>
+
+
+	<property index="userDeptInfos" connect="qd_author_read"
+		explain="qd_auth_users查询" is-convert-null="true">
+		<sql>select * from qd_auth_dept where dept_id=$[dept_id]</sql>
+	</property>
+
+	<property index="userPermitInfos" connect="qd_author_read"
+		explain="qd_auth_users查询" is-convert-null="true">
+		<sql>select * from qd_auth_permit where dept_id=$[dept_id]</sql>
+	</property>
+
+	<property index="userPermitRelations" connect="qd_author_read"
+		explain="qd_auth_users查询" is-convert-null="true">
+		<sql>select * from qd_auth_user_permit_relation where uid=$[uid]</sql>
+	</property>
+
+</SQLConfig>

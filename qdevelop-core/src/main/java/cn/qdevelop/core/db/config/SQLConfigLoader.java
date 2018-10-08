@@ -3,6 +3,7 @@ package cn.qdevelop.core.db.config;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -61,11 +62,21 @@ public class SQLConfigLoader extends ConcurrentHashMap<String,Element>{
 		fetch_zero_err = QProperties.getInstance().getValue("sqlconfig_fetch_zero_err", "true");
 //		System.out.println(QProperties.getInstance().getValue("sqlconfig_fetch_zero_err", "true"));
 		
+		isExistIndex = new Boolean(false);
+		errIndexInfo = new ArrayList<String>();
+		
 		long s = System.currentTimeMillis();
 		loadConfigFromJars();
 		loadConfigFromProject();
 		storeDebugXML();
 		System.out.println("SQLConfigLoader load all *.sql.xml count:"+this.size()+" use:"+(System.currentTimeMillis()-s)+"ms");
+		if(isExistIndex){
+			for(String info : errIndexInfo){
+				System.err.println(info);
+			}
+			System.out.println("检测SQLConfig存在不可识别的重复索引Index值，系统强制退出；请认真检查以上文件。");
+//			System.exit(0);
+		}
 		//		System.out.println(tablesIndex);
 	}
 
@@ -161,6 +172,8 @@ public class SQLConfigLoader extends ConcurrentHashMap<String,Element>{
 		}
 	}
 
+	private Boolean isExistIndex ;
+	private ArrayList<String> errIndexInfo;
 
 	private static Pattern cleanPrefix,clearJarPrefix;
 	private void initSqlConfig(Iterator<Element> items,String fileName,boolean isJarConfig){
@@ -174,12 +187,13 @@ public class SQLConfigLoader extends ConcurrentHashMap<String,Element>{
 					if(isJarConfig){
 						System.err.println("【"+index+"】 原文件【"+fileName+"】\r\n\t 被当前【"+ele.attributeValue("file")+"】文件中的配置覆盖");
 						if(clearJarPrefix.matcher(fileName).replaceAll("").equals(clearJarPrefix.matcher(ele.attributeValue("file")).replaceAll(""))){
-							System.out.println();
+							//System.out.println();
 							log.warn("【"+index+"】 原文件【"+fileName+"】被当前【"+ele.attributeValue("file")+"】文件中的配置覆盖");
 						}else{
-							System.out.println();
-							log.error("【"+index+"】 原文件【"+fileName+"】被当前【"+ele.attributeValue("file")+"】文件中的配置覆盖");
-							System.exit(0);
+							//System.out.println();
+							errIndexInfo.add("【"+index+"】 当前文件【"+fileName+"】\n和文件【"+ele.attributeValue("file")+"】存在重复索引");
+							isExistIndex = true;
+							//System.exit(0);
 						}
 					}else{
 						if(cleanPrefix.matcher(fileName).replaceAll("").equals(cleanPrefix.matcher(ele.attributeValue("file")).replaceAll(""))){
@@ -187,8 +201,9 @@ public class SQLConfigLoader extends ConcurrentHashMap<String,Element>{
 							log.warn("【"+index+"】 文件【"+fileName+"】和【"+ele.attributeValue("file")+"】含有重复索引，本次检测跳过，如不是临时编译文件，请手动检查index："+index);
 							continue;
 						}
-						log.error("当前文件【"+fileName+"】\n和文件【"+ele.attributeValue("file")+"】\n存在重复索引 index : "+index+" ！");
-						System.exit(0);
+						errIndexInfo.add("【"+index+"】当前文件【"+fileName+"】\n和文件【"+ele.attributeValue("file")+"】");
+						isExistIndex = true;
+						//System.exit(0);
 					}
 				}
 				try {
@@ -227,15 +242,31 @@ public class SQLConfigLoader extends ConcurrentHashMap<String,Element>{
 			Element sql = sqls.next();
 			String sqlStr = cleanSQL(sql.getText());
 			if(sqlStr== null )continue;
-
+			
+			String param = getParamKey(sqlStr);
+			if(param!=null){
+				sql.addAttribute("params", param);
+			}
+			
 			if(sql.attributeValue("repeat")!=null){
 				String repeat = sql.attributeValue("repeat").trim();
 				if(repeat.length()>0){
 					try {
 						if(sql.attributeValue("repeat-split")==null){
-							String repearSplit=cleanSplit.matcher(repeat).replaceAll("");
-							if(repearSplit.length() > 0){
-								sql.addAttribute("repeat-split", repearSplit.substring(0,1));
+							if(param!=null){
+								String[] tmp = param.split("\\|");
+								String repearSplit = new String(repeat);
+								for(String t:tmp){
+									repearSplit = repearSplit.replace(t, "");
+								}
+								if(repearSplit.length()>0){
+									sql.addAttribute("repeat-split", repearSplit.substring(0,1));
+								}
+							}else{
+								String repearSplit=cleanSplit.matcher(repeat).replaceAll("");
+								if(repearSplit.length() > 0){
+									sql.addAttribute("repeat-split", repearSplit.substring(0,1));
+								}
 							}
 						}
 						if(sql.attributeValue("repeat-concat")==null){
@@ -252,10 +283,7 @@ public class SQLConfigLoader extends ConcurrentHashMap<String,Element>{
 			sql.setText(sqlStr);
 			isSelect = sqlStr.length() > 6 && sqlStr.substring(0, 6).toLowerCase().equals("select") ? true: false;
 
-			String param = getParamKey(sqlStr);
-			if(param!=null){
-				sql.addAttribute("params", param);
-			}
+			
 
 			sql.addAttribute("is-select", isSelect.toString());
 			if(sql.attributeValue("tables")==null){

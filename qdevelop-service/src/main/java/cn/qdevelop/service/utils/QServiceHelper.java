@@ -144,9 +144,9 @@ public class QServiceHelper {
 	}
 
 
-	private static Pattern isInteger = Pattern.compile("^(([><=&\\^!\\|]+)?[0-9]+?)+?$");
-	private static Pattern isDouble = Pattern.compile("^(([><=&\\^!\\|]+)?[0-9]+?(\\.[0-9]+?)?)+?$");
-	private static Pattern isTime = Pattern.compile("^(([><=&\\^!\\|]+)?[0-9]{4}-[0-9]{2}-[0-9]{2}( [0-9]{2}:[0-9]{2}:[0-9]{2})?)+?$");
+	private static Pattern isInteger = Pattern.compile("^(([><=&\\^!\\|\\-\\_;]+)?[0-9]+?)+?$");
+	private static Pattern isDouble = Pattern.compile("^(([><=&\\^!\\|\\-\\_;]+)?[0-9]+?(\\.[0-9]+?)?)+?$");
+	private static Pattern isTime = Pattern.compile("^(([><=&\\^!\\|\\-\\_;]+)?[0-9]{4}-[0-9]{2}-[0-9]{2}( [0-9]{2}:[0-9]{2}:[0-9]{2})?)+?$");
 
 	//(?:--)|
 	private static Pattern isAttackValue =

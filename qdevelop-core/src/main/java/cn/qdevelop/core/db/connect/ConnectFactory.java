@@ -47,11 +47,12 @@ public class ConnectFactory {
 		Iterator<Element> elem = config.getRootElement().elementIterator("connect");
 		while(elem.hasNext()){
 			Element e = elem.next();
-			if(root.element(e.attributeValue("index"))==null){
+			Element oldE = (Element)databaseConfig.selectSingleNode("/database-config/connect[@index='"+e.attributeValue("index")+"']");
+			if(oldE==null){
 				Element connect  = root.addElement("connect");
 				xmlUtils.copyElement(e,connect);
 			}else{
-				log.warn(e.asXML());
+				log.warn("repeat conn index ["+e.attributeValue("index")+"] "+e.element("driver-url").getTextTrim());
 			}
 		}
 	}
@@ -111,6 +112,12 @@ public class ConnectFactory {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+//		 try {
+//			new QXMLUtils().save(databaseConfig, new File("db_debug.xml"));
+//		} catch (IOException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
 		Runtime.getRuntime().addShutdownHook(new Thread(){
 			public void run() {
 				log.info("shutdown all connects!");

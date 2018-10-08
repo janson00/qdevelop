@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- xml中常用转义符写法： （ & &amp; ）（ < &lt; ） （ > &gt; ） -->
+<SQLConfig>
+	<property index="qd_auth_dept_tree" connect="qd_author_read"
+		explain="qd_auth_dept查询">
+		<formatter>
+			<left-join-multi-formatter result-key="dept_id"
+				left-join="qd_auth_dept_tree" on-key="parent_id" columns="dept_id,dept_name,parent_id"
+				node-name="child" />
+		</formatter>
+		 <sql>select dept_id,dept_name,parent_id 
+			from qd_auth_dept where status=1 and {DYNAMIC}   </sql> 
+	</property>
+
+	<property index="qd_auth_dept_add_action" connect="qd_author_write"
+		explain="qd_auth_dept插入">
+		<sql repeat="" repeat-concat="^" fetch-zero-err="true"
+			is-full-param="false">
+			insert into
+			qd_auth_dept(update_time,status,create_time,dept_name,parent_id)
+			value
+			($[update_time],$[status],$[create_time],'$[dept_name]',$[parent_id])
+		</sql>
+		<!--<sql>insert other_table(dept_id) value({qd_auth_dept.LAST_INSERT_ID})</sql> -->
+	</property>
+
+	<property index="qd_auth_dept_store_action" connect="qd_author_write"
+		explain="qd_auth_dept修改">
+		<sql repeat="" repeat-concat="^" fetch-zero-err="true"
+			is-full-param="false">
+			update qd_auth_dept set
+			update_time=$[update_time],status=$[status],create_time=$[create_time],dept_name='$[dept_name]',parent_id=$[parent_id]
+			where dept_id=$[dept_id]
+		</sql>
+	</property>
+
+	<!-- <property index="qd_auth_dept_remove_action" connect="qd_author_read" 
+		explain="qd_auth_dept删除"> <sql repeat="" repeat-concat="^" fetch-zero-err="true"> 
+		delete from qd_auth_dept where dept_id=$[dept_id] </sql> </property> -->
+</SQLConfig>

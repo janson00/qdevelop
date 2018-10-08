@@ -28,8 +28,8 @@ public class LeftJoinFormatter extends AbstractResultFormatter implements IResul
 		if(attrs!=null){
 			formatterIndex = conf.attributeValue("left-join");
 			formatterKey = conf.attributeValue("on-key");
-			formatterColumns = conf.attributeValue("columns").split(",");
 			resultKey =  conf.attributeValue("result-key");
+			formatterColumns = conf.attributeValue("columns").split(",");
 		}
 	}
 

@@ -40,6 +40,15 @@
  		<format-columns>formatter结果集中的对应的字段名</format-columns>
 	</result-formatter>
 	
+	<!--实现递归找父类结果-->
+	<result-formatter name="closest-root-formatter" class="cn.qdevelop.core.formatter.impl.ClosestRootFormatter">
+		<parent-key>当前结果集中父ID的列名</parent-key>
+		<on-key>主键key</on-key>
+		<column-key>取父结果的列名</column-key>
+<!-- 	<split>多级的分割</split>-->
+<!-- 	<deep-max>往上递归多少级</deep-max>-->
+ 	</result-formatter>
+	
 	<!--利用已配置sql模版，进行结果集关联操作，类似leftjoin功能，可轻易实现夸库查询-->
 	<result-formatter name="left-join-formatter" class="cn.qdevelop.core.formatter.impl.LeftJoinFormatter">
 		<result-key>当前结果集字段名</result-key>

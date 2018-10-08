@@ -1,6 +1,5 @@
 package cn.qdevelop.common.math;
 
-import java.math.BigDecimal;
 import java.util.HashMap;
 
 public class RuleUtils {

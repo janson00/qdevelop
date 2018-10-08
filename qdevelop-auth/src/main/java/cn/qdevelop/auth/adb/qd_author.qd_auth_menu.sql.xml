@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- xml中常用转义符写法： （ &  &amp; ）（ <  &lt; ） （ >  &gt; ）-->
+<SQLConfig>
+	<property index="qd_auth_menu_query_action" connect="qd_author_read" explain="qd_auth_menu查询" is-convert-null="true">
+		<formatter>
+			<date-formatter result-key="update_time" date-style="yyyy-MM-dd HH:mm:ss"/>
+			<prop-formatter result-key="status" prop-key="qd_auth_status"/>
+			<prop-formatter result-key="sys_name" prop-key="multi_system_name"/>
+			<date-formatter result-key="create_time" date-style="yyyy-MM-dd HH:mm:ss"/>
+			<left-join-formatter  result-key="parent_id" left-join="qd_auth_menu_simple" on-key="menu_id" columns="menu_name as parent_menu_name,menu_icon as parent_menu_icon"/>
+		</formatter>
+		<sql>select menu_id,update_time,status,sys_name,menu_icon,create_time,menu_name,menu_link,parent_id,sort from qd_auth_menu where {DYNAMIC}</sql>
+	</property>
+	
+	<property index="qd_auth_menu_simple" connect="qd_author_read" explain="qd_auth_menu查询"  is-convert-null="true">
+		<sql>select menu_id,menu_name,menu_icon,menu_link,sort from qd_auth_menu where {DYNAMIC}</sql>
+	</property>
+	
+	<property index="qd_auth_menu" connect="qd_author_read" explain="qd_auth_menu查询">
+		<formatter>
+			<left-join-multi-formatter result-key="menu_id" left-join="qd_auth_menu" on-key="parent_id" columns="menu_id,menu_name,menu_icon,menu_link" node-name="child"/>
+		</formatter>
+		<sql>select menu_id,menu_name,menu_icon,menu_link,parent_id,sort from qd_auth_menu where {DYNAMIC} and status=1 </sql>
+	</property>
+	
+	<property index="qd_auth_menu_closest" connect="qd_author_read" explain="qd_auth_menu查询">
+		<formatter>
+			<closest-root-formatter parent-key="parent_id" on-key="menu_id" column-key="menu_name" split="->" deep-max="3"/>
+		</formatter>
+		<sql>select menu_id,menu_name,menu_icon,menu_link,parent_id from qd_auth_menu where {DYNAMIC} and status=1</sql>
+	</property>
+	
+	<property index="qd_auth_menu_permit_finder" connect="qd_author_read" explain="qd_auth_menu查询" is-convert-null="true">
+		<sql>select menu_id,update_time,status,sys_name,menu_icon,create_time,menu_name,menu_link,parent_id from qd_auth_menu where {DYNAMIC}</sql>
+	</property>
+
+	<property index="qd_auth_menu_add_action" connect="qd_author_write" explain="qd_auth_menu插入">
+		<sql repeat=""  repeat-concat="^" fetch-zero-err="true" is-full-param="false">
+			insert into qd_auth_menu(status,sys_name,menu_icon,menu_name,menu_link,parent_id,sort) value ($[status],'$[sys_name]','$[menu_icon]','$[menu_name]','$[menu_link]',$[parent_id],$[sort])
+		</sql>
+	</property>
+
+	<property index="qd_auth_menu_store_action" connect="qd_author_write" explain="qd_auth_menu修改">
+		<sql  repeat=""  repeat-concat="^" fetch-zero-err="true" is-full-param="false">
+			update qd_auth_menu set update_time=now(),status=$[status],sys_name='$[sys_name]',sort=$[sort],menu_icon='$[menu_icon]',menu_name='$[menu_name]',menu_link='$[menu_link]',parent_id=$[parent_id] where menu_id=$[menu_id]
+		</sql>
+	</property>
+
+	<!--
+	<property index="qd_auth_menu_remove_action" connect="qd_author_read" explain="qd_auth_menu删除">
+		<sql  repeat="" repeat-concat="^" fetch-zero-err="true">
+			delete from qd_auth_menu where menu_id=$[menu_id]
+		</sql>
+	</property>
+	-->
+	
+	<property index="query_menu_permit_menu_id" connect="qd_author_read" explain="qd_auth_menu查询" is-convert-null="true">
+		<!-- <formatter>
+			<left-join-formatter  result-key="menu_id" left-join="qd_auth_menu_permit_finder" on-key="menu_id" columns="menu_nam,menu_icon,menu_link,parent_id"/>
+		</formatter> -->
+		<sql>select distinct menu_id from qd_auth_menu_permit where (uid=$[uid] or permit_id = $[permit_id]) and menu_id &gt; 0</sql>
+	</property>
+	
+	<property index="query_menu_permit_menu_result" connect="qd_author_read" explain="qd_auth_menu查询" is-convert-null="true">
+		<sql>select qa.menu_name,qa.menu_link,qf.menu_name as parent_menu_name,qf.menu_icon as parent_menu_icon from qd_auth_menu qa left join qd_auth_menu qf on qa.parent_id=qf.menu_id where qa.parent_id  &gt; 0 and qa.status=1 and qa.menu_id in ($[menuIds]) order by qf.sort desc,qa.sort desc</sql>
+	</property>
+	
+</SQLConfig>

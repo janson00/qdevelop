@@ -10,8 +10,6 @@ import java.net.URL;
 import java.util.Map;
 import java.util.Vector;
 
-import com.google.common.base.Charsets;
-
 import cn.qdevelop.common.httpclient.IHttpClient;
 import cn.qdevelop.common.httpclient.ServerInfo;
 
@@ -27,7 +25,7 @@ public class HttpClient implements IHttpClient {
 		return instance;
 	}
 
-	private String defaultContentEncoding = Charsets.UTF_8.toString();
+	private String defaultContentEncoding = "UTF-8";
 
 	public HttpClient() {
 		// this.defaultContentEncoding = Charset.defaultCharset().name();

@@ -31,7 +31,7 @@ public interface IDBResult {
 	 * 判定是否存在数据
 	 * @return
 	 */
-	public boolean isExsitData();
+	public boolean hasData();
 	
 	
 }

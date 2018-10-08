@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- xml中常用转义符写法： （ &  &amp; ）（ <  &lt; ） （ >  &gt; ）-->
+<SQLConfig>
+	<property index="qd_auth_permit_query_action" connect="qd_author_read" explain="qd_auth_permit查询">
+		
+		<formatter>
+			<date-formatter result-key="update_time" date-style="yyyy-MM-dd HH:mm:ss"/>
+			<date-formatter result-key="create_time" date-style="yyyy-MM-dd HH:mm:ss"/>
+		</formatter>
+		
+		<sql>select * from qd_auth_permit where {DYNAMIC}</sql>
+		<!-- <sql>select permit_id,update_time,permit_name,status,sys_name,create_time from qd_auth_permit where 
+			 permit_id=$[permit_id] and update_time=$[update_time] and permit_name='$[permit_name]'
+			 and status=$[status] and sys_name='$[sys_name]' and create_time=$[create_time]
+			</sql> -->
+	</property>
+
+	<property index="qd_auth_permit_add_action" connect="qd_author_write" explain="qd_auth_permit插入">
+		<sql repeat=""  repeat-concat="^" fetch-zero-err="true">
+			insert into qd_auth_permit(permit_name,sys_name) value ('$[permit_name]','$[sys_name]')
+		</sql>
+		<!--<sql>insert other_table(permit_id) value({qd_auth_permit.LAST_INSERT_ID})</sql>-->
+	</property>
+
+	<property index="qd_auth_permit_store_action" connect="qd_author_write" explain="qd_auth_permit修改">
+		<sql  repeat=""  repeat-concat="^" fetch-zero-err="true" is-full-param="false">
+			update qd_auth_permit set update_time=$[update_time],permit_name='$[permit_name]',status=$[status],sys_name='$[sys_name]' where permit_id=$[permit_id]
+		</sql>
+	</property>
+
+	<!--
+	<property index="qd_auth_permit_remove_action" connect="qd_author_read" explain="qd_auth_permit删除">
+		<sql  repeat="" repeat-concat="^" fetch-zero-err="true">
+			delete from qd_auth_permit where permit_id=$[permit_id]
+		</sql>
+	</property>
+	-->
+</SQLConfig>
