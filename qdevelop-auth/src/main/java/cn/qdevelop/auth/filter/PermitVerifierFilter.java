@@ -14,8 +14,11 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.log4j.Logger;
+
 import cn.qdevelop.auth.bean.LoginInfo;
 import cn.qdevelop.auth.utils.XMemcached;
+import cn.qdevelop.common.QLog;
 import cn.qdevelop.common.files.QProperties;
 import cn.qdevelop.service.bean.OutputJson;
 import cn.qdevelop.service.utils.QServiceUitls;
@@ -29,6 +32,8 @@ import cn.qdevelop.service.utils.QServiceUitls;
 public abstract class PermitVerifierFilter implements Filter{
 	private String loginUrl = "/login";
 	private Pattern ignoreUrisReg,ignoreConfPattern;
+
+	private final static Logger log  = QLog.getLogger(PermitVerifierFilter.class);
 
 	@Override
 	public void init(FilterConfig filterConfig) throws ServletException {
@@ -61,12 +66,22 @@ public abstract class PermitVerifierFilter implements Filter{
 	protected abstract String[] ignoreUris();
 	protected abstract String getApiErrMsg();
 
+	private String toLogger(LoginInfo li,String msg){
+		if(li == null){
+			return msg;
+		}
+		return new StringBuilder()
+				.append(li.getUserName()).append("@")
+				.append(li.getUid()).append("@")
+				.append(li.getIp()).append(" ")
+				.append(msg).toString();
+	}
+
 	@Override
 	public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
 			throws IOException, ServletException {
-		//		long s = System.currentTimeMillis();
 		HttpServletRequest req = (HttpServletRequest)request;
-		String uri = req.getRequestURI();
+		String uri = (req.getRequestURI()).substring(req.getContextPath().length());
 		if((ignoreUrisReg!=null && ignoreUrisReg.matcher(uri).find()) || (ignoreConfPattern!=null && ignoreConfPattern.matcher(uri).find())){
 			chain.doFilter(request,response);
 			return;
@@ -74,16 +89,21 @@ public abstract class PermitVerifierFilter implements Filter{
 		String sid = QServiceUitls.getCookie("sid", req);
 		if(sid!=null){
 			LoginInfo li = (LoginInfo)XMemcached.getInstance().get(sid);
-			//			System.out.println(li.toString());
 			boolean hasPermit = li != null && li.hasUriPermit(uri) ;
 			if(li!=null&&li.isNeedResetSession()){
 				XMemcached.getInstance().set(sid, li, XMemcached.EXP_30Min);
 			}
-			li = null;
 			if(hasPermit){
+				log.info(toLogger(li, uri));
+				li = null;
 				chain.doFilter(request,response);
 				return;
+			}else{
+				log.warn(toLogger(li, uri));
+				li = null;
 			}
+		}else{
+			QServiceUitls.setCookie((HttpServletResponse)response, "sid", java.util.UUID.randomUUID().toString(), 60*60*24*365);
 		}
 
 		HttpServletResponse res = (HttpServletResponse)response;

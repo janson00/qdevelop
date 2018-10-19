@@ -5,8 +5,8 @@
 
 	<properties>
 		<qdevelop.version>2.0.0</qdevelop.version>
-		  <mvn.url>61.148.195.18</mvn.url>  
-		 <!-- <mvn.url>192.168.86.8</mvn.url> --> 
+		 <!-- <mvn.url>61.148.195.18</mvn.url> -->
+		   <mvn.url>192.168.86.8</mvn.url>    
 	</properties>
 
 	<modelVersion>4.0.0</modelVersion>

@@ -49,6 +49,7 @@
                       ,{ "field":"update_time",title:'更新时间','sortable':true}
                       ,{ "field":"last_login_time",title:'上次登陆','sortable':true}
                       ,{ "field":"login_times",title:'次数','sortable':true}
+                      ,{ "field":"extra_info",title:'扩展信息','sortable':true}
                   ],
               buttons:[
         			{act:'insert',title:'增加用户',isNew:true,callback:function(rowData){
@@ -84,6 +85,7 @@
 				{"title":'',"field":'uid',"type":'hidden'},
 				//{"title":'登陆名',"field":'login_name',"type":'varchar'},
 				{"title":'用户名',"field":'user_name',"type":'varchar'},
+				{"title":'扩展信息',"field":'extra_info',"type":'varchar'},
 				{"title":'状态',"field":'status',"type":'select',options:_status}
     		]
     	,submit:function(data,form){

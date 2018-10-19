@@ -28,6 +28,11 @@ import cn.qdevelop.core.standard.IParamFormatter;
 import cn.qdevelop.core.standard.IResultFormatter;
 import cn.qdevelop.core.standard.IUpdateHook;
 
+/**
+ * 
+ * @author janson
+ *
+ */
 public class DatabaseFactory {
 	public static DatabaseFactory getInstance(){return new DatabaseFactory();}
 	private final static Logger log  = QLog.getLogger(DatabaseFactory.class);

@@ -23,16 +23,16 @@ import net.rubyeye.xmemcached.networking.Connector;
 import net.rubyeye.xmemcached.utils.AddrUtil;
 
 public class XMemcached  extends QCache {
-	
-	
+
+
 	private static  XMemcached local;
-	
+
 	public static XMemcached getInstance(){
 		if(local!=null)return local;
 		local = new XMemcached();
 		return local;
 	}
-	
+
 	private static final Logger log  = QLog.getLogger(XMemcached.class);
 	private MemcachedClientBuilder builder;
 	private MemcachedClient client; 
@@ -41,11 +41,12 @@ public class XMemcached  extends QCache {
 
 	public XMemcached(Properties props) throws Exception{
 		initCache(props);
-		int maxPool = props.get("xmemcached_max_pool") == null ? 20 : Integer.parseInt( props.get("xmemcached_max_pool").toString());
+		int maxPool = props.get("xmemcached_max_pool") == null ? 10 : Integer.parseInt( props.get("xmemcached_max_pool").toString());
 		log.info("XMemcachedImpl ip:"+this.ips+" maxPool:"+maxPool);
 		builder = new XMemcachedClientBuilder(AddrUtil.getAddresses (ips));
 		builder.setConnectionPoolSize(maxPool);  //设成25或更高就ok，设小了就出异常
 		client=builder.build();//client是成功了
+		initOptimize();
 	}
 
 	public XMemcached() {
@@ -58,7 +59,10 @@ public class XMemcached  extends QCache {
 			System.out.println("XMemcachedImpl ip:"+this.ips+" maxPool:"+maxPool);
 			builder = new XMemcachedClientBuilder(AddrUtil.getAddresses (ips));
 			builder.setConnectionPoolSize(maxPool);
+		    
 			client=builder.build();//client是成功了
+			initOptimize();
+			
 		} catch (NumberFormatException e) {
 			e.printStackTrace();
 		} catch (IOException e) {
@@ -66,10 +70,30 @@ public class XMemcached  extends QCache {
 		}
 	}
 	
+	/**
+	 * 初始化xmemcached优化选项
+	 *   
+	 * @Description:
+	 */
+	private void initOptimize(){
+		if(builder!=null){
+			//多memcache server 时做hash一致性的分布算法
+//			builder.setSessionLocator(new KetamaMemcachedSessionLocator());
+//			builder.setSocketOption(StandardSocketOption.SO_RCVBUF, 32* 1024);// 设置接收缓存区为32K，默认16K
+//			builder.setSocketOption(StandardSocketOption.SO_SNDBUF,16 *1024); // 设置发送缓冲区为16K，默认为8K
+//			builder.setSocketOption(StandardSocketOption.TCP_NODELAY,false); // 启用nagle算法，提高吞吐量，默认关闭
+			builder.getConfiguration().setSessionIdleTimeout(10000);
+		}
+		if(client!=null){
+			client.setOptimizeMergeBuffer(false); //关闭合并buffer的优化
+			client.setMergeFactor(50);  //默认是150，缩小到50
+		}
+	}
+
 	public boolean set(String key, Serializable value, String config) {
 		return set(key,value,this.getExp(config));
 	}
-	
+
 	public boolean set(String key, Serializable value, int expire) {
 		if(!isCacheAble || key == null || value == null)return false;
 		try {

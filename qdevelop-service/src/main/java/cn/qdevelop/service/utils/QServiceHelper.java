@@ -78,6 +78,13 @@ public class QServiceHelper {
 				paramMap.put(key, tmp.toString().trim());
 			}
 		}
+		
+		// XXX 给Auth项目使用，用来标示请求过程中的唯一用户请求ID
+		String sid = getCookie("sid",request);
+		if(sid!=null&&sid.length()>0){
+			paramMap.put("HTTP_HEAD_SID", sid);
+		}
+		
 		return paramMap;
 	}
 	

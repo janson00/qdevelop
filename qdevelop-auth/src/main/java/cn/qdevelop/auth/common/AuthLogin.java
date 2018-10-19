@@ -1,11 +1,16 @@
 package cn.qdevelop.auth.common;
 
 import java.sql.Connection;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
 import javax.servlet.annotation.WebInitParam;
 import javax.servlet.annotation.WebServlet;
+
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 
 import cn.qdevelop.auth.bean.LoginInfo;
 import cn.qdevelop.auth.utils.AuthUtils;
@@ -32,9 +37,9 @@ public class AuthLogin extends APIControl{
 	public void init(Map<String, String> args) {
 
 	}
-	
-	
-	
+
+
+
 	@Override
 	protected String execute(Map<String, String> args, IOutput output) {
 		Connection conn = null;
@@ -58,6 +63,19 @@ public class AuthLogin extends APIControl{
 			li.setUserName(result.getString(0, "user_name"));
 			li.setIp(QServiceUitls.getUserIP(getRequest()));
 			li.setUid(result.getInteger(0, "uid"));
+			
+			String  extra = result.getString(0, "extra_info");
+			if(extra!=null && extra.length()>2){
+				HashMap<String,String> extraAttr = new HashMap<String,String>();
+				JSONObject tmp = JSON.parseObject(extra);
+				Iterator<String> itor = tmp.keySet().iterator();
+				while(itor.hasNext()){
+					String key = itor.next();
+					extraAttr.put(key, tmp.getString(key));
+				}
+				tmp.clear();
+				li.setExtra(extraAttr);
+			}
 
 			StringBuffer sb = new StringBuffer();
 			if(data.get("child")!=null){
@@ -87,16 +105,16 @@ public class AuthLogin extends APIControl{
 
 			//存入memcached做验证使用
 			String sid = QServiceUitls.getCookie("sid", this.getRequest());
+
 			if(sid!=null){
 				XMemcached.getInstance().add(sid, li, XMemcached.EXP_30Min);
+				DBArgs query = new DBArgs("loginLoggers")
+						.putMap(data, new String[]{"permit_id","uid","login_name","user_name"})
+						.put("sid", sid)
+						.put("ip", li.getIp())
+						.put("sys_name", li.getSysName());
+				DatabaseFactory.getInstance().updateDatabase(query);
 			}
-
-			DBArgs query = new DBArgs("loginLoggers")
-					.putMap(data, new String[]{"permit_id","uid","login_name","user_name"})
-					.put("sid", sid)
-					.put("ip", li.getIp())
-					.put("sys_name", li.getSysName());
-			DatabaseFactory.getInstance().updateDatabase(query,conn);
 			data.clear();
 			output.setData("登陆成功");
 		} catch (QDevelopException e) {
@@ -105,7 +123,7 @@ public class AuthLogin extends APIControl{
 		DatabaseFactory.closeConnection(conn);
 		return null;
 	}
-	
-	
-	
+
+
+
 }

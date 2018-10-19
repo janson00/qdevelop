@@ -68,19 +68,19 @@
           <!-- User Account: style can be found in dropdown.less -->
           <li class="dropdown user user-menu">
             <a href="#" class="dropdown-toggle" data-toggle="dropdown">
-              <img src="http://wx.qlogo.cn/mmopen/F3xiaBEkH1VJ1Bv7yBx9dMbMB14LtknWsBEl4pukrMKYNKQbSWMjfbWwlf7FEzKRAvXXDRgKDwmVrEVWmTS1c5WLrd9vdgdwu/0" class="user-image" alt="User Image">
-              <span class="hidden-xs">顾杰勇</span>
+             <!--  <img src="http://wx.qlogo.cn/mmopen/F3xiaBEkH1VJ1Bv7yBx9dMbMB14LtknWsBEl4pukrMKYNKQbSWMjfbWwlf7FEzKRAvXXDRgKDwmVrEVWmTS1c5WLrd9vdgdwu/0" class="user-image" alt="User Image"> -->
+              <span class="hidden-xs"></span> 
             </a>
             <ul class="dropdown-menu">
               <!-- User image -->
-              <li class="user-header">
+             <!--  <li class="user-header">
                 <img src="http://wx.qlogo.cn/mmopen/F3xiaBEkH1VJ1Bv7yBx9dMbMB14LtknWsBEl4pukrMKYNKQbSWMjfbWwlf7FEzKRAvXXDRgKDwmVrEVWmTS1c5WLrd9vdgdwu/0" class="img-circle" alt="User Image">
 
                 <p>
                   Alexander Pierce - Web Developer
                   <small>Member since Nov. 2012</small>
                 </p>
-              </li>
+              </li> -->
              
               <!-- Menu Footer-->
               <li class="user-footer">
@@ -106,7 +106,7 @@
     <!-- sidebar: style can be found in sidebar.less -->
     <section class="sidebar">
       <!-- Sidebar user panel -->
-      <div class="user-panel">
+      <!-- <div class="user-panel">
         <div class="pull-left image">
           <img src="http://wx.qlogo.cn/mmopen/F3xiaBEkH1VJ1Bv7yBx9dMbMB14LtknWsBEl4pukrMKYNKQbSWMjfbWwlf7FEzKRAvXXDRgKDwmVrEVWmTS1c5WLrd9vdgdwu/0" class="img-circle" alt="User Image">
         </div>
@@ -114,7 +114,7 @@
           <p>Alexander Pierce</p>
           <a href="#"><i class="fa fa-circle text-success"></i> Online</a>
         </div>
-      </div>
+      </div> -->
      
       <!-- /.search form -->
       <!-- sidebar menu: : style can be found in sidebar.less -->
@@ -137,6 +137,15 @@
    					window.location.reload();
    				}});
    			}
+   		});
+   		$.ajax({
+			url:'<%=request.getContextPath()%>/sys/auth/userInfo',
+			success : function(r) {
+				if (r.tag == 0) {
+					var rb = r.data.result;
+					$('.hidden-xs').html(rb['user_name']);
+				}
+			}
    		});
    		$.ajax({
 			url:'<%=request.getContextPath()%>/sys/auth/menu',

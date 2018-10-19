@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<data-formatter>
+
+ 
+	
+	<!-- 获取当前登陆用户的数据作为sql参数使用 -->
+	<param-formatter name="user-parameter" class="cn.qdevelop.auth.formatter.LoginInfoParameter">	
+		<user-attrs>需要的当前登陆用的参数key【userName,ip,sysName,loginName,permitId,uid,lastLoginTimer】含扩展字段</user-attrs>	
+	</param-formatter>
+	
+	
+</data-formatter>

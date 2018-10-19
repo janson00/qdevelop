@@ -14,7 +14,20 @@ public class LoginInfo implements Serializable{
 
 	private String userName,ip,sysName,loginName,permitId;
 	private long uid,lastLoginTimer = System.currentTimeMillis();
+	private HashMap<String,String> extra;
 	private HashMap<String,Object> menuPermit = new HashMap<String,Object>();
+
+	
+	
+	public String getExtraInfo(String key) {
+		return extra==null?null:extra.get(key);
+	}
+
+
+	public void setExtra(HashMap<String, String> extra) {
+		this.extra = extra;
+	}
+
 
 	public String getUserName() {
 		return userName;

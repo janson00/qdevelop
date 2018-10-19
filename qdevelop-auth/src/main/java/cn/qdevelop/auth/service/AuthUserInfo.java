@@ -39,6 +39,7 @@ public class AuthUserInfo  extends APIControl{
 							);
 					if(result.getSize()>0){
 						output.setData(result.getResult(0));
+						output.addAttr("info", li);
 						return null;
 					}
 				} catch (QDevelopException e) {

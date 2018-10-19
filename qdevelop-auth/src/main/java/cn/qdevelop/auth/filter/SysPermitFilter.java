@@ -13,7 +13,7 @@ public class SysPermitFilter extends PermitVerifierFilter{
 	@Override
 	protected String[] ignoreUris() {
 //		return null;
-		return new String[]{"/sys/auth/loginout$","/sys/auth/login$","/sys/auth/menu"};
+		return new String[]{"/sys/auth/loginout$","/sys/auth/login$","/sys/auth/menu","/sys/auth/userInfo"};
 	}
 
 	@Override

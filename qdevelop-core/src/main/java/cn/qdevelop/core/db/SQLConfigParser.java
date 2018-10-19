@@ -190,6 +190,9 @@ public class SQLConfigParser {
 			dbub = new DBUpdateBean();
 			dbub.setIndex(index);
 			String connName = config.attributeValue("connect");
+			
+//			QThreadLogger.add(dbub.getIndex()," ",connName);
+			
 			List<Element> sqls = config.elements("sql");
 			for(Element sql : sqls){
 				String repeat = sql.attributeValue("repeat");
@@ -304,13 +307,15 @@ public class SQLConfigParser {
 			DBQueryBean dbQuery = new DBQueryBean();
 			dbQuery.setIndex(index);
 			dbQuery.setConnName(config.attributeValue("connect"));
+//			QThreadLogger.add(dbQuery.getIndex()," ",dbQuery.getConnName());
+			
 			Element sql = config.element("sql");
 			dbQuery.setSql(sql.getText());
 			String[] params= sql.attributeValue("params")==null? null:sql.attributeValue("params").split("\\|");
 			String[] tables =  sql.attributeValue("tables")==null? null:sql.attributeValue("tables").split("\\|");
 
 			dbQuery.setComplexBuild(Boolean.parseBoolean(config.attributeValue("is-complex-build")));
-
+			
 			try {
 				dbQuery.setTableStruts(TableColumnType.getInstance().getTablesStrutsBean(conn, tables));
 			} catch (SQLException e) {

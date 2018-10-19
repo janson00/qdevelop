@@ -44,5 +44,6 @@ public interface IDBQuery {
 	
 	public String toString();
 	
+	public String getConnName();
 	
 }

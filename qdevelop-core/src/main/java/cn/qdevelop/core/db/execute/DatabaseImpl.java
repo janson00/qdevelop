@@ -37,13 +37,13 @@ public class DatabaseImpl {
 			setValue(query.getPreparedSql(),query.getTableStruts(),pstmt,query.getPreparedColumns(),query.getPreparedValues());
 			ResultSet rs = pstmt.executeQuery();
 			ResultSetMetaData rsmd = rs.getMetaData();
-			log.info("["+query.getPreparedColumns().length+"] "+query.getSql());
+			log.info("["+query.getIndex()+"] "+query.getSql());
 			int recordSize = rsmd.getColumnCount();
 			while(rs.next()){
 				result.addResultSet(parseRecord(rsmd,rs,recordSize,query.isConvertNull()));
 			}
 		} catch (SQLException e) {
-			log.error("["+query.getIndex()+"] "+query.getPreparedSql());
+			log.error("["+query.getIndex()+" "+query.getConnName()+"] "+query.getPreparedSql());
 			log.error(toDebugInfo(query.getTableStruts(),query.getPreparedColumns(),query.getPreparedValues()));
 			throw new QDevelopException(1001,"数据库查询错误",e);
 		}finally{
@@ -86,7 +86,7 @@ public class DatabaseImpl {
 			if(rs.next()){
 				last_id = rs.getInt(1);
 			}
-			log.info("["+last_id+"] "+ub.getFullSql());
+			log.info("["+ub.getIndex()+"] ["+last_id+"]"+ub.getFullSql());
 			if(updateHooks!=null){
 				for(IUpdateHook uh : updateHooks){
 					uh.execHook(conn,ub, fetch, last_id);
@@ -95,7 +95,7 @@ public class DatabaseImpl {
 			if(isAutoCommit)conn.commit();
 			return last_id;
 		} catch (SQLException e) {
-			log.error("["+ub.getIndex()+"] "+ub.getPreparedSql());
+			log.error("["+ub.getIndex()+" "+ub.getConnName()+"] "+ub.getPreparedSql());
 			log.error(toDebugInfo(ub.getDbsb(),ub.getColumns(),ub.getValues()));
 			if(isAutoCommit){
 				try {
@@ -189,7 +189,7 @@ public class DatabaseImpl {
 				for(int i=0;i<values.size();i++){
 					ub.setValues(values.get(i));
 					setValue(ub.getPreparedSql(),ub.getDbsb(),pstmt,ub.getColumns(),ub.getValues());
-					log.info("[batch] "+ub.getFullSql());
+					log.info("["+ub.getIndex()+"] "+ub.getFullSql());
 					pstmt.addBatch();
 					if(++idx%1000==0){
 						pstmt.executeBatch();
@@ -203,7 +203,7 @@ public class DatabaseImpl {
 			if(isAutoCommit)conn.commit();
 			return size;
 		} catch (Exception e) {
-			log.error("["+ub.getIndex()+"] "+ub.getPreparedSql());
+			log.error("["+ub.getIndex()+" "+ub.getConnName()+"] "+ub.getPreparedSql());
 			log.error(toDebugInfo(ub.getDbsb(),ub.getColumns(),ub.getValues()));
 			if(isAutoCommit){
 				try {
@@ -276,9 +276,9 @@ public class DatabaseImpl {
 							last_id = rs.getInt(1);
 							autoIncrement.put(ub.getTableName(), String.valueOf(last_id));
 						}
-						log.info("["+last_id+"] "+ub.getFullSql());
+						log.info("["+ub.getIndex()+"] ["+last_id+"] "+ub.getFullSql());
 					}else{
-						log.info(ub.getFullSql());
+						log.info("["+ub.getIndex()+"] "+ub.getFullSql());
 					}
 					if(updateHooks!=null){
 						for(IUpdateHook uh : updateHooks){
@@ -286,7 +286,7 @@ public class DatabaseImpl {
 						}
 					}
 				} catch (Exception e) {
-					log.error("["+ub.getIndex()+"] "+ub.getPreparedSql());
+					log.error("["+ub.getIndex()+" "+ub.getConnName()+"] "+ub.getPreparedSql());
 					log.error(toDebugInfo(ub.getDbsb(),ub.getColumns(),ub.getValues()));
 					if(isAutoCommit){
 						try {

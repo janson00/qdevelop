@@ -27,10 +27,10 @@
 		<sql repeat="" repeat-concat="^" fetch-zero-err="true"
 			is-full-param="false">
 			insert into
-			qd_auth_users(login_passwd,company_id,open_id,status,last_login_time,login_times,user_name,dept_id,permit_id,update_time,login_name,create_time)
+			qd_auth_users(login_passwd,company_id,open_id,status,last_login_time,login_times,user_name,dept_id,permit_id,update_time,login_name,create_time,extra_info)
 			value
 			(md5(concat('$[login_name]','$[login_passwd]')),$[company_id],'$[open_id]',$[status],$[last_login_time],$[login_times],'$[user_name]',$[dept_id]
-			,$[permit_id],$[update_time],'$[login_name]',$[create_time])
+			,$[permit_id],$[update_time],'$[login_name]',$[create_time],'$[extra_info]')
 		</sql>
 		<!--<sql>insert other_table(uid) value({qd_auth_users.LAST_INSERT_ID})</sql> -->
 	</property>
@@ -41,7 +41,7 @@
 			is-full-param="false">
 			update
 			qd_auth_users set company_id=$[company_id],open_id='$[open_id]',status=$[status],user_name='$[user_name]',dept_id=$[dept_id],permit_id=$[permit_id],
-			update_time=now(),login_name='$[login_name]'
+			update_time=now(),login_name='$[login_name]',extra_info='$[extra_info]'
 			where uid=$[uid]
 		</sql>
 	</property>

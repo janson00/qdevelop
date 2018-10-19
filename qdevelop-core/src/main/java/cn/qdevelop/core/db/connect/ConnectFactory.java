@@ -1,6 +1,7 @@
 package cn.qdevelop.core.db.connect;
 
 import java.io.File;
+import java.io.IOException;
 import java.io.InputStream;
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -43,7 +44,7 @@ public class ConnectFactory {
 	private static  Document databaseConfig;
 
 	@SuppressWarnings("unchecked")
-	private  void copyConfigNode(Document config,Element root,QXMLUtils xmlUtils){
+	private  void copyConfigNode(Document config,Element root,QXMLUtils xmlUtils,String source){
 		Iterator<Element> elem = config.getRootElement().elementIterator("connect");
 		while(elem.hasNext()){
 			Element e = elem.next();
@@ -51,6 +52,7 @@ public class ConnectFactory {
 			if(oldE==null){
 				Element connect  = root.addElement("connect");
 				xmlUtils.copyElement(e,connect);
+				connect.addAttribute("src", source);
 			}else{
 				log.warn("repeat conn index ["+e.attributeValue("index")+"] "+e.element("driver-url").getTextTrim());
 			}
@@ -88,7 +90,7 @@ public class ConnectFactory {
 				protected void disposeFile(File f) {
 					log.info(QString.append("load database : ",f.getAbsolutePath().substring(projectIndex)));
 					try {
-						copyConfigNode(xmlUtils.getDocument(f,"UTF-8"),root,xmlUtils);
+						copyConfigNode(xmlUtils.getDocument(f,"UTF-8"),root,xmlUtils,f.getAbsolutePath().substring(projectIndex));
 					} catch (DocumentException e) {
 						e.printStackTrace();
 					}
@@ -100,8 +102,9 @@ public class ConnectFactory {
 				public void desposeFile(String jarName,String fileName, InputStream is) {
 					try {
 						if(root.getName().equals(Contant.CONNECT_CONFIG_ROOT)){
-							log.info(QString.append("load database : ",jarName,"!",fileName));
-							copyConfigNode(xmlUtils.getDocument(is, "UTF-8"),root,xmlUtils);
+							String src = jarName+"!"+fileName;
+							log.info(QString.append("load database : ",src));
+							copyConfigNode(xmlUtils.getDocument(is, "UTF-8"),root,xmlUtils,src);
 						}
 					} catch (Exception e) {
 						log.error("err:"+jarName+"!"+fileName);
@@ -113,7 +116,7 @@ public class ConnectFactory {
 			e.printStackTrace();
 		}
 //		 try {
-//			new QXMLUtils().save(databaseConfig, new File("db_debug.xml"));
+//			new QXMLUtils().save(databaseConfig, new File(QSource.getProjectPath()+"/connection_debug.xml"));
 //		} catch (IOException e) {
 //			// TODO Auto-generated catch block
 //			e.printStackTrace();
@@ -134,6 +137,7 @@ public class ConnectFactory {
 			Element configs = (Element) databaseConfig.selectSingleNode(append("/database-config/connect[@index='",config,"']"));
 			if(configs==null && config.endsWith("_R"))configs = (Element) databaseConfig.selectSingleNode(append("/database-config/connect[@index='",config.substring(0,config.length()-2),"']"));
 			if(configs==null)throw new QDevelopException(1001,"数据库配置["+config+"]不存在！请检查src/databaseConfig.xml");
+			System.out.println("[init DB] >>>>>>>> "+configs.attributeValue("index")+" from "+configs.attributeValue("src"));
 			connection=new DruidConnect(configs);
 			connection.printInfo();
 			connCache.put(config, connection);
