@@ -38,7 +38,7 @@ public class QUtils {
 	 * @param executor
 	 */
 	public static void asynExec(Runnable executor){
-		AsynExcutor.getInstance().asynExec(executor);
+		AsynExcutor.getInstance().add(executor);
 	}
 
 	/**

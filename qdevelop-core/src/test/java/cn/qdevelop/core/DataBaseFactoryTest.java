@@ -5,14 +5,31 @@ import java.util.HashMap;
 import java.util.Map;
 
 import cn.qdevelop.common.exception.QDevelopException;
+import cn.qdevelop.core.bean.DBResultBean;
 import cn.qdevelop.core.db.SQLConfigParser;
+import cn.qdevelop.core.db.connect.ConnectFactory;
+import cn.qdevelop.core.db.execute.DatabaseImpl;
 import cn.qdevelop.core.standard.IDBQuery;
 import cn.qdevelop.core.standard.IDBResult;
 import junit.framework.TestCase;
 
 public class DataBaseFactoryTest extends TestCase {
 	
-	public void testQuery(){
+	public void testDriect(){
+		Connection conn = null;
+		try {
+			 conn = ConnectFactory.getInstance("default").getConnection();
+			 IDBResult result = new DBResultBean();
+			 new DatabaseImpl().queryDB(conn, "show tables", result);
+			 System.out.println(result.getSize());
+			 System.out.println(result);
+		} catch (QDevelopException e) {
+			e.printStackTrace();
+		}
+		ConnectFactory.close(conn);
+	}
+	
+	public void stestQuery(){
 		Map<String,Object> query = new HashMap<String,Object>();
 		query.put("index", "users-search-action");
 		query.put("status", "1");

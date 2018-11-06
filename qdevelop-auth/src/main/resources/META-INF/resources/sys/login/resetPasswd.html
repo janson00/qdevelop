@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta name="viewport" content="width=device-width">
+
+<title>代言</title>
+<!-- <script src="https://code.jquery.com/jquery-3.0.0.min.js"></script>
+ --></head>
+<link rel="stylesheet" href="http://www.bootcss.com/p/buttons/css/buttons.css">
+
+<style type="text/css">
+html {
+  font-size: 100%;
+  /* 1 */
+  -webkit-text-size-adjust: 100%;
+  /* 2 */
+  -ms-text-size-adjust: 100%;
+  /* 2 */ }
+
+/*
+* Addresses `font-family` inconsistency between `textarea` and other form
+* elements.
+*/
+html,
+button,
+input,
+select,
+textarea {
+  font-family: sans-serif; }
+
+/*
+* Addresses margins handled incorrectly in IE 6/7.
+*/
+body {
+  margin: 0;
+  font-family: "proxima-nova", Helvetica, Verdana, Arial, "Lucida Grande", sans-serif; }
+  
+.img-view {
+	background-color:#efefef;margin-left:20px;margin-left:20px;
+} 
+</style>
+<script type="text/javascript">
+	//下面用于多图片上传预览功能
+	function setImagePreviews(src,tab) {
+		console.log(src+" -- > "+tab);
+		var docObj = document.getElementById(src);
+		var dd = document.getElementById(tab);
+		dd.innerHTML = "";
+		var fileList = docObj.files;
+		for (var i = 0; i < fileList.length; i++) {
+			dd.innerHTML += " <img id='"+src+"img" + i + "' style=\"margin-left:13px;\" /> ";
+			var imgObjPreview = document.getElementById(src+"img" + i);
+			if (docObj.files && docObj.files[i]) {
+				//火狐下，直接设img属性
+				imgObjPreview.style.display = 'block';
+				imgObjPreview.style.width = '170px';
+				//imgObjPreview.style.height = '100%';
+				//imgObjPreview.src = docObj.files[0].getAsDataURL();
+				//火狐7以上版本不能用上面的getAsDataURL()方式获取，需要一下方式
+				imgObjPreview.src = window.URL.createObjectURL(docObj.files[i]);
+			} else {
+				//IE下，使用滤镜
+				docObj.select();
+				var imgSrc = document.selection.createRange().text;
+				//alert(imgSrc)
+				var localImagId = document.getElementById(src+"img" + i);
+				//必须设置初始大小
+				localImagId.style.width = "170px";
+				//localImagId.style.height = "100%";
+				//图片异常的捕捉，防止用户修改后缀来伪造图片
+				try {
+					localImagId.style.filter = "progid:DXImageTransform.Microsoft.AlphaImageLoader(sizingMethod=scale)";
+					localImagId.filters.item("DXImageTransform.Microsoft.AlphaImageLoader").src = imgSrc;
+				}catch (e) {
+					alert("您上传的图片格式不正确，请重新选择!");
+					return false;
+				}
+				imgObjPreview.style.display = 'none';
+				document.selection.empty();
+			}
+		}
+		return true;
+	}
+</script>
+</head>
+<body>
+<div class="l-over showcase-content">
+<form action="./upload/uploadAndCompose.jpg" method="post" enctype="multipart/form-data">
+	<table style="width:100%;text-align:center" >
+		<tr style="height:275px">	
+			<td  id="img1" class="img-view">待选照片</td>
+			<td id="img2" class="img-view">待选照片</td>
+		</tr>
+		<tr style="height:10px"><td colspan="2"></td></tr>
+		<tr >
+			<td >
+				<span   style="width:50%">
+					<input type="button" class="button button-3d button-primary button-rounded" value="选择第一张靓照" onclick="javascript:document.getElementById('src1').click();" />
+					<span class="upload-tip"></span>
+					<input type="file" name="src1" id="src1" class="upload-input-file" accept="image/*" onchange="javascript:setImagePreviews('src1','img1');" style="display:none" />
+				</span>	
+			</td>
+			<td>
+				<span  style="width:50%">
+					<input type="button" class="button button-3d button-primary button-rounded" value="选择第二张靓照" onclick="javascript:document.getElementById('src2').click();"/>
+					<span class="upload-tip"></span>
+					<input type="file" name="src2" id="src2" class="upload-input-file" accept="image/*" onchange="javascript:setImagePreviews('src2','img2');" style="display:none"/>
+				</span>
+			</td>
+		</tr>
+		<tr style="height:10px"><td colspan="2"></td></tr>
+		<tr >
+		<td colspan="2" ><button type="submit" class="button button-3d button-action button-pill">生成我的海报</button></td>
+		<td></td>
+		</tr>
+	</table>
+	<!-- <div>
+		<div style="background-color:#00ff00;float:left; witdh:49%;">
+			
+		</div>
+		<div style="background-color:#000000;float:left; witdh:49%;">
+			
+		</div>
+	</div>
+	<div style="">
+			<div id="img1" style="float:left;"></div>
+			<div id="img2" style="float:left;"></div>
+	</div>
+	<div style="">
+		<button type="submit" class="button button-royal button-square button-giant">提交照片</button>
+	</div> -->
+</form>
+</div>
+</body>

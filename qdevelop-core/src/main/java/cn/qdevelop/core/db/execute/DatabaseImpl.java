@@ -7,6 +7,7 @@ import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.sql.Types;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
@@ -30,6 +31,44 @@ public class DatabaseImpl {
 	
 	private final static Logger log  = QLog.getLogger(DatabaseImpl.class);
 
+	
+	/**
+	 * 直接执行sql语句
+	 * @param conn
+	 * @param sql
+	 * @param result
+	 * @return
+	 * @throws QDevelopException
+	 */
+	public IDBResult queryDB(Connection conn,String sql,IDBResult result) throws QDevelopException{
+		PreparedStatement pstmt = null;
+		try {
+			pstmt = conn.prepareStatement(sql);
+			ResultSet rs = pstmt.executeQuery();
+			ResultSetMetaData rsmd = rs.getMetaData();
+			int recordSize = rsmd.getColumnCount();
+			while(rs.next()){
+				result.addResultSet(parseRecord(rsmd,rs,recordSize,false));
+			}
+		} catch (SQLException e) {
+			try {
+				log.error("["+conn.getCatalog()+"] "+sql);
+			} catch (SQLException e1) {
+				e1.printStackTrace();
+			}
+			throw new QDevelopException(1001,"数据库查询错误",e);
+		}finally{
+			try {
+				if(pstmt!=null){
+					pstmt.close();
+				}
+			} catch (SQLException e1) {
+				e1.printStackTrace();
+			}
+		}
+		return result;
+	}
+	
 	public IDBResult queryDB(Connection conn,IDBQuery query,IDBResult result) throws QDevelopException{
 		PreparedStatement pstmt = null;
 		try {
@@ -384,7 +423,11 @@ public class DatabaseImpl {
 						}
 						break;
 					case 2:
-						pstmt.setString(i+start, String.valueOf(values[i]));
+						if(values[i] == null){
+							pstmt.setNull(i+start, Types.VARCHAR);
+						}else{
+							pstmt.setString(i+start, String.valueOf(values[i]));
+						}
 						break;
 					case 3:
 						if(values[i].getClass().equals(Double.class)){

@@ -5,6 +5,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -24,7 +25,7 @@ public class LeftJoinMultiFormatter extends AbstractResultFormatter implements I
 	String formatterIndex,formatterKey,resultKey,nodeName="child";
 	String[] formatterColumns;
 	Integer limit = null;
-	
+
 	@Override
 	public void initFormatter(Element conf) throws QDevelopException {
 		if(attrs!=null){
@@ -51,7 +52,7 @@ public class LeftJoinMultiFormatter extends AbstractResultFormatter implements I
 	@Override
 	public void formatter(Map<String, Object> data) {
 		Object val = data.get(resultKey);
-//		StringUtils.isEmpty(String.valueOf(val));
+		//		StringUtils.isEmpty(String.valueOf(val));
 		if(val!=null&&String.valueOf(val).length()>0){
 			conditions.add(String.valueOf(val));
 		}
@@ -60,19 +61,22 @@ public class LeftJoinMultiFormatter extends AbstractResultFormatter implements I
 	@Override
 	public void flush(IDBResult result)  throws QDevelopException{
 		if(result.getSize()==0)return;
-		Map<String,Object> query = new HashMap<String,Object>();
-		query.put("index", formatterIndex);
-		StringBuilder sb = new StringBuilder();
-		for(String v : conditions){
-			sb.append("|").append(v);
-		}
-//		System.out.println(">>>>>>> "+sb.toString());
-		if(sb.length()==0)return;
-		query.put(formatterKey, sb.substring(1));
-		query.put("page", 1);
-		query.put("limit","50000");
 		Connection conn = null;
 		try {
+			Map<String,Object> query = new HashMap<String,Object>();
+			query.put("index", formatterIndex);
+			StringBuilder sb = new StringBuilder();
+			//		synchronized(conditions){
+			Iterator<String> itor = conditions.iterator();
+			while(itor.hasNext()){
+				sb.append("|").append(itor.next());
+			}
+			//		System.out.println(">>>>>>> "+sb.toString());
+			if(sb.length()==0)return;
+			query.put(formatterKey, sb.substring(1));
+			//		query.put("page", 1);
+			//		query.put("limit","50000");
+
 			conn = DatabaseFactory.getInstance().getConnectByQuery(query);
 			IDBQuery dbQuery = SQLConfigParser.getInstance().getDBQueryBean(query, conn);
 			IDBResult formatterResult = new DBResultBean();
@@ -80,7 +84,7 @@ public class LeftJoinMultiFormatter extends AbstractResultFormatter implements I
 			int size  = formatterResult.getSize();
 			if(size==0)return;
 			DatabaseFactory.getInstance().formatterResult(formatterIndex, formatterResult);
-//			System.out.println(JSONObject.toJSONString(formatterResult));	
+			//			System.out.println(JSONObject.toJSONString(formatterResult));	
 			HashMap<String,List<Map<String,Object>>> tmp = new HashMap<String,List<Map<String,Object>>>();
 			for(int i=0;i<size;i++){
 				Map<String,Object> data = formatterResult.getResult(i);
@@ -90,11 +94,11 @@ public class LeftJoinMultiFormatter extends AbstractResultFormatter implements I
 					array = new ArrayList<Map<String,Object>>();
 					tmp.put(key, array);
 				}
-				
+
 				if(limit!=null && array.size() >= limit){
 					continue;
 				}
-				
+
 				Map<String,Object> fr = new HashMap<String,Object>();
 				for(String k : formatterColumns){
 					String[] _t = k.split(" as ");
@@ -141,14 +145,14 @@ public class LeftJoinMultiFormatter extends AbstractResultFormatter implements I
 				e.printStackTrace();
 			}
 		}
-
+		//		}
 	}
-	
+
 	public void testAdd(String val){
 		conditions.add(val);
 	}
-	
-	
+
+
 	@Override
 	public void init() {
 		conditions = new HashSet<String>();

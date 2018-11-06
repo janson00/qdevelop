@@ -129,7 +129,7 @@
         	,search:{
         		'menu_name':{title:'菜单名',width:'100px'}
         		,'menu_link':{title:'访问链接',width:'100px'}
-        		,'parent_id':{title:'父菜单',width:'110px','type':'select',ajax:{index:'qd_auth_menu_simple',parent_id:0,limit:1000,page:1},text:'menu_name',value:'menu_id'}
+        		,'parent_id':{title:'父菜单',width:'110px','type':'select',ajax:{index:'qd_auth_menu_simple',parent_id:0,limit:1000,page:1,status:1},text:'menu_name',value:'menu_id'}
         		,'sys_name':{title:'系统',width:'110px','type':'select',options:multi_system_name}
         		,'status':{title:'状态',width:'100px','type':'select',options:qd_auth_status}
         		,'update_time':{title:'更新时间',type:'date'}
@@ -154,7 +154,7 @@
     		//alert(1);
     		$.ajax({
 				url:'<%=request.getContextPath()%>/rest/cn/qdevelop/auth/adb/qd_auth_menu_simple',
-				data : {parent_id : 0,limit:1000},
+				data : {parent_id : 0,limit:1000,status:1},
 				success : function(r) {
 					if (r.tag == 0 ) {
 						$('#parent_id',formBody).html('');
@@ -233,7 +233,7 @@
 				if(typeof data['uid'] == 'undefined'){
 					data['uid'] = '0';
 				}
-				ajaxSubmit(data, form);
+				ajaxSubmit(data, form, table);
 			}
 		});
 		$('#userSearchClick').click(function(){

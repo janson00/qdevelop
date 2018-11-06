@@ -193,6 +193,7 @@
     						if (r.tag == 0) {
     							$(form).modal('hide');
     							alert('设置手工权限成功！');
+    							table.ajax.reload();
     						}else{
     							alert(r.errMsg);
     						}

@@ -6,6 +6,7 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServletRequest;
 
 import cn.qdevelop.auth.bean.LoginInfo;
+import cn.qdevelop.auth.utils.AuthUtils;
 import cn.qdevelop.auth.utils.XMemcached;
 import cn.qdevelop.service.APIControl;
 import cn.qdevelop.service.interfacer.IOutput;
@@ -33,6 +34,13 @@ public class ThirdValidService extends APIControl{
 		if(url == null){
 			output.setErrMsg("来源Url分析错误，请带入需要验证的url");
 			output.setTag(500);
+			return null;
+		}
+		
+		if(AuthUtils.isDevEnv()){
+			output.setData("success");
+			output.setErrMsg("success");
+			output.setTag(200);
 			return null;
 		}
 //		if(url.startsWith("http://")){

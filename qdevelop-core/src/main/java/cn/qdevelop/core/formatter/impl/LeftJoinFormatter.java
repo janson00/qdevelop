@@ -4,7 +4,9 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Map;
+import java.util.Set;
 
 import org.dom4j.Element;
 
@@ -20,8 +22,9 @@ import cn.qdevelop.core.standard.IDBResult;
 import cn.qdevelop.core.standard.IResultFormatter;
 
 public class LeftJoinFormatter extends AbstractResultFormatter implements IResultFormatter{
-	String formatterIndex,formatterKey,resultKey;
-	String[] formatterColumns;
+	private String formatterIndex,formatterKey,resultKey;
+	private String[] formatterColumns;
+	//	private Lock lock = new ReentrantLock();
 
 	@Override
 	public void initFormatter(Element conf) throws QDevelopException {
@@ -33,7 +36,7 @@ public class LeftJoinFormatter extends AbstractResultFormatter implements IResul
 		}
 	}
 
-	public HashSet<String> conditions;
+	private Set<String> conditions = null;
 
 	@Override
 	public boolean isQBQuery() {
@@ -42,27 +45,36 @@ public class LeftJoinFormatter extends AbstractResultFormatter implements IResul
 
 	@Override
 	public void formatter(Map<String, Object> data) {
+		//		synchronized(conditions){
 		Object val = data.get(resultKey);
-		if(val!=null){
+		if(val!=null && conditions != null){
 			conditions.add(String.valueOf(val));
 		}
+		//		}
 	}
 
 	@Override
 	public void flush(IDBResult result)  throws QDevelopException{
-		if(result.getSize()==0)return;
-		Map<String,Object> query = new HashMap<String,Object>();
-		query.put("index", formatterIndex);
-		StringBuilder sb = new StringBuilder();
-		for(String v : conditions){
-			sb.append("|").append(v);
-		}
-		if(sb.length()==0)return;
-		query.put(formatterKey, sb.substring(1));
-		query.put("page", 1);
-		query.put("limit", conditions.size());
+		if(result.getSize()==0||(conditions!=null&&conditions.size()==0))return;
+		//		lock.lock();
 		Connection conn = null;
 		try {
+			Map<String,Object> query = new HashMap<String,Object>();
+			query.put("index", formatterIndex);
+			StringBuilder sb = new StringBuilder();
+			//		conditions.toArray(a)
+			//		String [] c = conditions.toArray(new String[]{});
+			//			synchronized(conditions){
+			Iterator<String> itor = conditions.iterator();
+			while(itor.hasNext()){
+				sb.append("|").append(itor.next());
+			}
+			//			}
+			if(sb.length()==0)return;
+			query.put(formatterKey, sb.substring(1));
+			//		query.put("page", 1);
+			//		query.put("limit", conditions.size());
+
 			conn = DatabaseFactory.getInstance().getConnectByQuery(query);
 			IDBQuery dbQuery = SQLConfigParser.getInstance().getDBQueryBean(query, conn);
 
@@ -158,8 +170,8 @@ public class LeftJoinFormatter extends AbstractResultFormatter implements IResul
 			} catch (SQLException e) {
 				e.printStackTrace();
 			}
+			//				lock.unlock();
 		}
-
 	}
 
 	public void testAdd(String val){
@@ -169,6 +181,8 @@ public class LeftJoinFormatter extends AbstractResultFormatter implements IResul
 
 	@Override
 	public void init() {
+		conditions = null;
+		// Collections.synchronizedSet(new HashSet<String>());
 		conditions = new HashSet<String>();
 	}
 }

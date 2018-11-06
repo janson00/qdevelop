@@ -1,12 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <data-formatter>
-
- 
 	
-	<!-- 获取当前登陆用户的数据作为sql参数使用 -->
+	<!-- 
+	获取当前登陆用户的数据作为sql参数使用 
+	
+	例：在用户信息表中的扩展薪资字段extra中输入的json数据，可以在此处直接获取，例extra={'companyId':'10001'},以下user-attrs中可以直接输入companyId获取当前用户的值
+	使用如下：
+	<param-formatter>
+		<user-parameter user-attrs="userName,uid,companyId" />
+	</param-formatter>
+	-->
 	<param-formatter name="user-parameter" class="cn.qdevelop.auth.formatter.LoginInfoParameter">	
 		<user-attrs>需要的当前登陆用的参数key【userName,ip,sysName,loginName,permitId,uid,lastLoginTimer】含扩展字段</user-attrs>	
 	</param-formatter>
-	
 	
 </data-formatter>

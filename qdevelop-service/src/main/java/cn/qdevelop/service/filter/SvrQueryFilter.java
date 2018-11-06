@@ -14,7 +14,6 @@ import javax.servlet.FilterConfig;
 import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
-import javax.servlet.annotation.WebFilter;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -22,7 +21,7 @@ import cn.qdevelop.common.files.QSource;
 import cn.qdevelop.service.interfacer.IOutput;
 import cn.qdevelop.service.utils.QServiceUitls;
 
-@WebFilter(urlPatterns="/svr/*")
+//@WebFilter(urlPatterns="/svr/*")
 public class SvrQueryFilter  implements Filter{
 	Pattern localIps,allowIps; 
 
@@ -39,6 +38,7 @@ public class SvrQueryFilter  implements Filter{
 				sb.append(sb.length()>5?"|":"").append("(").append(ip.replaceAll("\\*", "[0-9]+?")).append(")");
 			}
 			sb.append("$");
+			System.out.println("cn.qdevelop.service.filter.SvrQueryFilter >>>> "+sb.toString());
 			allowIps = Pattern.compile(sb.toString());
 		}
 	}
@@ -89,9 +89,9 @@ public class SvrQueryFilter  implements Filter{
 	}
 
 //	public static void main(String[] args) {
-//		//		Pattern isTarget = Pattern.compile("^(192.168.1.[0-9]+?)|(127.0.0.1)$");
+//				Pattern isTarget = Pattern.compile("^([0-9]+?.[0-9]+?.[0-9]+?.[0-9]+?)$");
 //		//		System.out.println(isTarget.matcher("192.168.1.2").find());
-//		System.out.println(getIp());
+//		System.out.println(isTarget.matcher("124.202.216.34").find());
 //
 //	}
 

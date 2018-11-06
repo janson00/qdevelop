@@ -53,6 +53,12 @@
 		</sql>
 	</property>
 	-->
+	<property index="query_menu_permit_nonuser_menu_id" connect="qd_author_read" explain="qd_auth_menu查询" is-convert-null="true">
+		<!-- <formatter>
+			<left-join-formatter  result-key="menu_id" left-join="qd_auth_menu_permit_finder" on-key="menu_id" columns="menu_nam,menu_icon,menu_link,parent_id"/>
+		</formatter> -->
+		<sql>select distinct menu_id from qd_auth_menu_permit where  permit_id = $[permit_id] and menu_id &gt; 0</sql>
+	</property>
 	
 	<property index="query_menu_permit_menu_id" connect="qd_author_read" explain="qd_auth_menu查询" is-convert-null="true">
 		<!-- <formatter>

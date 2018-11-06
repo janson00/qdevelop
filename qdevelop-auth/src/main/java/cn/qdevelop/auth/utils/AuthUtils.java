@@ -11,7 +11,7 @@ public class AuthUtils {
 	public static final Pattern formatUri = Pattern.compile("^\\/+|^(http|https):\\/\\/|(\\?|#).+$",Pattern.CASE_INSENSITIVE);
 	public static final Pattern formatUriClean = Pattern.compile("\\/+");
 
-	private static Properties qdevelop_menu_dict = QSource.getInstance().loadProperties("plugin-config/qdevelop_menu.properties", AuthLogin.class) ;
+	private static Properties qdevelop_menu_dict = QSource.getInstance().loadProperties("plugin-config/qdevelop_auth.properties", AuthLogin.class) ;
 	private static Pattern isDynamicValue = Pattern.compile("\\{[a-zA-Z0-9_]+\\}"); 
 	
 	/**
@@ -30,6 +30,20 @@ public class AuthUtils {
 					.append(ender).toString();
 		}
 		return url;
+	}
+	
+	
+	private static Boolean isDevEnv;
+	/**
+	 * 是否是开发环境
+	 * @return  
+	 * @Description:
+	 */
+	public static boolean isDevEnv(){
+		if(isDevEnv!=null)return isDevEnv;
+		if(qdevelop_menu_dict.getProperty("is_dev_env")==null)return false;
+		isDevEnv =  Boolean.parseBoolean(qdevelop_menu_dict.getProperty("is_dev_env"));
+		return isDevEnv;
 	}
 	
 	public static void main(String[] args) {

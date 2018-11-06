@@ -36,14 +36,14 @@ import cn.qdevelop.core.standard.IUpdateHook;
 public class DatabaseFactory {
 	public static DatabaseFactory getInstance(){return new DatabaseFactory();}
 	private final static Logger log  = QLog.getLogger(DatabaseFactory.class);
-	
-//	private String callThread;
-//	public DatabaseFactory(){
-//		StackTraceElement[] ste = Thread.currentThread().getStackTrace();
-//		for(StackTraceElement s : ste){
-//			System.out.println(">>> "+s.getClassName());
-//		}
-//	}
+
+	//	private String callThread;
+	//	public DatabaseFactory(){
+	//		StackTraceElement[] ste = Thread.currentThread().getStackTrace();
+	//		for(StackTraceElement s : ste){
+	//			System.out.println(">>> "+s.getClassName());
+	//		}
+	//	}
 
 
 	/**
@@ -54,34 +54,50 @@ public class DatabaseFactory {
 	 */
 	@SuppressWarnings("unchecked")
 	public Connection getConnectByQuery(Object query) throws QDevelopException{
-		String index=null;
-		if(query.getClass().equals(String.class)){
-			index = (String)query;
-		}else if(query.getClass().equals(Map.class)||query.getClass().equals(HashMap.class)||query.getClass().equals(DBArgs.class)){
-			index = String.valueOf(((Map<String,?>)query).get("index"));
+		try {
+			String index=null;
+			if(query.getClass().equals(String.class)){
+				index = (String)query;
+			}else if(query.getClass().equals(Map.class)||query.getClass().equals(HashMap.class)||query.getClass().equals(DBArgs.class)){
+				index = String.valueOf(((Map<String,?>)query).get("index"));
+			}
+			if(index==null)throw new QDevelopException(1002,"请求没有index");
+			Element config = SQLConfigLoader.getInstance().getSQLConfig(index);
+			if(config==null)throw new QDevelopException(1003,"["+index+"] SQL配置【"+index+"】不存在");
+			return ConnectFactory.getInstance(config.attributeValue("connect")).getConnection();
+		} catch (Exception e) {
+			throw new QDevelopException(10001,"数据库链接获取错误",e);
 		}
-		if(index==null)throw new QDevelopException(1002,"请求没有index");
-		Element config = SQLConfigLoader.getInstance().getSQLConfig(index);
-		if(config==null)throw new QDevelopException(1003,"["+index+"] SQL配置【"+index+"】不存在");
-		return ConnectFactory.getInstance(config.attributeValue("connect")).getConnection();
 	}
 	private static Pattern cleanPrevSql = Pattern.compile("^select .+ from ", Pattern.CASE_INSENSITIVE);
 	private static Pattern from = Pattern.compile(" from ", Pattern.CASE_INSENSITIVE);
-	
+
 	/**清除统计中无效参数**/
 	private static String[] countClearArgs = new String[]{"order","page","limit","page_size"};
-	
+
+
+	public int queryDatabaseCount(Map<String,?> query) throws QDevelopException{
+		Connection conn = null;
+		try {
+			conn = getConnectByQuery(query);
+			return queryDatabaseCount(query,conn);
+		} catch (Exception e) {
+			throw e;
+		}finally{
+			ConnectFactory.close(conn);
+		}
+	}
 	/**
 	 * 根据条件单独查询结果集总数
 	 * @param query
 	 * @return
 	 * @throws QDevelopException
 	 */
-	public int queryDatabaseCount(Map<String,?> query) throws QDevelopException{
+	public int queryDatabaseCount(Map<String,?> query,Connection conn) throws QDevelopException{
 		long s = System.currentTimeMillis();
 		String index = String.valueOf(query.get("index"));
-		Connection conn = getConnectByQuery(query);
-		
+		//		Connection conn = getConnectByQuery(query);
+
 		try {
 			formatterParameters(query);
 			for(int i=0;i<countClearArgs.length;i++){
@@ -113,11 +129,10 @@ public class DatabaseFactory {
 			throw e; 
 		}finally{
 			query.clear();
-			ConnectFactory.close(conn);
 			log.info("queryDatabaseCount:"+index+" use:"+(System.currentTimeMillis()-s)+"ms");
 		}
 	}
-	
+
 
 
 	/**
@@ -131,16 +146,16 @@ public class DatabaseFactory {
 		try {
 			conn = getConnectByQuery(query);
 			return queryDatabase(query,conn);
-		} catch (QDevelopException e) {
+		} catch (Exception e) {
 			throw e;
 		}finally{
 			ConnectFactory.close(conn);
 		}
-		
+
 	}
-	
-	
-	
+
+
+
 	/**
 	 * 查询数据库；自动清理请求参数，关闭数据库链接
 	 * @param query
@@ -203,7 +218,7 @@ public class DatabaseFactory {
 		try {
 			conn = getConnectByQuery(query);
 			return updateDatabase(query,conn,true);
-		} catch (QDevelopException e) {
+		} catch (Exception e) {
 			throw e;
 		}finally{
 			ConnectFactory.close(conn);
@@ -257,7 +272,7 @@ public class DatabaseFactory {
 			log.info("updateDatabase:"+index+" use:"+(System.currentTimeMillis()-s)+"ms");
 		}
 	}
-	
+
 	/**
 	 * 插入并返回自增ID的方法
 	 * @param query
@@ -269,13 +284,13 @@ public class DatabaseFactory {
 		try {
 			conn = getConnectByQuery(query);
 			return insertDBReturnAutoID(query,conn);
-		} catch (QDevelopException e) {
+		} catch (Exception e) {
 			throw e;
 		}finally{
 			ConnectFactory.close(conn);
 		}
 	}
-	
+
 	/**
 	 * 插入并返回自增ID的方法;
 	 * @param query
@@ -316,7 +331,7 @@ public class DatabaseFactory {
 
 		}
 	}
-	
+
 	public int updateBatch(Map<String,?> query,List<Object[]> values) throws QDevelopException{
 		Connection conn = null;
 		try {
@@ -339,7 +354,7 @@ public class DatabaseFactory {
 		}
 		return 0;
 	}
-	
+
 	/**
 	 * 单sql模版批量更新数据库操作
 	 * @param query
@@ -416,7 +431,7 @@ public class DatabaseFactory {
 			throw new QDevelopException(1001,e.getMessage(),e);
 		}
 	}
-	
+
 	/**
 	 * 更新数据库；多index请求，事务控制
 	 * @param querys
@@ -427,7 +442,7 @@ public class DatabaseFactory {
 	public boolean updateDataBaseMulti(List<Map<String, Object>> test) throws QDevelopException{
 		long start = System.currentTimeMillis();
 		StringBuffer indexs = new StringBuffer();
-		
+
 		HashMap<String,Connection> cache = new HashMap<String,Connection>(test.size());
 		HashMap<String,List<IUpdateHook>> hooks = new HashMap<String,List<IUpdateHook>>(test.size());
 		HashMap<String,IDBUpdate> IDBUpdates = new HashMap<String,IDBUpdate>(test.size());
@@ -513,7 +528,7 @@ public class DatabaseFactory {
 		}
 		return true;
 	}
-	
+
 	/**
 	 * 更新数据库；多index请求，事务控制
 	 * @param querys
@@ -525,7 +540,7 @@ public class DatabaseFactory {
 	public boolean updateDataBaseMulti(Map<String,?> ... query) throws QDevelopException{
 		long start = System.currentTimeMillis();
 		StringBuffer indexs = new StringBuffer();
-		
+
 		HashMap<String,Connection> cache = new HashMap<String,Connection>(query.length);
 		HashMap<String,List<IUpdateHook>> hooks = new HashMap<String,List<IUpdateHook>>(query.length);
 		HashMap<String,IDBUpdate> IDBUpdates = new HashMap<String,IDBUpdate>(query.length);
@@ -616,34 +631,51 @@ public class DatabaseFactory {
 
 	@SuppressWarnings("unchecked")
 	public void formatterParameters(Map<String,? extends Object> query) throws QDevelopException{
-		String index = (String)query.get("index");
-		List<IParamFormatter> paraFormatter = SQLConfigParser.getInstance().getParamFormatter(index) ;
-		if(paraFormatter!=null && paraFormatter.size()>0){
-			for(IParamFormatter formatter : paraFormatter){
-				formatter.init();
-				formatter.formatter((Map<String,Object>)query);
+		List<IParamFormatter> paraFormatter = null;
+		try {
+			String index = (String)query.get("index");
+			paraFormatter = SQLConfigParser.getInstance().getParamFormatter(index) ;
+			if(paraFormatter!=null && paraFormatter.size()>0){
+				for(IParamFormatter formatter : paraFormatter){
+					formatter.init();
+					formatter.formatter((Map<String,Object>)query);
+				}
 			}
-			paraFormatter.clear();
+		} catch (Exception e) {
+			throw new QDevelopException(10001,"formatterParameters",e);
+		}finally{
+			if(paraFormatter!=null){
+				paraFormatter.clear();
+			}
 		}
 	}
 
 	public void formatterResult(String index,IDBResult dbResult) throws QDevelopException{
-		List<IResultFormatter> resultFormatters = SQLConfigParser.getInstance().getResultFormatter(index);
-		if(resultFormatters!=null && resultFormatters.size()>0){
-			for(IResultFormatter resultFormatter : resultFormatters){
-				resultFormatter.init();
-			}
-			int size = dbResult.getSize();
-			for(int i=0;i<size;i++){
-				Map<String,Object> data = dbResult.getResult(i);
+		List<IResultFormatter> resultFormatters = null;
+		try {
+			resultFormatters = SQLConfigParser.getInstance().getResultFormatter(index);
+			if(resultFormatters!=null && resultFormatters.size()>0){
 				for(IResultFormatter resultFormatter : resultFormatters){
-					resultFormatter.formatter(data);
+					resultFormatter.init();
 				}
+				int size = dbResult.getSize();
+				for(int i=0;i<size;i++){
+					Map<String,Object> data = dbResult.getResult(i);
+					for(IResultFormatter resultFormatter : resultFormatters){
+						resultFormatter.formatter(data);
+					}
+				}
+				for(IResultFormatter resultFormatter : resultFormatters){
+					resultFormatter.flush(dbResult);
+				}
+
 			}
-			for(IResultFormatter resultFormatter : resultFormatters){
-				resultFormatter.flush(dbResult);
+		} catch (Exception e) {
+			throw new QDevelopException(10001,"formatterResult",e);
+		}finally{
+			if(resultFormatters!=null){
+				resultFormatters.clear();
 			}
-			resultFormatters.clear();
 		}
 	}
 

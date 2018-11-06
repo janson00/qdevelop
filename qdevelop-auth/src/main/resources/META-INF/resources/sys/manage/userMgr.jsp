@@ -124,7 +124,7 @@
 					}
 				});
 
-		var passReg = /^[a-zA-Z]\w{5,17}$/;
+		var passReg = /^[0-9a-zA-Z\_\*&\^\%\$#@\!]{5,17}$/;
 		function checkPassword(passwd) {
 			if (!passReg.test(passwd)) {
 				alert('密码必须为字母开头，由字母、数字组成，长度为6至18位');

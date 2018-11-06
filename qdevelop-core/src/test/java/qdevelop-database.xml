@@ -7,10 +7,10 @@
 		</driver-url>
 		<user-name>root</user-name>
 		<password>janson</password>
-		<min-idle>1</min-idle>
-		<init-idle>1</init-idle>
-		<max-idle>10</max-idle>
-		<max-wait>1000</max-wait>
+		<min-idle>10</min-idle>
+		<init-idle>10</init-idle>
+		<max-idle>100</max-idle>
+		<max-wait>10000</max-wait>
 		<test-query>select 1</test-query>
 		<test-borrow>true</test-borrow>
 		<test-return>true</test-return>
@@ -23,6 +23,22 @@
 		</driver-url>
 		<user-name>root</user-name>
 		<password>janson</password>
+		<min-idle>10</min-idle>
+		<init-idle>10</init-idle>
+		<max-idle>100</max-idle>
+		<max-wait>10000</max-wait>
+		<test-query>select 1</test-query>
+		<test-borrow>true</test-borrow>
+		<test-return>true</test-return>
+		<test-while-idle>true</test-while-idle>
+	</connect>
+	
+	<connect index="ep_user">
+		<driver-class>com.mysql.jdbc.Driver</driver-class>
+		<driver-url>jdbc:mysql://139.129.208.188:3306/ep_user?useUnicode=true&amp;characterEncoding=utf8&amp;autoReconnect=true&amp;zeroDateTimeBehavior=convertToNull
+		</driver-url>
+		<user-name>ep_manager</user-name>
+		<password>ep_manager</password>
 		<min-idle>1</min-idle>
 		<init-idle>1</init-idle>
 		<max-idle>10</max-idle>

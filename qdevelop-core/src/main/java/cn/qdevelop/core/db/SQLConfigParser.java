@@ -80,7 +80,11 @@ public class SQLConfigParser {
 		ArrayList<IParamFormatter> paramFormatters = paramFormatterByIndex.get(index);
 		if(paramFormatters!=null){
 			if(paramFormatters.size()==0)return null;
-			return (List<IParamFormatter>) paramFormatters.clone();
+			List<IParamFormatter> paramtters = new ArrayList<IParamFormatter>(paramFormatters.size());
+			for(int i=0;i<paramFormatters.size();i++){
+				paramtters.add(paramFormatters.get(i).clone());
+			}
+			return paramtters;
 		}
 		Element paramFormatterConfig = config.element("param-formatter");
 		if(paramFormatterConfig==null){
@@ -103,7 +107,12 @@ public class SQLConfigParser {
 			paramFormatters.add(paramFormatter);
 		}
 		paramFormatterByIndex.put(index, paramFormatters);
-		return (List<IParamFormatter>) paramFormatters.clone();
+		
+		List<IParamFormatter> paramtters = new ArrayList<IParamFormatter>(paramFormatters.size());
+		for(int i=0;i<paramFormatters.size();i++){
+			paramtters.add(paramFormatters.get(i).clone());
+		}
+		return paramtters;
 	}
 
 
@@ -113,7 +122,12 @@ public class SQLConfigParser {
 		if(config==null)throw new QDevelopException(1002,"请求没有index");
 		ArrayList<IUpdateHook> updateHooks =  resultHookByIndex.get(index);
 		if(updateHooks!=null){
-			return (List<IUpdateHook>) updateHooks.clone();
+			if(updateHooks.size()==0)return null;
+			List<IUpdateHook> hooks = new ArrayList<IUpdateHook>(updateHooks.size());
+			for(int i=0;i<updateHooks.size();i++){
+				hooks.add(updateHooks.get(i).clone());
+			}
+			return hooks;
 		}
 
 		Element updateHookConfig = config.element("update-hook");
@@ -134,7 +148,12 @@ public class SQLConfigParser {
 			updateHooks.add(updateHook);
 		}
 		resultHookByIndex.put(index, updateHooks);
-		return (List<IUpdateHook>) updateHooks.clone();
+		
+		List<IUpdateHook> hooks = new ArrayList<IUpdateHook>(updateHooks.size());
+		for(int i=0;i<updateHooks.size();i++){
+			hooks.add(updateHooks.get(i).clone());
+		}
+		return hooks;
 	}
 
 	/**
@@ -150,7 +169,11 @@ public class SQLConfigParser {
 		ArrayList<IResultFormatter> resultFormatters = resultFormatterByIndex.get(index);
 		if(resultFormatters!=null){
 			if(resultFormatters.size()==0)return null;
-			return (List<IResultFormatter>) resultFormatters.clone();
+			List<IResultFormatter> formatters = new ArrayList<IResultFormatter>(resultFormatters.size());
+			for(int i=0;i<resultFormatters.size();i++){
+				formatters.add(resultFormatters.get(i).clone());
+			}
+			return formatters;
 		}
 		Element resultFormatterConfig = config.element("result-formatter");
 		if(resultFormatterConfig==null){
@@ -173,7 +196,12 @@ public class SQLConfigParser {
 			resultFormatters.add(resultFormatter);
 		}
 		resultFormatterByIndex.put(index, resultFormatters);
-		return (List<IResultFormatter>) resultFormatters.clone();
+		
+		List<IResultFormatter> formatters = new ArrayList<IResultFormatter>(resultFormatters.size());
+		for(int i=0;i<resultFormatters.size();i++){
+			formatters.add(resultFormatters.get(i).clone());
+		}
+		return formatters;
 	}
 
 	@SuppressWarnings("unchecked")

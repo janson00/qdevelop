@@ -48,4 +48,12 @@ public abstract class AbstractResultFormatter  implements IResultFormatter{
 	public void init(){
 		
 	}
+	
+//	public Object clone() throws CloneNotSupportedException {
+//		IResultFormatter obj = (IResultFormatter)super.clone();
+//	      obj.inner = (Inner) inner.clone();
+//	      return obj;
+//	  }
+
+	
 }

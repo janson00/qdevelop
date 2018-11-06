@@ -42,17 +42,17 @@ public class QLog {
 		return Logger.getLogger(claZZ);
 	}
 	
-	/**
-	 * 获取异步logger执行
-	 * @param claZZ
-	 * @return
-	 */
-	public static QLogger getQLogger(Class<?> claZZ){
-		if(!isInit.get()){
-			init();
-		}
-		return new QLogger(Logger.getLogger(claZZ));
-	}
+//	/**
+//	 * 获取异步logger执行
+//	 * @param claZZ
+//	 * @return
+//	 */
+//	public static AsycWriter getQLogger(Class<?> claZZ){
+//		if(!isInit.get()){
+//			init();
+//		}
+//		return new AsycWriter(Logger.getLogger(claZZ));
+//	}
 
 
 	public static void init(){

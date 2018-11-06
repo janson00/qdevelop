@@ -1,68 +1,68 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <sql-config-debug>
-  <poperty index="include_file_adv!select" explain="include_file查询" connect="web_R" cacheAble="false" file="/target/test-classes/cn/test/other/web_core2.sql.xml" is-open="false" name-space="" is-complex-build="true" is-convert-null="false" is-need-total="false" is-select="true">
+  <poperty index="include_file_adv!select" explain="include_file查询" connect="web_R" cacheAble="false" file="/target/test-classes/cn/test/other/web_core2.sql.xml" is-open="false" name-space="" is-complex-build="true" is-convert-null="false" is-need-total="false" result-format-type="0" is-select="true">
     <sql is-select="true" tables="page|file_page_relation|file" fetch-zero-err="true" is-full-param="true">select f.file_name,f.file_id,f.include_position,fp.target_page,f.file_path, f.file_type, f.ctime,p.page_template from file_page_relation fp left join page p on fp.target_page=p.page_id left join file f on fp.resource_file=f.file_id where 9=9</sql>
     <result-formatter>
       <date-formatter targetKey="ctime" style="yyyyMMdd"></date-formatter>
     </result-formatter>
   </poperty>
-  <poperty index="modular_test!selectByModularId" explain="modular查询，通过模块id查询内容" connect="web_R" cacheAble="false" file="/target/test-classes/cn/test/other/matchFile.sql.xml" is-open="false" name-space="" is-complex-build="true" is-convert-null="false" is-need-total="false" is-select="true">
+  <poperty index="modular_test!selectByModularId" explain="modular查询，通过模块id查询内容" connect="web_R" cacheAble="false" file="/target/test-classes/cn/test/other/matchFile.sql.xml" is-open="false" name-space="" is-complex-build="true" is-convert-null="false" is-need-total="false" result-format-type="0" is-select="true">
     <sql is-select="true" tables="modular" fetch-zero-err="true" is-full-param="true">select `modular_content`,`page_type` from modular where 9=9</sql>
   </poperty>
-  <poperty index="page_test!update" explain="page修改" connect="web" afterRun="com.lelife.oa.formatter.ClearPageCache" file="/target/test-classes/cn/test/other/web_page.sql.xml" is-open="false" name-space="" is-complex-build="true" is-convert-null="false" is-need-total="false" is-select="false">
+  <poperty index="page_test!update" explain="page修改" connect="web" afterRun="com.lelife.oa.formatter.ClearPageCache" file="/target/test-classes/cn/test/other/web_page.sql.xml" is-open="false" name-space="" is-complex-build="true" is-convert-null="false" is-need-total="false" result-format-type="0" is-select="false">
     <param-formatter>
       <param key="uid" value="${user.uid}"></param>
     </param-formatter>
     <sql params="page_name|description|uid|page_display|page_breadcrumb|page_order|page_type|page_target|page_id" is-select="false" tables="page" fetch-zero-err="true" is-full-param="true">update page set `page_name`='$[page_name]',`description`='$[description]',`cuser`=$[uid],`page_display`='$[page_display]',`page_breadcrumb`='$[page_breadcrumb]',`page_order`='$[page_order]',`page_type`='$[page_type]',`page_target`='$[page_target]' where page_id=$[page_id]</sql>
   </poperty>
-  <poperty index="modular_type_test!selectType" explain="modular_type_test下拉选项" connect="web_R" file="/target/test-classes/cn/test/other/web_modular_type.sql.xml" is-open="false" name-space="" is-complex-build="true" is-convert-null="false" is-need-total="false" is-select="true">
+  <poperty index="modular_type_test!selectType" explain="modular_type_test下拉选项" connect="web_R" file="/target/test-classes/cn/test/other/web_modular_type.sql.xml" is-open="false" name-space="" is-complex-build="true" is-convert-null="false" is-need-total="false" result-format-type="0" is-select="true">
     <sql is-select="true" tables="modular_type" fetch-zero-err="true" is-full-param="true">select `modular_type_id`,`modular_type_name` from modular_type where 9=9</sql>
   </poperty>
-  <poperty index="modular_type_test!insert" explain="modular_type_test插入" uniKey="modular_type_id" connect="web" afterRun="com.lelife.oa.formatter.ReloadAndCreateFile" file="/target/test-classes/cn/test/other/web_modular_type.sql.xml" is-open="false" name-space="" is-complex-build="true" is-convert-null="false" is-need-total="false" is-select="false">
+  <poperty index="modular_type_test!insert" explain="modular_type_test插入" uniKey="modular_type_id" connect="web" afterRun="com.lelife.oa.formatter.ReloadAndCreateFile" file="/target/test-classes/cn/test/other/web_modular_type.sql.xml" is-open="false" name-space="" is-complex-build="true" is-convert-null="false" is-need-total="false" result-format-type="0" is-select="false">
     <param-formatter>
       <param key="uid" value="${user.uid}"></param>
     </param-formatter>
     <sql params="modular_type_name|modular_path|cuser|description|page_type_id" is-select="false" tables="modular_type" fetch-zero-err="true" is-full-param="true">insert into modular_type(`modular_type_name`,`modular_path`,`status`,`ctime`,`cuser`,`description`,`page_type_id`) values ('$[modular_type_name]','$[modular_path]',1,NOW(),$[cuser],'$[description]',$[page_type_id])</sql>
   </poperty>
-  <poperty index="modular_editor!update" explain="modular_编辑状态" connect="web" file="/target/test-classes/cn/test/other/web_modular.sql.xml" is-open="false" name-space="" is-complex-build="true" is-convert-null="false" is-need-total="false" is-select="false">
+  <poperty index="modular_editor!update" explain="modular_编辑状态" connect="web" file="/target/test-classes/cn/test/other/web_modular.sql.xml" is-open="false" name-space="" is-complex-build="true" is-convert-null="false" is-need-total="false" result-format-type="0" is-select="false">
     <param-formatter>
       <param key="uid" value="${user.uid}"></param>
     </param-formatter>
     <sql params="editStatus|uid|modular_id" is-select="false" tables="modular" fetch-zero-err="true" is-full-param="true">update modular set `modular_edit_status`=$[editStatus], `modular_editor`=$[uid] where modular_id=$[modular_id]</sql>
   </poperty>
-  <poperty index="users-query-action" connect="user-connect-rw" explain="users查询" file="/target/test-classes/cn/test/sql/qd_product_center.users.sql.xml" is-open="false" name-space="" is-complex-build="true" is-convert-null="false" is-need-total="false" is-select="true">
+  <poperty index="users-query-action" connect="user-connect-rw" explain="users查询" file="/target/test-classes/cn/test/sql/qd_product_center.users.sql.xml" is-open="false" name-space="" is-complex-build="true" is-convert-null="false" is-need-total="false" result-format-type="0" is-select="true">
     <sql params="uid|utime|user_name|status|age|ctime|mobile" is-select="true" tables="users" fetch-zero-err="true" is-full-param="true">select uid,utime,user_name,status,age,ctime,mobile from users where uid=$[uid] and utime=$[utime] and user_name='$[user_name]' and status=$[status] and age=$[age] and ctime=$[ctime] and mobile='$[mobile]'</sql>
   </poperty>
-  <poperty index="products_log-store-action" connect="default" explain="products_log修改" file="/target/test-classes/cn/test/sql/demo_product_center.products_log.sql.xml" is-open="false" name-space="" is-complex-build="true" is-convert-null="false" is-need-total="false" is-select="false">
+  <poperty index="products_log-store-action" connect="default" explain="products_log修改" file="/target/test-classes/cn/test/sql/demo_product_center.products_log.sql.xml" is-open="false" name-space="" is-complex-build="true" is-convert-null="false" is-need-total="false" result-format-type="0" is-select="false">
     <sql repeat-concat="^" fetch-zero-err="true" params="uid|product_name|action|pid|ctime|plog_id" is-select="false" tables="products_log" is-full-param="true">update products_log set uid=$[uid],product_name='$[product_name]',action='$[action]',pid=$[pid],ctime=$[ctime] where plog_id=$[plog_id]</sql>
   </poperty>
-  <poperty index="modular_type_push!insert" explain="线上modular_type插入" connect="web_online" safe-args="*" file="/target/test-classes/cn/test/other/web_push.sql.xml" is-open="false" name-space="" is-complex-build="true" is-convert-null="false" is-need-total="false" is-select="false">
+  <poperty index="modular_type_push!insert" explain="线上modular_type插入" connect="web_online" safe-args="*" file="/target/test-classes/cn/test/other/web_push.sql.xml" is-open="false" name-space="" is-complex-build="true" is-convert-null="false" is-need-total="false" result-format-type="0" is-select="false">
     <sql params="MODULAR_TYPE_NAME|MODULAR_PATH|STATUS|CTIME|CUSER|DESCRIPTION|PAGE_TYPE_ID" is-select="false" tables="modular_type" fetch-zero-err="true" is-full-param="true">INSERT INTO modular_type(`modular_type_name`,`modular_path`,`status`,`ctime`,`cuser`,`description`,`page_type_id`) VALUES('$[MODULAR_TYPE_NAME]','$[MODULAR_PATH]','$[STATUS]','$[CTIME]','$[CUSER]','$[DESCRIPTION]', '$[PAGE_TYPE_ID]')</sql>
   </poperty>
-  <poperty index="products_log-add-action" connect="default" explain="products_log插入" file="/target/test-classes/cn/test/sql/demo_product_center.products_log.sql.xml" is-open="false" name-space="" is-complex-build="true" is-convert-null="false" is-need-total="false" is-select="false">
+  <poperty index="products_log-add-action" connect="default" explain="products_log插入" file="/target/test-classes/cn/test/sql/demo_product_center.products_log.sql.xml" is-open="false" name-space="" is-complex-build="true" is-convert-null="false" is-need-total="false" result-format-type="0" is-select="false">
     <sql repeat-concat="^" fetch-zero-err="true" params="uid|product_name|action|pid|ctime" is-select="false" tables="products_log" is-full-param="true">insert into products_log(uid,product_name,action,pid,ctime) value ($[uid],'$[product_name]','$[action]',$[pid],$[ctime])</sql>
   </poperty>
-  <poperty index="breadcrumbs!select" explain="page查询" connect="web_R" file="/target/test-classes/cn/test/other/web_core.sql.xml" is-open="false" name-space="" is-complex-build="true" is-convert-null="false" is-need-total="false" is-select="true">
+  <poperty index="breadcrumbs!select" explain="page查询" connect="web_R" file="/target/test-classes/cn/test/other/web_core.sql.xml" is-open="false" name-space="" is-complex-build="true" is-convert-null="false" is-need-total="false" result-format-type="0" is-select="true">
     <sql is-select="true" tables="page" fetch-zero-err="true" is-full-param="true">select `page_id`,`page_name`,`parent_id`,`page_url`,`page_level`,`page_display`,`page_order`,`page_type`, `page_breadcrumb`,`page_target` from page where 9=9</sql>
   </poperty>
-  <poperty index="page_content!select" explain="page_content查询" connect="web_R" cacheAble="false" file="/target/test-classes/cn/test/other/web_page.sql.xml" is-open="false" name-space="" is-complex-build="true" is-convert-null="false" is-need-total="false" is-select="true">
+  <poperty index="page_content!select" explain="page_content查询" connect="web_R" cacheAble="false" file="/target/test-classes/cn/test/other/web_page.sql.xml" is-open="false" name-space="" is-complex-build="true" is-convert-null="false" is-need-total="false" result-format-type="0" is-select="true">
     <sql is-select="true" tables="page" fetch-zero-err="true" is-full-param="true">select `page_url`, `page_template`,`page_content` from page where 9=9</sql>
   </poperty>
-  <poperty index="page_file_include_web_site!update" explain="page_file_include!update查询" connect="web" afterRun="com.lelife.oa.formatter.IncludeFileReload" file="/target/test-classes/cn/test/other/web_core2.sql.xml" is-open="false" name-space="" is-complex-build="true" is-convert-null="false" is-need-total="false" is-select="false">
+  <poperty index="page_file_include_web_site!update" explain="page_file_include!update查询" connect="web" afterRun="com.lelife.oa.formatter.IncludeFileReload" file="/target/test-classes/cn/test/other/web_core2.sql.xml" is-open="false" name-space="" is-complex-build="true" is-convert-null="false" is-need-total="false" result-format-type="0" is-select="false">
     <param-formatter>
       <param key="uid" value="${user.uid}"></param>
     </param-formatter>
     <sql fullParamOnly="true" params="file_id" is-select="false" tables="file_page_relation" fetch-zero-err="true" is-full-param="true">delete from file_page_relation where resource_file=$[file_id] and target_page in (select page_type_code as target_page from page_type)</sql>
-    <sql repeat="pageId" fullParamOnly="true" repeat-concat="^" params="file_id|pageId|uid" is-select="false" tables="file_page_relation" fetch-zero-err="true" is-full-param="true">insert into file_page_relation(resource_file,target_page,include_type,include_file_type,ctime,cuser) values($[file_id],'$[pageId]',0,1,NOW(),$[uid])</sql>
+    <sql repeat="pageId" fullParamOnly="true" params="file_id|pageId|uid" repeat-concat="^" is-select="false" tables="file_page_relation" fetch-zero-err="true" is-full-param="true">insert into file_page_relation(resource_file,target_page,include_type,include_file_type,ctime,cuser) values($[file_id],'$[pageId]',0,1,NOW(),$[uid])</sql>
   </poperty>
-  <poperty index="config_file_adv!select" explain="config_file查询" connect="web_R" file="/target/test-classes/cn/test/other/web_config_file.sql.xml" is-open="false" name-space="" is-complex-build="true" is-convert-null="false" is-need-total="false" is-select="true">
+  <poperty index="config_file_adv!select" explain="config_file查询" connect="web_R" file="/target/test-classes/cn/test/other/web_config_file.sql.xml" is-open="false" name-space="" is-complex-build="true" is-convert-null="false" is-need-total="false" result-format-type="0" is-select="true">
     <sql is-select="true" tables="config_files" fetch-zero-err="true" is-full-param="true">select `config_file_id`,`config_file_path`,`config_file_name`,`config_file_desc`,`config_file_type`,`ctime`,`cuser` from config_files where 9=9 and status=1</sql>
     <result-formatter>
       <table-cache table="qd_jaas_user" targetKey="cuser" fields="name"></table-cache>
     </result-formatter>
   </poperty>
-  <poperty index="log_file!select" explain="log_file查询" connect="web_R" cacheAble="false" file="/target/test-classes/cn/test/other/web_log.sql.xml" is-open="false" name-space="" is-complex-build="true" is-convert-null="false" is-need-total="false" is-select="true">
+  <poperty index="log_file!select" explain="log_file查询" connect="web_R" cacheAble="false" file="/target/test-classes/cn/test/other/web_log.sql.xml" is-open="false" name-space="" is-complex-build="true" is-convert-null="false" is-need-total="false" result-format-type="0" is-select="true">
     <sql is-select="true" tables="log_file" fetch-zero-err="true" is-full-param="true">select file_log_id,file_id,file_content,ctime,cuser,operation from log_file where 9=9</sql>
     <result-formatter>
       <date-formatter targetKey="ctime" style="yyyy-MM-dd HH:mm:ss"></date-formatter>
@@ -70,23 +70,23 @@
       <table-cache table="file" targetKey="file_id" fields="file_name,file_path,file_type"></table-cache>
     </result-formatter>
   </poperty>
-  <poperty index="page_name_adv!select" explain="page_name_adv!select查询" connect="web_R" cacheAble="false" file="/target/test-classes/cn/test/other/web_core2.sql.xml" is-open="false" name-space="" is-complex-build="true" is-convert-null="false" is-need-total="false" is-select="true">
+  <poperty index="page_name_adv!select" explain="page_name_adv!select查询" connect="web_R" cacheAble="false" file="/target/test-classes/cn/test/other/web_core2.sql.xml" is-open="false" name-space="" is-complex-build="true" is-convert-null="false" is-need-total="false" result-format-type="0" is-select="true">
     <sql is-select="true" tables="page" fetch-zero-err="true" is-full-param="true">select `page_id`,`page_name`,`page_url` from page where 9=9 and status=1</sql>
   </poperty>
-  <poperty index="page_type_adv!select" explain="page所有类型查询" connect="web_R" file="/target/test-classes/cn/test/other/web_core2.sql.xml" is-open="false" name-space="" is-complex-build="true" is-convert-null="false" is-need-total="false" is-select="true">
+  <poperty index="page_type_adv!select" explain="page所有类型查询" connect="web_R" file="/target/test-classes/cn/test/other/web_core2.sql.xml" is-open="false" name-space="" is-complex-build="true" is-convert-null="false" is-need-total="false" result-format-type="0" is-select="true">
     <sql is-select="true" tables="page_type" fetch-zero-err="true" is-full-param="true">select pt.page_type_id,pt.page_type_name, pt.page_type_code from page_type pt where 9=9</sql>
   </poperty>
-  <poperty index="page_push!update" explain="线上page内容修改" connect="web_online" safe-args="*" file="/target/test-classes/cn/test/other/web_push.sql.xml" is-open="false" name-space="" is-complex-build="true" is-convert-null="false" is-need-total="false" is-select="false">
+  <poperty index="page_push!update" explain="线上page内容修改" connect="web_online" safe-args="*" file="/target/test-classes/cn/test/other/web_push.sql.xml" is-open="false" name-space="" is-complex-build="true" is-convert-null="false" is-need-total="false" result-format-type="0" is-select="false">
     <sql params="PAGE_NAME|PARENT_ID|PAGE_TEMPLATE|PAGE_TARGET|PAGE_URL|PAGE_LEVEL|DESCRIPTION|STATUS|CTIME|CUSER|PAGE_CONTENT|PAGE_DISPLAY|PAGE_ORDER|PAGE_TYPE|PAGE_BREADCRUMB|PAGE_ID" is-select="false" tables="page" fetch-zero-err="true" is-full-param="true">UPDATE page SET `PAGE_NAME`='$[PAGE_NAME]',`PARENT_ID`='$[PARENT_ID]',`PAGE_TEMPLATE`='$[PAGE_TEMPLATE]', `PAGE_TARGET`='$[PAGE_TARGET]',`PAGE_URL`='$[PAGE_URL]',`PAGE_LEVEL`='$[PAGE_LEVEL]',`DESCRIPTION`='$[DESCRIPTION]', `STATUS`='$[STATUS]',`CTIME`='$[CTIME]',`CUSER`='$[CUSER]',`PAGE_CONTENT`='$[PAGE_CONTENT]', `PAGE_DISPLAY`='$[PAGE_DISPLAY]',`PAGE_ORDER`='$[PAGE_ORDER]',`PAGE_TYPE`='$[PAGE_TYPE]',`PAGE_BREADCRUMB`='$[PAGE_BREADCRUMB]' WHERE `PAGE_ID`='$[PAGE_ID]'</sql>
     <sql params="PAGE_ID|LOG_CONTENT|LOGUSER" is-select="false" tables="log_page" fetch-zero-err="true" is-full-param="true">INSERT INTO log_page (`PAGE_ID`,`PAGE_CONTENT`,`CTIME`,`CUSER`,OPERATION) VALUES ('$[PAGE_ID]','$[LOG_CONTENT]',NOW(),'$[LOGUSER]',3)</sql>
   </poperty>
-  <poperty index="web_server_for_publish!select" explain="web_server_for_publish!select查询" connect="web_R" cacheAble="false" file="/target/test-classes/cn/test/other/web_core2.sql.xml" is-open="false" name-space="" is-complex-build="true" is-convert-null="false" is-need-total="false" is-select="true">
+  <poperty index="web_server_for_publish!select" explain="web_server_for_publish!select查询" connect="web_R" cacheAble="false" file="/target/test-classes/cn/test/other/web_core2.sql.xml" is-open="false" name-space="" is-complex-build="true" is-convert-null="false" is-need-total="false" result-format-type="0" is-select="true">
     <sql is-select="true" tables="web_server" fetch-zero-err="true" is-full-param="true">select web_server_id,web_server_ip,web_server_port,web_server_desc,order_num,status from web_server where 9=9</sql>
   </poperty>
-  <poperty index="file_push!selectOnline" explain="查询线上file表内容" connect="web_online" file="/target/test-classes/cn/test/other/web_push.sql.xml" is-open="false" name-space="" is-complex-build="true" is-convert-null="false" is-need-total="false" is-select="true">
+  <poperty index="file_push!selectOnline" explain="查询线上file表内容" connect="web_online" file="/target/test-classes/cn/test/other/web_push.sql.xml" is-open="false" name-space="" is-complex-build="true" is-convert-null="false" is-need-total="false" result-format-type="0" is-select="true">
     <sql is-select="true" tables="file" fetch-zero-err="true" is-full-param="true">select * from file where status=1 and 9=9</sql>
   </poperty>
-  <poperty index="log_modular!select" explain="log_modular查询" connect="web_R" cacheAble="false" file="/target/test-classes/cn/test/other/web_log.sql.xml" is-open="false" name-space="" is-complex-build="true" is-convert-null="false" is-need-total="false" is-select="true">
+  <poperty index="log_modular!select" explain="log_modular查询" connect="web_R" cacheAble="false" file="/target/test-classes/cn/test/other/web_log.sql.xml" is-open="false" name-space="" is-complex-build="true" is-convert-null="false" is-need-total="false" result-format-type="0" is-select="true">
     <sql is-select="true" tables="log_modular" fetch-zero-err="true" is-full-param="true">select modular_log_id,modular_id,modular_content,ctime,cuser,operation from log_modular where 9=9</sql>
     <result-formatter>
       <date-formatter targetKey="ctime" style="yyyy-MM-dd HH:mm:ss"></date-formatter>
@@ -94,38 +94,38 @@
       <table-cache table="modular" targetKey="modular_id" fields="status,modular_type,modular_name,modular_func"></table-cache>
     </result-formatter>
   </poperty>
-  <poperty index="modular_push!insert" explain="线上modular插入" connect="web_online" safe-args="*" file="/target/test-classes/cn/test/other/web_push.sql.xml" is-open="false" name-space="" is-complex-build="true" is-convert-null="false" is-need-total="false" is-select="false">
+  <poperty index="modular_push!insert" explain="线上modular插入" connect="web_online" safe-args="*" file="/target/test-classes/cn/test/other/web_push.sql.xml" is-open="false" name-space="" is-complex-build="true" is-convert-null="false" is-need-total="false" result-format-type="0" is-select="false">
     <sql params="MODULAR_NAME|MODULAR_TYPE|MODULAR_CONTENT|MODULAR_FUNC|MODULAR_IMAGE|DESCRIPTION|STATUS|CTIME|CUSER|MODULAR_DESCRIPTION|PAGE_TYPE|MODULAR_EDIT_STATUS|MODULAR_EDITOR" is-select="false" tables="modular" fetch-zero-err="true" is-full-param="true">INSERT INTO modular(`modular_name`,`modular_type`,`modular_content`,`modular_func`,`modular_image`,`description`,`status`, `ctime`,`cuser`,`modular_description`,`page_type`,`modular_edit_status`,`modular_editor`) VALUES('$[MODULAR_NAME]','$[MODULAR_TYPE]','$[MODULAR_CONTENT]','$[MODULAR_FUNC]','$[MODULAR_IMAGE]','$[DESCRIPTION]','$[STATUS]', '$[CTIME]','$[CUSER]','$[MODULAR_DESCRIPTION]','$[PAGE_TYPE]','$[MODULAR_EDIT_STATUS]','$[MODULAR_EDITOR]')</sql>
   </poperty>
-  <poperty index="config_file_adv!delete" explain="config_file_adv!delete查询" connect="web" safe-args="*" beforeRun="com.lelife.oa.formatter.DeleteConfigFile" file="/target/test-classes/cn/test/other/web_config_file.sql.xml" is-open="false" name-space="" is-complex-build="true" is-convert-null="false" is-need-total="false" is-select="false">
+  <poperty index="config_file_adv!delete" explain="config_file_adv!delete查询" connect="web" safe-args="*" beforeRun="com.lelife.oa.formatter.DeleteConfigFile" file="/target/test-classes/cn/test/other/web_config_file.sql.xml" is-open="false" name-space="" is-complex-build="true" is-convert-null="false" is-need-total="false" result-format-type="0" is-select="false">
     <sql params="config_file_id" is-select="false" tables="config_files" fetch-zero-err="true" is-full-param="true">update config_files set `status`=2 where config_file_id=$[config_file_id]</sql>
   </poperty>
-  <poperty index="page_test!selectByPageId" explain="file内容查询" connect="web_R" cacheAble="false" file="/target/test-classes/cn/test/other/matchFile.sql.xml" is-open="false" name-space="" is-complex-build="true" is-convert-null="false" is-need-total="false" is-select="true">
+  <poperty index="page_test!selectByPageId" explain="file内容查询" connect="web_R" cacheAble="false" file="/target/test-classes/cn/test/other/matchFile.sql.xml" is-open="false" name-space="" is-complex-build="true" is-convert-null="false" is-need-total="false" result-format-type="0" is-select="true">
     <sql is-select="true" tables="page" fetch-zero-err="true" is-full-param="true">select `page_content`,`page_type` from page where 9=9</sql>
   </poperty>
-  <poperty index="modular_type_test!delete" explain="modular_type_test删除" uniKey="modular_type_id" connect="web" afterRun="com.lelife.oa.formatter.IncludeFileReload" file="/target/test-classes/cn/test/other/web_modular_type.sql.xml" is-open="false" name-space="" is-complex-build="true" is-convert-null="false" is-need-total="false" is-select="false">
+  <poperty index="modular_type_test!delete" explain="modular_type_test删除" uniKey="modular_type_id" connect="web" afterRun="com.lelife.oa.formatter.IncludeFileReload" file="/target/test-classes/cn/test/other/web_modular_type.sql.xml" is-open="false" name-space="" is-complex-build="true" is-convert-null="false" is-need-total="false" result-format-type="0" is-select="false">
     <sql params="modular_type_id" is-select="false" tables="modular_type" fetch-zero-err="true" is-full-param="true">delete from modular_type where modular_type_id=$[modular_type_id]</sql>
   </poperty>
-  <poperty index="modular_type_test!select" explain="modular_type_test查询" connect="web_R" file="/target/test-classes/cn/test/other/web_modular_type.sql.xml" is-open="false" name-space="" is-complex-build="true" is-convert-null="false" is-need-total="false" is-select="true">
+  <poperty index="modular_type_test!select" explain="modular_type_test查询" connect="web_R" file="/target/test-classes/cn/test/other/web_modular_type.sql.xml" is-open="false" name-space="" is-complex-build="true" is-convert-null="false" is-need-total="false" result-format-type="0" is-select="true">
     <sql is-select="true" tables="modular_type" fetch-zero-err="true" is-full-param="true">select `modular_type_id`,`modular_type_name`,`modular_path`,`description`,`page_type_id`,`status`,`ctime`,`cuser` from modular_type where 9=9</sql>
     <result-formatter>
       <table-cache table="qd_jaas_user" targetKey="cuser" fields="name"></table-cache>
       <key-value-formatter cacheIndex="page_type_options!select" cacheKey="page_type_id" cacheValue="page_type_name" targetKey="page_type_id" targetName="page_type_name"></key-value-formatter>
     </result-formatter>
   </poperty>
-  <poperty index="users-search-action" connect="user-connect-rw" is-complex-build="true" explain="users查询" file="/target/test-classes/cn/test/sql/qd_product_center.users.sql.xml" is-open="false" name-space="" is-convert-null="false" is-need-total="false" is-select="true">
+  <poperty index="users-search-action" connect="user-connect-rw" is-complex-build="true" explain="users查询" file="/target/test-classes/cn/test/sql/qd_product_center.users.sql.xml" is-open="false" name-space="" is-convert-null="false" is-need-total="false" result-format-type="0" is-select="true">
     <sql params="status|mySelf" is-select="true" tables="users" fetch-zero-err="true" is-full-param="true">select * from users usr where usr.status=$[status] and $[mySelf] and 9=9</sql>
   </poperty>
-  <poperty index="page_test!delete" explain="page删除" connect="web" afterRun="com.lelife.oa.formatter.ClearPageCache" file="/target/test-classes/cn/test/other/web_page.sql.xml" is-open="false" name-space="" is-complex-build="true" is-convert-null="false" is-need-total="false" is-select="false">
+  <poperty index="page_test!delete" explain="page删除" connect="web" afterRun="com.lelife.oa.formatter.ClearPageCache" file="/target/test-classes/cn/test/other/web_page.sql.xml" is-open="false" name-space="" is-complex-build="true" is-convert-null="false" is-need-total="false" result-format-type="0" is-select="false">
     <sql params="page_id" is-select="false" tables="page" fetch-zero-err="true" is-full-param="true">update page set status=2 where page_id=$[page_id]</sql>
   </poperty>
-  <poperty index="page_type_include!select" explain="page查询" connect="web_R" cacheAble="false" file="/target/test-classes/cn/test/other/web_core.sql.xml" is-open="false" name-space="" is-complex-build="true" is-convert-null="false" is-need-total="false" is-select="true">
+  <poperty index="page_type_include!select" explain="page查询" connect="web_R" cacheAble="false" file="/target/test-classes/cn/test/other/web_core.sql.xml" is-open="false" name-space="" is-complex-build="true" is-convert-null="false" is-need-total="false" result-format-type="0" is-select="true">
     <sql is-select="true" tables="page|page_type" fetch-zero-err="true" is-full-param="true">select p.`page_id`,p.`page_url`,p.`page_type`,pt.`page_type_code`,pt.`page_type_name` from page p left join page_type pt on pt.page_type_id=p.page_type where 9=9</sql>
   </poperty>
-  <poperty index="modular_push!selectLocal" explain="查询本地modular表内容" connect="web_R" safe-args="*" file="/target/test-classes/cn/test/other/web_push.sql.xml" is-open="false" name-space="" is-complex-build="true" is-convert-null="false" is-need-total="false" is-select="true">
+  <poperty index="modular_push!selectLocal" explain="查询本地modular表内容" connect="web_R" safe-args="*" file="/target/test-classes/cn/test/other/web_push.sql.xml" is-open="false" name-space="" is-complex-build="true" is-convert-null="false" is-need-total="false" result-format-type="0" is-select="true">
     <sql is-select="true" tables="modular" fetch-zero-err="true" is-full-param="true">select * from modular where status=1 and 9=9</sql>
   </poperty>
-  <poperty index="page_member!select" explain="pageMember查询" connect="web_R" afterRun="com.lelife.oa.formatter.FormatPageParam" file="/target/test-classes/cn/test/other/web_page.sql.xml" is-open="false" name-space="" is-complex-build="true" is-convert-null="false" is-need-total="false" is-select="true">
+  <poperty index="page_member!select" explain="pageMember查询" connect="web_R" afterRun="com.lelife.oa.formatter.FormatPageParam" file="/target/test-classes/cn/test/other/web_page.sql.xml" is-open="false" name-space="" is-complex-build="true" is-convert-null="false" is-need-total="false" result-format-type="0" is-select="true">
     <sql is-select="true" tables="page" fetch-zero-err="true" is-full-param="true">select `page_id`,`page_id` as id,`page_name`,`page_target`,`parent_id`,`parent_id` as _parentId,`page_template`,`page_url`,`page_level`,`description`,`ctime`,`cuser`,`page_display`,`page_breadcrumb`,`page_order`,`page_type` from page where page_id=248 or parent_id=248 and 9=9</sql>
     <result-formatter>
       <table-cache table="qd_jaas_user" targetKey="cuser" fields="name"></table-cache>
@@ -133,34 +133,34 @@
       <key-value-formatter cacheIndex="page_type_options!select" cacheKey="page_type_id" cacheValue="page_type_code" targetKey="page_type" targetName="page_type_code"></key-value-formatter>
     </result-formatter>
   </poperty>
-  <poperty index="users-remove-action" connect="user-connect-rw" explain="users删除" file="/target/test-classes/cn/test/sql/qd_product_center.users.sql.xml" is-open="false" name-space="" is-complex-build="true" is-convert-null="false" is-need-total="false" is-select="true">
+  <poperty index="users-remove-action" connect="user-connect-rw" explain="users删除" file="/target/test-classes/cn/test/sql/qd_product_center.users.sql.xml" is-open="false" name-space="" is-complex-build="true" is-convert-null="false" is-need-total="false" result-format-type="0" is-select="true">
     <sql is-full-param="false" params="deptId" is-select="true" tables="" fetch-zero-err="true">SELECT a.*,b.loginName,(CASE WHEN b.headImgUrl IS NULL THEN '' ELSE b.headImgUrl END) AS headImgUrl,c.deptName FROM zmt_bc.sale_record a LEFT JOIN zmt_sc.sc_employee b ON a.saleId=b.id LEFT JOIN zmt_sc.sc_department c ON a.deptId=c.id WHERE a.deptId=$[deptId] AND a.orderStatus=0 AND a.orderNewStatus='CLAIM_SUCCESS' AND a.isRefund=0 ORDER BY a.claimSucTime DESC</sql>
   </poperty>
-  <poperty index="url_redirect_oa!insert" explain="url_redirect添加" connect="web" file="/target/test-classes/cn/test/other/url_redirect.sql.xml" is-open="false" name-space="" is-complex-build="true" is-convert-null="false" is-need-total="false" is-select="false">
+  <poperty index="url_redirect_oa!insert" explain="url_redirect添加" connect="web" file="/target/test-classes/cn/test/other/url_redirect.sql.xml" is-open="false" name-space="" is-complex-build="true" is-convert-null="false" is-need-total="false" result-format-type="0" is-select="false">
     <param-formatter>
       <param key="uid" value="${user.uid}"></param>
     </param-formatter>
     <sql params="source_url|redirect_url|uid" is-select="false" tables="url_redirect" fetch-zero-err="true" is-full-param="true">insert into url_redirect(`source_url`,`redirect_url`,`status`,`ctime`,`cuser`) values ('$[source_url]','$[redirect_url]',1,NOW(),$[uid])</sql>
   </poperty>
-  <poperty index="page_type!delete" explain="page_type删除" uniKey="page_type_id" connect="web" file="/target/test-classes/cn/test/other/web_page_type.sql.xml" is-open="false" name-space="" is-complex-build="true" is-convert-null="false" is-need-total="false" is-select="false">
+  <poperty index="page_type!delete" explain="page_type删除" uniKey="page_type_id" connect="web" file="/target/test-classes/cn/test/other/web_page_type.sql.xml" is-open="false" name-space="" is-complex-build="true" is-convert-null="false" is-need-total="false" result-format-type="0" is-select="false">
     <sql params="page_type_id" is-select="false" tables="page_type" fetch-zero-err="true" is-full-param="true">update page_type set `status`=2 where page_type_id='$[page_type_id]'</sql>
   </poperty>
-  <poperty index="url_redirect_oa!select" explain="url_redirect查询" connect="web_R" file="/target/test-classes/cn/test/other/url_redirect.sql.xml" is-open="false" name-space="" is-complex-build="true" is-convert-null="false" is-need-total="false" is-select="true">
+  <poperty index="url_redirect_oa!select" explain="url_redirect查询" connect="web_R" file="/target/test-classes/cn/test/other/url_redirect.sql.xml" is-open="false" name-space="" is-complex-build="true" is-convert-null="false" is-need-total="false" result-format-type="0" is-select="true">
     <sql is-select="true" tables="url_redirect" fetch-zero-err="true" is-full-param="true">select `url_redirect_id`,`redirect_url`,`source_url`,`status`,`ctime`,`cuser` from url_redirect where status=1</sql>
     <result-formatter>
       <table-cache table="qd_jaas_user" targetKey="cuser" fields="name"></table-cache>
     </result-formatter>
   </poperty>
-  <poperty index="include_file_adv_for_page!select" explain="include_file查询" connect="web_R" afterRun="com.lelife.oa.formatter.IncludeFileFormatter" file="/target/test-classes/cn/test/other/web_core2.sql.xml" is-open="false" name-space="" is-complex-build="true" is-convert-null="false" is-need-total="false" is-select="true">
+  <poperty index="include_file_adv_for_page!select" explain="include_file查询" connect="web_R" afterRun="com.lelife.oa.formatter.IncludeFileFormatter" file="/target/test-classes/cn/test/other/web_core2.sql.xml" is-open="false" name-space="" is-complex-build="true" is-convert-null="false" is-need-total="false" result-format-type="0" is-select="true">
     <sql is-select="true" tables="page|file_page_relation|file" fetch-zero-err="true" is-full-param="true">select f.file_name,f.file_id,fp.target_page,f.file_path, f.file_type, f.ctime,p.page_template from file_page_relation fp left join page p on fp.target_page=p.page_id left join file f on fp.resource_file=f.file_id where 9=9</sql>
     <result-formatter>
       <date-formatter targetKey="ctime" style="yyyyMMdd"></date-formatter>
     </result-formatter>
   </poperty>
-  <poperty index="resource_logs!insert" explain="resource_logs插入" connect="web" file="/target/test-classes/cn/test/other/resourse_logs.sql.xml" is-open="false" name-space="" is-complex-build="true" is-convert-null="false" is-need-total="false" is-select="false">
+  <poperty index="resource_logs!insert" explain="resource_logs插入" connect="web" file="/target/test-classes/cn/test/other/resourse_logs.sql.xml" is-open="false" name-space="" is-complex-build="true" is-convert-null="false" is-need-total="false" result-format-type="0" is-select="false">
     <sql params="cuser|resource_name|remark|upload_path" is-select="false" tables="resource_logs" fetch-zero-err="true" is-full-param="true">INSERT INTO resource_logs(`cuser`,`ctime`,`resource_name`,`remark`,`upload_path`) VALUES('$[cuser]',NOW(),'$[resource_name]','$[remark]','$[upload_path]')</sql>
   </poperty>
-  <poperty index="log_page!select" explain="log_page查询" connect="web_R" cacheAble="false" file="/target/test-classes/cn/test/other/web_log.sql.xml" is-open="false" name-space="" is-complex-build="true" is-convert-null="false" is-need-total="false" is-select="true">
+  <poperty index="log_page!select" explain="log_page查询" connect="web_R" cacheAble="false" file="/target/test-classes/cn/test/other/web_log.sql.xml" is-open="false" name-space="" is-complex-build="true" is-convert-null="false" is-need-total="false" result-format-type="0" is-select="true">
     <sql is-select="true" tables="log_page" fetch-zero-err="true" is-full-param="true">select page_log_id,page_id,page_content,ctime,cuser,operation from log_page where 9=9</sql>
     <result-formatter>
       <date-formatter targetKey="ctime" style="yyyy-MM-dd HH:mm:ss"></date-formatter>
@@ -168,83 +168,83 @@
       <table-cache table="page" targetKey="page_id" fields="page_name,page_url"></table-cache>
     </result-formatter>
   </poperty>
-  <poperty index="products-store-action" connect="default" explain="products修改" file="/target/test-classes/cn/test/sql/qd_product_center.products.sql.xml" is-open="false" name-space="" is-complex-build="true" is-convert-null="false" is-need-total="false" is-select="false">
+  <poperty index="products-store-action" connect="default" explain="products修改" file="/target/test-classes/cn/test/sql/qd_product_center.products.sql.xml" is-open="false" name-space="" is-complex-build="true" is-convert-null="false" is-need-total="false" result-format-type="0" is-select="false">
     <sql repeat-concat="^" fetch-zero-err="true" is-full-param="false" params="dg|phone|price|store|status|product_name|ctime|pid" is-select="false" tables="products">update products set dg=$[dg],phone='$[phone]',price=$[price],store=$[store],status=$[status],product_name='$[product_name]',ctime=$[ctime] where pid=$[pid]</sql>
   </poperty>
-  <poperty index="modular_ImgPath!update" explain="modular_test修改" uniKey="modular_id" connect="web" afterRun="com.lelife.oa.formatter.IncludeFileReload" file="/target/test-classes/cn/test/other/web_modular.sql.xml" is-open="false" name-space="" is-complex-build="true" is-convert-null="false" is-need-total="false" is-select="false">
+  <poperty index="modular_ImgPath!update" explain="modular_test修改" uniKey="modular_id" connect="web" afterRun="com.lelife.oa.formatter.IncludeFileReload" file="/target/test-classes/cn/test/other/web_modular.sql.xml" is-open="false" name-space="" is-complex-build="true" is-convert-null="false" is-need-total="false" result-format-type="0" is-select="false">
     <sql params="modular_image|modular_id" is-select="false" tables="modular" fetch-zero-err="true" is-full-param="true">update modular set `modular_image`='$[modular_image]' where modular_id=$[modular_id]</sql>
   </poperty>
-  <poperty index="modular_push!selectOnline" explain="查询线上modular表内容" connect="web_online" safe-args="*" file="/target/test-classes/cn/test/other/web_push.sql.xml" is-open="false" name-space="" is-complex-build="true" is-convert-null="false" is-need-total="false" is-select="true">
+  <poperty index="modular_push!selectOnline" explain="查询线上modular表内容" connect="web_online" safe-args="*" file="/target/test-classes/cn/test/other/web_push.sql.xml" is-open="false" name-space="" is-complex-build="true" is-convert-null="false" is-need-total="false" result-format-type="0" is-select="true">
     <sql is-select="true" tables="modular" fetch-zero-err="true" is-full-param="true">select * from modular where status=1 and 9=9</sql>
   </poperty>
-  <poperty index="ad_show!select" explain="ad_show查询" connect="web_R" cacheAble="false" file="/target/test-classes/cn/test/other/web_show.sql.xml" is-open="false" name-space="" is-complex-build="true" is-convert-null="false" is-need-total="false" is-select="true">
+  <poperty index="ad_show!select" explain="ad_show查询" connect="web_R" cacheAble="false" file="/target/test-classes/cn/test/other/web_show.sql.xml" is-open="false" name-space="" is-complex-build="true" is-convert-null="false" is-need-total="false" result-format-type="0" is-select="true">
     <sql is-select="true" tables="ad_schedule|ad_source|ad_space" fetch-zero-err="true" is-full-param="true">select a.ad_space_id, b.ad_schedule_id,b.ad_schedule_id as schedule_id,ad_schedule_num,b.ad_schedule_name, c.ad_source_resource,c.ad_source_url,c.ad_source_imgpath,c.ad_source_title,c.ad_source_description, c.ad_source_id,c.ad_source_width,c.ad_source_high,c.ad_source_margin_top,c.ad_source_margin_left,c.p_ad_source_id from ad_space a join ad_schedule b on a.ad_space_id=b.ad_space_id left join ad_source c on b.ad_source_id=c.ad_source_id where 9=9 order by b.ad_schedule_num,b.ad_schedule_priority</sql>
     <result-formatter>
       <union-multi-formatter targetKey="ad_schedule_id" uniKey="ad_schedule_id" uniIndex="ad_rules!select" asColumn="RULES"></union-multi-formatter>
     </result-formatter>
   </poperty>
-  <poperty index="modular_editor!select" explain="modular_编辑状态查询" connect="web_R" cacheAble="false" file="/target/test-classes/cn/test/other/web_modular.sql.xml" is-open="false" name-space="" is-complex-build="true" is-convert-null="false" is-need-total="false" is-select="true">
+  <poperty index="modular_editor!select" explain="modular_编辑状态查询" connect="web_R" cacheAble="false" file="/target/test-classes/cn/test/other/web_modular.sql.xml" is-open="false" name-space="" is-complex-build="true" is-convert-null="false" is-need-total="false" result-format-type="0" is-select="true">
     <param-formatter>
       <param key="uid" value="${user.uid}"></param>
     </param-formatter>
     <sql params="modular_id" is-select="true" tables="modular" fetch-zero-err="true" is-full-param="true">select `modular_edit_status`, `modular_editor` from modular where modular_id=$[modular_id]</sql>
   </poperty>
-  <poperty index="page_type!update" explain="page_type修改" uniKey="page_type_id" connect="web" file="/target/test-classes/cn/test/other/web_page_type.sql.xml" is-open="false" name-space="" is-complex-build="true" is-convert-null="false" is-need-total="false" is-select="false">
+  <poperty index="page_type!update" explain="page_type修改" uniKey="page_type_id" connect="web" file="/target/test-classes/cn/test/other/web_page_type.sql.xml" is-open="false" name-space="" is-complex-build="true" is-convert-null="false" is-need-total="false" result-format-type="0" is-select="false">
     <sql params="page_type_name|page_type_code|description|status|page_type_id" is-select="false" tables="page_type" fetch-zero-err="true" is-full-param="true">update page_type set `page_type_name`='$[page_type_name]',`page_type_code`='$[page_type_code]',`description`='$[description]',`status`=$[status] where page_type_id='$[page_type_id]'</sql>
   </poperty>
-  <poperty index="config_file_adv!update" explain="config_file_adv!update查询" connect="web" safe-args="*" file="/target/test-classes/cn/test/other/web_config_file.sql.xml" is-open="false" name-space="" is-complex-build="true" is-convert-null="false" is-need-total="false" is-select="false">
+  <poperty index="config_file_adv!update" explain="config_file_adv!update查询" connect="web" safe-args="*" file="/target/test-classes/cn/test/other/web_config_file.sql.xml" is-open="false" name-space="" is-complex-build="true" is-convert-null="false" is-need-total="false" result-format-type="0" is-select="false">
     <sql params="config_file_path|config_file_name|config_file_desc|config_file_id" is-select="false" tables="config_files" fetch-zero-err="true" is-full-param="true">update config_files set `config_file_path`='$[config_file_path]',`config_file_name`='$[config_file_name]',`config_file_desc`='$[config_file_desc]' where config_file_id=$[config_file_id]</sql>
   </poperty>
-  <poperty index="products-search-action" connect="default" explain="products查询" is-convert-null="true" file="/target/test-classes/cn/test/sql/qd_product_center.products.sql.xml" is-open="false" name-space="" is-complex-build="true" is-need-total="false" is-select="true">
+  <poperty index="products-search-action" connect="default" explain="products查询" is-convert-null="true" file="/target/test-classes/cn/test/sql/qd_product_center.products.sql.xml" is-open="false" name-space="" is-complex-build="true" is-need-total="false" result-format-type="0" is-select="true">
     <sql is-select="true" tables="products" fetch-zero-err="true" is-full-param="true">select * from products where 9=9</sql>
     <result-formatter>
       <left-join-multi-formatter result-key="pid" left-join="products_log-search-action" on-key="pid" columns="action,ctime as ct"></left-join-multi-formatter>
     </result-formatter>
   </poperty>
-  <poperty index="url_redirect_web!select" explain="url_redirect查询" connect="web_R" cacheAble="false" file="/target/test-classes/cn/test/other/url_redirect.sql.xml" is-open="false" name-space="" is-complex-build="true" is-convert-null="false" is-need-total="false" is-select="true">
+  <poperty index="url_redirect_web!select" explain="url_redirect查询" connect="web_R" cacheAble="false" file="/target/test-classes/cn/test/other/url_redirect.sql.xml" is-open="false" name-space="" is-complex-build="true" is-convert-null="false" is-need-total="false" result-format-type="0" is-select="true">
     <sql is-select="true" tables="url_redirect" fetch-zero-err="true" is-full-param="true">select `redirect_url`,`source_url` from url_redirect where status=1</sql>
   </poperty>
-  <poperty index="modular_path!select" explain="modular_path查询" connect="web_R" file="/target/test-classes/cn/test/other/web_modular.sql.xml" is-open="false" name-space="" is-complex-build="true" is-convert-null="false" is-need-total="false" is-select="true">
+  <poperty index="modular_path!select" explain="modular_path查询" connect="web_R" file="/target/test-classes/cn/test/other/web_modular.sql.xml" is-open="false" name-space="" is-complex-build="true" is-convert-null="false" is-need-total="false" result-format-type="0" is-select="true">
     <sql is-select="true" tables="modular|page_type|modular_type" fetch-zero-err="true" is-full-param="true">select m.`modular_id`,m.`modular_type`,m.`modular_func`,m.`status`, mt.`modular_path`, mt.page_type_id from modular m left join modular_type mt on m.modular_type=mt.modular_type_id left join page_type pt on mt.page_type_id=pt.page_type_id where 9=9</sql>
   </poperty>
-  <poperty index="users-store-action" connect="user-connect-rw" explain="users修改" file="/target/test-classes/cn/test/sql/qd_product_center.users.sql.xml" is-open="false" name-space="" is-complex-build="true" is-convert-null="false" is-need-total="false" is-select="false">
+  <poperty index="users-store-action" connect="user-connect-rw" explain="users修改" file="/target/test-classes/cn/test/sql/qd_product_center.users.sql.xml" is-open="false" name-space="" is-complex-build="true" is-convert-null="false" is-need-total="false" result-format-type="0" is-select="false">
     <sql repeat-concat="^" fetch-zero-err="true" is-full-param="false" params="utime|user_name|status|age|ctime|mobile|uid" is-select="false" tables="users">update users set utime=$[utime],user_name='$[user_name]',status=$[status],age=$[age],ctime=$[ctime],mobile='$[mobile]' where uid=$[uid]</sql>
   </poperty>
-  <poperty index="modular_func_adv!select" explain="modular_func_adv!select查询" connect="web_R" file="/target/test-classes/cn/test/other/web_core2.sql.xml" is-open="false" name-space="" is-complex-build="true" is-convert-null="false" is-need-total="false" is-select="true">
+  <poperty index="modular_func_adv!select" explain="modular_func_adv!select查询" connect="web_R" file="/target/test-classes/cn/test/other/web_core2.sql.xml" is-open="false" name-space="" is-complex-build="true" is-convert-null="false" is-need-total="false" result-format-type="0" is-select="true">
     <sql is-select="true" tables="modular" fetch-zero-err="true" is-full-param="true">select modular_id,modular_name,modular_func from modular where 9=9 and status=1</sql>
   </poperty>
-  <poperty index="modular_test!update" explain="modular_test修改" uniKey="modular_id" connect="web" afterRun="com.lelife.oa.formatter.ReloadModular" file="/target/test-classes/cn/test/other/web_modular.sql.xml" is-open="false" name-space="" is-complex-build="true" is-convert-null="false" is-need-total="false" is-select="false">
+  <poperty index="modular_test!update" explain="modular_test修改" uniKey="modular_id" connect="web" afterRun="com.lelife.oa.formatter.ReloadModular" file="/target/test-classes/cn/test/other/web_modular.sql.xml" is-open="false" name-space="" is-complex-build="true" is-convert-null="false" is-need-total="false" result-format-type="0" is-select="false">
     <param-formatter>
       <param key="uid" value="${user.uid}"></param>
     </param-formatter>
     <sql params="modular_id|modular_name|modular_type|modular_func|modular_image|description|modular_description|cuser|page_type|modular_id" is-select="false" tables="modular" fetch-zero-err="true" is-full-param="true">update modular set `modular_id`=$[modular_id],`modular_name`='$[modular_name]',`modular_type`=$[modular_type],`modular_func`='$[modular_func]',`modular_image`='$[modular_image]',`description`='$[description]',`modular_description`='$[modular_description]',`ctime`=NOW(),`cuser`=$[cuser],`page_type`='$[page_type]' where modular_id=$[modular_id]</sql>
   </poperty>
-  <poperty index="page_adv!select" explain="page查询" connect="web_R" afterRun="com.lelife.oa.formatter.FormatPageParam" cacheAble="false" file="/target/test-classes/cn/test/other/web_core2.sql.xml" is-open="false" name-space="" is-complex-build="true" is-convert-null="false" is-need-total="false" is-select="true">
+  <poperty index="page_adv!select" explain="page查询" connect="web_R" afterRun="com.lelife.oa.formatter.FormatPageParam" cacheAble="false" file="/target/test-classes/cn/test/other/web_core2.sql.xml" is-open="false" name-space="" is-complex-build="true" is-convert-null="false" is-need-total="false" result-format-type="0" is-select="true">
     <sql is-select="true" tables="page" fetch-zero-err="true" is-full-param="true">select `page_id`,`page_id` as id,`page_name`,`page_target`,`parent_id`,`parent_id` as _parentId,`page_url`,`page_level`, page_display,page_breadcrumb,page_order,description,page_type from page where 9=9</sql>
     <result-formatter>
       <key-value-formatter cacheIndex="page_type_adv!select" cacheKey="page_type_id" cacheValue="page_type_code" targetKey="page_type" targetName="page_type_code"></key-value-formatter>
     </result-formatter>
   </poperty>
-  <poperty index="web_publish!update" explain="web_publish修改" connect="web" file="/target/test-classes/cn/test/other/web_publish.sql.xml" is-open="false" name-space="" is-complex-build="true" is-convert-null="false" is-need-total="false" is-select="false">
+  <poperty index="web_publish!update" explain="web_publish修改" connect="web" file="/target/test-classes/cn/test/other/web_publish.sql.xml" is-open="false" name-space="" is-complex-build="true" is-convert-null="false" is-need-total="false" result-format-type="0" is-select="false">
     <param-formatter>
       <param key="uid" value="${user.uid}"></param>
       <param key="uname" value="${user.name}"></param>
     </param-formatter>
     <sql params="uname|message|uname|log_message|status|uid|web_publish_id" is-select="false" tables="web_publish" fetch-zero-err="true" is-full-param="true">update web_publish set message=concat('[','$[uname]',' ',NOW(),']','$[message]'),log_message=concat('[','$[uname]',' ',NOW(),']','$[log_message]'),status='$[status]',ctime=now(),cuser=$[uid] where web_publish_id='$[web_publish_id]'</sql>
   </poperty>
-  <poperty index="modular_test!selectModels" explain="modular查询，通过函数名称" safeArgs="modular_func" connect="web_R" file="/target/test-classes/cn/test/other/matchFile.sql.xml" is-open="false" name-space="" is-complex-build="true" is-convert-null="false" is-need-total="false" is-select="true">
+  <poperty index="modular_test!selectModels" explain="modular查询，通过函数名称" safeArgs="modular_func" connect="web_R" file="/target/test-classes/cn/test/other/matchFile.sql.xml" is-open="false" name-space="" is-complex-build="true" is-convert-null="false" is-need-total="false" result-format-type="0" is-select="true">
     <sql params="modular_func" is-select="true" tables="modular" fetch-zero-err="true" is-full-param="true">select `modular_id`,`modular_name`,`modular_type`,`modular_func`,`status`,`modular_edit_status` from modular where modular_func in ($[modular_func]) and status=1</sql>
   </poperty>
-  <poperty index="modular_type_push!selectOnline" explain="查询线上modular_type表内容" connect="web_online" file="/target/test-classes/cn/test/other/web_push.sql.xml" is-open="false" name-space="" is-complex-build="true" is-convert-null="false" is-need-total="false" is-select="true">
+  <poperty index="modular_type_push!selectOnline" explain="查询线上modular_type表内容" connect="web_online" file="/target/test-classes/cn/test/other/web_push.sql.xml" is-open="false" name-space="" is-complex-build="true" is-convert-null="false" is-need-total="false" result-format-type="0" is-select="true">
     <sql is-select="true" tables="modular_type" fetch-zero-err="true" is-full-param="true">select * from modular_type where status=1 and 9=9</sql>
   </poperty>
-  <poperty index="products-query-action" connect="default" explain="products查询" file="/target/test-classes/cn/test/sql/qd_product_center.products.sql.xml" is-open="false" name-space="" is-complex-build="true" is-convert-null="false" is-need-total="false" is-select="true">
+  <poperty index="products-query-action" connect="default" explain="products查询" file="/target/test-classes/cn/test/sql/qd_product_center.products.sql.xml" is-open="false" name-space="" is-complex-build="true" is-convert-null="false" is-need-total="false" result-format-type="0" is-select="true">
     <sql params="pid|dg|phone|price|store|status|product_name|ctime" is-select="true" tables="products" fetch-zero-err="true" is-full-param="true">select dg,phone,price,store,status,product_name,pid,ctime from products where pid=$[pid] and dg=$[dg] and phone='$[phone]' and price=$[price] and store=$[store] and status=$[status] and product_name='$[product_name]' and ctime=$[ctime]</sql>
   </poperty>
-  <poperty index="file_test!selectByFileId" explain="file内容查询" connect="web_R" cacheAble="false" file="/target/test-classes/cn/test/other/matchFile.sql.xml" is-open="false" name-space="" is-complex-build="true" is-convert-null="false" is-need-total="false" is-select="true">
+  <poperty index="file_test!selectByFileId" explain="file内容查询" connect="web_R" cacheAble="false" file="/target/test-classes/cn/test/other/matchFile.sql.xml" is-open="false" name-space="" is-complex-build="true" is-convert-null="false" is-need-total="false" result-format-type="0" is-select="true">
     <sql is-select="true" tables="file" fetch-zero-err="true" is-full-param="true">select file_id,file_path,file_content from file where 9=9</sql>
   </poperty>
-  <poperty index="web_publish!select" explain="web_publish查询" connect="web_R" cacheAble="false" file="/target/test-classes/cn/test/other/web_publish.sql.xml" is-open="false" name-space="" is-complex-build="true" is-convert-null="false" is-need-total="false" is-select="true">
+  <poperty index="web_publish!select" explain="web_publish查询" connect="web_R" cacheAble="false" file="/target/test-classes/cn/test/other/web_publish.sql.xml" is-open="false" name-space="" is-complex-build="true" is-convert-null="false" is-need-total="false" result-format-type="0" is-select="true">
     <sql is-select="true" tables="web_publish" fetch-zero-err="true" is-full-param="true">select * from web_publish where 9=9</sql>
     <result-formatter>
       <date-formatter targetKey="ctime,checktime" style="yyyy-MM-dd HH:mm:ss"></date-formatter>
@@ -252,38 +252,38 @@
       <table-cache table="qd_jaas_user" targetKey="checkuser" fields="name|checkusername"></table-cache>
     </result-formatter>
   </poperty>
-  <poperty index="modular_file!select" explain="modular_file查询" connect="web_R" cacheAble="false" file="/target/test-classes/cn/test/other/web_core.sql.xml" is-open="false" name-space="" is-complex-build="true" is-convert-null="false" is-need-total="false" is-select="true">
+  <poperty index="modular_file!select" explain="modular_file查询" connect="web_R" cacheAble="false" file="/target/test-classes/cn/test/other/web_core.sql.xml" is-open="false" name-space="" is-complex-build="true" is-convert-null="false" is-need-total="false" result-format-type="0" is-select="true">
     <sql is-select="true" tables="page_type|modular_type" fetch-zero-err="true" is-full-param="true">select mt.`modular_path`,mt.`page_type_id`,pt.`page_type_code` from modular_type mt left join page_type pt on pt.page_type_id=mt.page_type_id where 9=9</sql>
   </poperty>
-  <poperty index="page_file_include_page!update" explain="page_file_include!update查询" connect="web" afterRun="com.lelife.oa.formatter.IncludeFileReload" file="/target/test-classes/cn/test/other/web_core2.sql.xml" is-open="false" name-space="" is-complex-build="true" is-convert-null="false" is-need-total="false" is-select="false">
+  <poperty index="page_file_include_page!update" explain="page_file_include!update查询" connect="web" afterRun="com.lelife.oa.formatter.IncludeFileReload" file="/target/test-classes/cn/test/other/web_core2.sql.xml" is-open="false" name-space="" is-complex-build="true" is-convert-null="false" is-need-total="false" result-format-type="0" is-select="false">
     <param-formatter>
       <param key="uid" value="${user.uid}"></param>
     </param-formatter>
     <sql fullParamOnly="true" params="file_id" is-select="false" tables="file_page_relation" fetch-zero-err="true" is-full-param="true">delete from file_page_relation where resource_file=$[file_id] and target_page not in(select page_type_code as target_page from page_type)</sql>
-    <sql repeat="pageId" fullParamOnly="true" repeat-concat="^" params="file_id|pageId|uid" is-select="false" tables="file_page_relation" fetch-zero-err="true" is-full-param="true">insert into file_page_relation(resource_file,target_page,include_type,include_file_type,ctime,cuser) values($[file_id],$[pageId],1,1,NOW(),$[uid])</sql>
+    <sql repeat="pageId" fullParamOnly="true" params="file_id|pageId|uid" repeat-concat="^" is-select="false" tables="file_page_relation" fetch-zero-err="true" is-full-param="true">insert into file_page_relation(resource_file,target_page,include_type,include_file_type,ctime,cuser) values($[file_id],$[pageId],1,1,NOW(),$[uid])</sql>
   </poperty>
-  <poperty index="ad_rules!select" explain="ad_rule查询" connect="web_R" file="/target/test-classes/cn/test/other/web_show.sql.xml" is-open="false" name-space="" is-complex-build="true" is-convert-null="false" is-need-total="false" is-select="true">
+  <poperty index="ad_rules!select" explain="ad_rule查询" connect="web_R" file="/target/test-classes/cn/test/other/web_show.sql.xml" is-open="false" name-space="" is-complex-build="true" is-convert-null="false" is-need-total="false" result-format-type="0" is-select="true">
     <sql is-select="true" tables="ad_rule|ad_schedule_rule_raltion" fetch-zero-err="true" is-full-param="true">select asrr.ad_schedule_id , asrr.rule_param,asrr.ad_schedule_id, ar.rule_object from ad_schedule_rule_raltion asrr left join ad_rule ar on asrr.ad_rule_id=ar.ad_rule_id where 9=9 and ar.status=1 and asrr.status=1</sql>
   </poperty>
-  <poperty index="modular_type_push!selectLocal" explain="查询本地modular_type表内容" connect="web_R" file="/target/test-classes/cn/test/other/web_push.sql.xml" is-open="false" name-space="" is-complex-build="true" is-convert-null="false" is-need-total="false" is-select="true">
+  <poperty index="modular_type_push!selectLocal" explain="查询本地modular_type表内容" connect="web_R" file="/target/test-classes/cn/test/other/web_push.sql.xml" is-open="false" name-space="" is-complex-build="true" is-convert-null="false" is-need-total="false" result-format-type="0" is-select="true">
     <sql is-select="true" tables="modular_type" fetch-zero-err="true" is-full-param="true">select * from modular_type where status=1 and 9=9</sql>
   </poperty>
-  <poperty index="config_file_content_adv!select" explain="config_file_content_adv查询" connect="web_R" file="/target/test-classes/cn/test/other/web_config_file.sql.xml" is-open="false" name-space="" is-complex-build="true" is-convert-null="false" is-need-total="false" is-select="true">
+  <poperty index="config_file_content_adv!select" explain="config_file_content_adv查询" connect="web_R" file="/target/test-classes/cn/test/other/web_config_file.sql.xml" is-open="false" name-space="" is-complex-build="true" is-convert-null="false" is-need-total="false" result-format-type="0" is-select="true">
     <sql is-select="true" tables="config_files" fetch-zero-err="true" is-full-param="true">select `config_file_id`,`config_file_path`,`config_file_content`,`config_file_type` from config_files where 9=9 and status=1</sql>
   </poperty>
-  <poperty index="products_log-query-action" connect="default" explain="products_log查询" file="/target/test-classes/cn/test/sql/demo_product_center.products_log.sql.xml" is-open="false" name-space="" is-complex-build="true" is-convert-null="false" is-need-total="false" is-select="true">
+  <poperty index="products_log-query-action" connect="default" explain="products_log查询" file="/target/test-classes/cn/test/sql/demo_product_center.products_log.sql.xml" is-open="false" name-space="" is-complex-build="true" is-convert-null="false" is-need-total="false" result-format-type="0" is-select="true">
     <sql params="plog_id|uid|product_name|action|pid|ctime" is-select="true" tables="products_log" fetch-zero-err="true" is-full-param="true">select uid,plog_id,product_name,action,pid,ctime from products_log where plog_id=$[plog_id] and uid=$[uid] and product_name='$[product_name]' and action='$[action]' and pid=$[pid] and ctime=$[ctime]</sql>
   </poperty>
-  <poperty index="products-add-action" connect="default" explain="products插入" file="/target/test-classes/cn/test/sql/qd_product_center.products.sql.xml" is-open="false" name-space="" is-complex-build="true" is-convert-null="false" is-need-total="false" is-select="false">
+  <poperty index="products-add-action" connect="default" explain="products插入" file="/target/test-classes/cn/test/sql/qd_product_center.products.sql.xml" is-open="false" name-space="" is-complex-build="true" is-convert-null="false" is-need-total="false" result-format-type="0" is-select="false">
     <sql repeat-concat="^" fetch-zero-err="true" params="dg|phone|price|store|status|product_name|ctime" is-select="false" tables="products" is-full-param="true">insert into products(dg,phone,price,store,status,product_name,ctime) value ($[dg],'$[phone]',$[price],$[store],$[status],'$[product_name]',$[ctime])</sql>
   </poperty>
-  <poperty index="web_server_ip!update" explain="web_server_for_publish!select查询" connect="web" file="/target/test-classes/cn/test/other/web_core2.sql.xml" is-open="false" name-space="" is-complex-build="true" is-convert-null="false" is-need-total="false" is-select="false">
+  <poperty index="web_server_ip!update" explain="web_server_for_publish!select查询" connect="web" file="/target/test-classes/cn/test/other/web_core2.sql.xml" is-open="false" name-space="" is-complex-build="true" is-convert-null="false" is-need-total="false" result-format-type="0" is-select="false">
     <sql params="web_server_ip|web_server_port|web_server_desc|order_num|status|web_server_id" is-select="false" tables="web_server" fetch-zero-err="true" is-full-param="true">update web_server set `web_server_ip`='$[web_server_ip]',`web_server_port`='$[web_server_port]',`web_server_desc`='$[web_server_desc]',`order_num`='$[order_num]',`status`='$[status]' where `web_server_id`='$[web_server_id]'</sql>
   </poperty>
-  <poperty index="page_push!selectOnline" explain="查询线上page表内容" connect="web_online" file="/target/test-classes/cn/test/other/web_push.sql.xml" is-open="false" name-space="" is-complex-build="true" is-convert-null="false" is-need-total="false" is-select="true">
+  <poperty index="page_push!selectOnline" explain="查询线上page表内容" connect="web_online" file="/target/test-classes/cn/test/other/web_push.sql.xml" is-open="false" name-space="" is-complex-build="true" is-convert-null="false" is-need-total="false" result-format-type="0" is-select="true">
     <sql is-select="true" tables="page" fetch-zero-err="true" is-full-param="true">select * from page where status=1 and 9=9</sql>
   </poperty>
-  <poperty index="file_adv_for_manage!select" explain="file_adv_for_manage!select查询" connect="web_R" cacheAble="false" file="/target/test-classes/cn/test/other/web_core2.sql.xml" is-open="false" name-space="" is-complex-build="true" is-convert-null="false" is-need-total="false" is-select="true">
+  <poperty index="file_adv_for_manage!select" explain="file_adv_for_manage!select查询" connect="web_R" cacheAble="false" file="/target/test-classes/cn/test/other/web_core2.sql.xml" is-open="false" name-space="" is-complex-build="true" is-convert-null="false" is-need-total="false" result-format-type="0" is-select="true">
     <sql is-select="true" tables="file_page_relation|file" fetch-zero-err="true" is-full-param="true">select DISTINCT `file_id`,`file_name`,`file_path`,`include_position`,`file_type`,f.`target_page`,`file_order`,`description`,`isCompress`,f.`status`,f.`ctime`,f.`cuser` from file f left join file_page_relation fp on f.file_id=fp.resource_file where 9=9 and f.status=1</sql>
     <result-formatter>
       <date-formatter targetKey="ctime" style="yyyy-MM-dd HH:mm:ss"></date-formatter>
@@ -292,146 +292,146 @@
       <union-multi-formatter targetKey="file_id" uniKey="resource_file" uniIndex="file_page_relation_adv!select" asColumn="TARGETS"></union-multi-formatter>
     </result-formatter>
   </poperty>
-  <poperty index="file_test!insert" explain="file_test插入" uniKey="file_id" connect="web" beforeRun="com.lelife.oa.formatter.CreateFile" afterRun="com.lelife.oa.formatter.IncludeFileReload" safe-args="*" file="/target/test-classes/cn/test/other/web_file.sql.xml" is-open="false" name-space="" is-complex-build="true" is-convert-null="false" is-need-total="false" is-select="false">
+  <poperty index="file_test!insert" explain="file_test插入" uniKey="file_id" connect="web" beforeRun="com.lelife.oa.formatter.CreateFile" afterRun="com.lelife.oa.formatter.IncludeFileReload" safe-args="*" file="/target/test-classes/cn/test/other/web_file.sql.xml" is-open="false" name-space="" is-complex-build="true" is-convert-null="false" is-need-total="false" result-format-type="0" is-select="false">
     <param-formatter>
       <param key="uid" value="${user.uid}"></param>
     </param-formatter>
     <sql params="file_name|file_path|file_type|target_page|file_order|description|isCompress|uid|file_content|include_position" is-select="false" tables="file" fetch-zero-err="true" is-full-param="true">insert into file(`file_name`,`file_path`,`file_type`,`target_page`,`file_order`,`description`,`isCompress`,`status`,`ctime`,`cuser`,`file_content`,`include_position`) values ('$[file_name]','$[file_path]',$[file_type],'$[target_page]',$[file_order],'$[description]','$[isCompress]',1,NOW(),$[uid],'$[file_content]','$[include_position]')</sql>
   </poperty>
-  <poperty index="file_content!update" explain="file_contet修改" uniKey="file_id" connect="web" safe-args="*" beforeRun="com.lelife.oa.formatter.FileAuth" file="/target/test-classes/cn/test/other/web_file.sql.xml" is-open="false" name-space="" is-complex-build="true" is-convert-null="false" is-need-total="false" is-select="false">
+  <poperty index="file_content!update" explain="file_contet修改" uniKey="file_id" connect="web" safe-args="*" beforeRun="com.lelife.oa.formatter.FileAuth" file="/target/test-classes/cn/test/other/web_file.sql.xml" is-open="false" name-space="" is-complex-build="true" is-convert-null="false" is-need-total="false" result-format-type="0" is-select="false">
     <param-formatter>
       <param key="uid" value="${user.uid}"></param>
     </param-formatter>
     <sql params="file_content|uid|file_id" is-select="false" tables="file" fetch-zero-err="true" is-full-param="true">update file set `file_content`='$[file_content]', ctime=NOW(), cuser=$[uid] where file_id=$[file_id]</sql>
     <sql params="file_id|file_content|uid" is-select="false" tables="log_file" fetch-zero-err="true" is-full-param="true">insert into log_file (`file_id`,`file_content`,`ctime`,`cuser`,operation) values ($[file_id],'$[file_content]',NOW(),$[uid],3)</sql>
   </poperty>
-  <poperty index="config_file_adv!insert" explain="config_file_adv!insert查询" connect="web" safe-args="*" beforeRun="com.lelife.oa.formatter.CreateConfigFile" file="/target/test-classes/cn/test/other/web_config_file.sql.xml" is-open="false" name-space="" is-complex-build="true" is-convert-null="false" is-need-total="false" is-select="false">
+  <poperty index="config_file_adv!insert" explain="config_file_adv!insert查询" connect="web" safe-args="*" beforeRun="com.lelife.oa.formatter.CreateConfigFile" file="/target/test-classes/cn/test/other/web_config_file.sql.xml" is-open="false" name-space="" is-complex-build="true" is-convert-null="false" is-need-total="false" result-format-type="0" is-select="false">
     <param-formatter>
       <param key="uid" value="${user.uid}"></param>
     </param-formatter>
     <sql params="config_file_path|config_file_name|config_file_desc|config_file_type|uid|config_file_content" is-select="false" tables="config_files" fetch-zero-err="true" is-full-param="true">insert into config_files(`config_file_path`,`config_file_name`,`config_file_desc`,`status`,`config_file_type`,`ctime`,`cuser`, `config_file_content`) values ('$[config_file_path]','$[config_file_name]','$[config_file_desc]',1,$[config_file_type],NOW(),$[uid],'$[config_file_content]')</sql>
   </poperty>
-  <poperty index="page_push!selectLocal" explain="查询本地page表内容" connect="web_R" file="/target/test-classes/cn/test/other/web_push.sql.xml" is-open="false" name-space="" is-complex-build="true" is-convert-null="false" is-need-total="false" is-select="true">
+  <poperty index="page_push!selectLocal" explain="查询本地page表内容" connect="web_R" file="/target/test-classes/cn/test/other/web_push.sql.xml" is-open="false" name-space="" is-complex-build="true" is-convert-null="false" is-need-total="false" result-format-type="0" is-select="true">
     <sql is-select="true" tables="page" fetch-zero-err="true" is-full-param="true">select * from page where status=1 and 9=9</sql>
   </poperty>
-  <poperty index="page_adv_for_publish!select" explain="page_adv_for_publish!select查询" connect="web_R" cacheAble="false" file="/target/test-classes/cn/test/other/web_core2.sql.xml" is-open="false" name-space="" is-complex-build="true" is-convert-null="false" is-need-total="false" is-select="true">
+  <poperty index="page_adv_for_publish!select" explain="page_adv_for_publish!select查询" connect="web_R" cacheAble="false" file="/target/test-classes/cn/test/other/web_core2.sql.xml" is-open="false" name-space="" is-complex-build="true" is-convert-null="false" is-need-total="false" result-format-type="0" is-select="true">
     <sql is-select="true" tables="page" fetch-zero-err="true" is-full-param="true">select page_id,page_name,page_url,ctime,cuser,page_type,page_order from page where 9=9 and status=1 order by ctime desc</sql>
     <result-formatter>
       <date-formatter targetKey="ctime" style="yyyy-MM-dd HH:mm:ss"></date-formatter>
       <table-cache table="qd_jaas_user" targetKey="cuser" fields="name"></table-cache>
     </result-formatter>
   </poperty>
-  <poperty index="file_test!select" explain="file_test查询" connect="web_R" file="/target/test-classes/cn/test/other/web_file.sql.xml" is-open="false" name-space="" is-complex-build="true" is-convert-null="false" is-need-total="false" is-select="true">
+  <poperty index="file_test!select" explain="file_test查询" connect="web_R" file="/target/test-classes/cn/test/other/web_file.sql.xml" is-open="false" name-space="" is-complex-build="true" is-convert-null="false" is-need-total="false" result-format-type="0" is-select="true">
     <sql is-select="true" tables="file" fetch-zero-err="true" is-full-param="true">select `file_id`,`file_name`,`file_path`,`file_type`,`target_page`,`file_order`,`description`,`isCompress`,`status`,`ctime`,`cuser` from file where 9=9 and status=1</sql>
     <result-formatter>
       <table-cache table="qd_jaas_user" targetKey="cuser" fields="name"></table-cache>
       <key-value-formatter cacheIndex="page_type_options!select" cacheKey="page_type_code" cacheValue="page_type_name" targetKey="target_page" targetName="page_type_name"></key-value-formatter>
     </result-formatter>
   </poperty>
-  <poperty index="page_type!select" explain="page_type查询" connect="web_R" file="/target/test-classes/cn/test/other/web_page_type.sql.xml" is-open="false" name-space="" is-complex-build="true" is-convert-null="false" is-need-total="false" is-select="true">
+  <poperty index="page_type!select" explain="page_type查询" connect="web_R" file="/target/test-classes/cn/test/other/web_page_type.sql.xml" is-open="false" name-space="" is-complex-build="true" is-convert-null="false" is-need-total="false" result-format-type="0" is-select="true">
     <sql is-select="true" tables="page_type" fetch-zero-err="true" is-full-param="true">select `page_type_id`,`page_type_name`,`page_type_code`,`description`,`status`,`ctime`,`cuser` from page_type where 9=9</sql>
   </poperty>
-  <poperty index="page_push!insert" explain="线上page插入" connect="web_online" safe-args="*" file="/target/test-classes/cn/test/other/web_push.sql.xml" is-open="false" name-space="" is-complex-build="true" is-convert-null="false" is-need-total="false" is-select="false">
+  <poperty index="page_push!insert" explain="线上page插入" connect="web_online" safe-args="*" file="/target/test-classes/cn/test/other/web_push.sql.xml" is-open="false" name-space="" is-complex-build="true" is-convert-null="false" is-need-total="false" result-format-type="0" is-select="false">
     <sql params="PAGE_NAME|PARENT_ID|PAGE_TEMPLATE|PAGE_TARGET|PAGE_URL|PAGE_LEVEL|DESCRIPTION|STATUS|CTIME|CUSER|PAGE_CONTENT|PAGE_DISPLAY|PAGE_ORDER|PAGE_TYPE|PAGE_BREADCRUMB" is-select="false" tables="page" fetch-zero-err="true" is-full-param="true">INSERT INTO page(`page_name`,`parent_id`,`page_template`,`page_target`,`page_url`,`page_level`,`description`, `status`,`ctime`,`cuser`,`page_content`,`page_display`,`page_order`,`page_type`,`page_breadcrumb`) VALUES('$[PAGE_NAME]','$[PARENT_ID]','$[PAGE_TEMPLATE]','$[PAGE_TARGET]','$[PAGE_URL]','$[PAGE_LEVEL]','$[DESCRIPTION]', '$[STATUS]','$[CTIME]','$[CUSER]','$[PAGE_CONTENT]','$[PAGE_DISPLAY]','$[PAGE_ORDER]','$[PAGE_TYPE]','$[PAGE_BREADCRUMB]')</sql>
   </poperty>
-  <poperty index="web_server_ip!detele" explain="web_server_for_publish!select查询" connect="web" file="/target/test-classes/cn/test/other/web_core2.sql.xml" is-open="false" name-space="" is-complex-build="true" is-convert-null="false" is-need-total="false" is-select="false">
+  <poperty index="web_server_ip!detele" explain="web_server_for_publish!select查询" connect="web" file="/target/test-classes/cn/test/other/web_core2.sql.xml" is-open="false" name-space="" is-complex-build="true" is-convert-null="false" is-need-total="false" result-format-type="0" is-select="false">
     <sql params="web_server_id" is-select="false" tables="web_server" fetch-zero-err="true" is-full-param="true">update web_server set `status`=0 where `web_server_id`='$[web_server_id]'</sql>
   </poperty>
-  <poperty index="modular_test!insert" explain="modular_test插入" uniKey="modular_id" connect="web" beforeRun="com.lelife.oa.formatter.CreateModular" afterRun="com.lelife.oa.formatter.IncludeFileReload" safe-args="*" file="/target/test-classes/cn/test/other/web_modular.sql.xml" is-open="false" name-space="" is-complex-build="true" is-convert-null="false" is-need-total="false" is-select="false">
+  <poperty index="modular_test!insert" explain="modular_test插入" uniKey="modular_id" connect="web" beforeRun="com.lelife.oa.formatter.CreateModular" afterRun="com.lelife.oa.formatter.IncludeFileReload" safe-args="*" file="/target/test-classes/cn/test/other/web_modular.sql.xml" is-open="false" name-space="" is-complex-build="true" is-convert-null="false" is-need-total="false" result-format-type="0" is-select="false">
     <param-formatter>
       <param key="uid" value="${user.uid}"></param>
     </param-formatter>
     <sql params="modular_name|modular_type|modular_content|modular_func|modular_image|description|modular_description|uid|page_type" is-select="false" tables="modular" fetch-zero-err="true" is-full-param="true">insert into modular(`modular_name`,`modular_type`,`modular_content`,`modular_func`,`modular_image`,`description`,`modular_description`,`status`,`ctime`,`cuser`,`page_type`) values ('$[modular_name]',$[modular_type],'$[modular_content]','$[modular_func]','$[modular_image]','$[description]','$[modular_description]',0,NOW(),$[uid],$[page_type])</sql>
   </poperty>
-  <poperty index="page_type!insert" explain="page_type插入" uniKey="page_type_id" connect="web" file="/target/test-classes/cn/test/other/web_page_type.sql.xml" is-open="false" name-space="" is-complex-build="true" is-convert-null="false" is-need-total="false" is-select="false">
+  <poperty index="page_type!insert" explain="page_type插入" uniKey="page_type_id" connect="web" file="/target/test-classes/cn/test/other/web_page_type.sql.xml" is-open="false" name-space="" is-complex-build="true" is-convert-null="false" is-need-total="false" result-format-type="0" is-select="false">
     <param-formatter>
       <param key="uid" value="${user.uid}"></param>
     </param-formatter>
     <sql params="page_type_name|page_type_code|description|uid" is-select="false" tables="page_type" fetch-zero-err="true" is-full-param="true">insert into page_type(`page_type_name`,`page_type_code`,`description`,`status`,`ctime`,`cuser`) values ('$[page_type_name]','$[page_type_code]','$[description]',1,NOW(),$[uid])</sql>
   </poperty>
-  <poperty index="web_auth_select" explain="web_auth_select" connect="default" file="/target/test-classes/cn/test/other/web_core.sql.xml" is-open="false" name-space="" is-complex-build="true" is-convert-null="false" is-need-total="false" is-select="true">
+  <poperty index="web_auth_select" explain="web_auth_select" connect="default" file="/target/test-classes/cn/test/other/web_core.sql.xml" is-open="false" name-space="" is-complex-build="true" is-convert-null="false" is-need-total="false" result-format-type="0" is-select="true">
     <sql params="sid|menu_id" is-select="true" tables="qd_s_menu" fetch-zero-err="true" is-full-param="true">select id from qd_s_menu where sid regexp '$[sid]' and id=$[menu_id];</sql>
   </poperty>
-  <poperty index="page_test!insert" explain="page插入" connect="web" beforeRun="com.lelife.oa.formatter.CreateHtml" afterRun="com.lelife.oa.formatter.ClearPageCache" safe-args="*" file="/target/test-classes/cn/test/other/web_page.sql.xml" is-open="false" name-space="" is-complex-build="true" is-convert-null="false" is-need-total="false" is-select="false">
+  <poperty index="page_test!insert" explain="page插入" connect="web" beforeRun="com.lelife.oa.formatter.CreateHtml" afterRun="com.lelife.oa.formatter.ClearPageCache" safe-args="*" file="/target/test-classes/cn/test/other/web_page.sql.xml" is-open="false" name-space="" is-complex-build="true" is-convert-null="false" is-need-total="false" result-format-type="0" is-select="false">
     <param-formatter>
       <param key="uid" value="${user.uid}"></param>
     </param-formatter>
     <sql params="page_name|parent_id|page_url|page_url|page_level|description|uid|page_display|page_breadcrumb|page_order|page_type|page_target|page_content" is-select="false" tables="page" fetch-zero-err="true" is-full-param="true">insert into page(`page_name`,`parent_id`,`page_template`,`page_url`,`page_level`,`description`,`ctime`,`cuser`,`status`,`page_display`,`page_breadcrumb`,`page_order`,`page_type`,`page_target`,`page_content`) values ('$[page_name]',$[parent_id],'$[page_url]','$[page_url]',$[page_level],'$[description]',NOW(),$[uid],1,$[page_display],$[page_breadcrumb],'$[page_order]',$[page_type],'$[page_target]','$[page_content]')</sql>
   </poperty>
-  <poperty index="file_page_relation_adv!select" explain="file_page_relation_adv!select查询" connect="web_R" cacheAble="false" file="/target/test-classes/cn/test/other/web_core2.sql.xml" is-open="false" name-space="" is-complex-build="true" is-convert-null="false" is-need-total="false" is-select="true">
+  <poperty index="file_page_relation_adv!select" explain="file_page_relation_adv!select查询" connect="web_R" cacheAble="false" file="/target/test-classes/cn/test/other/web_core2.sql.xml" is-open="false" name-space="" is-complex-build="true" is-convert-null="false" is-need-total="false" result-format-type="0" is-select="true">
     <sql is-select="true" tables="file_page_relation" fetch-zero-err="true" is-full-param="true">select `resource_file`,`target_page`,`target_page` as p_id from file_page_relation where 9=9</sql>
     <result-formatter>
       <key-value-formatter cacheIndex="page_name_adv!select" cacheKey="page_id" cacheValue="page_name" targetKey="target_page" targetName="target_page"></key-value-formatter>
       <key-value-formatter cacheIndex="page_type_options!select" cacheKey="page_type_code" cacheValue="page_type_name" targetKey="target_page" targetName="target_page"></key-value-formatter>
     </result-formatter>
   </poperty>
-  <poperty index="modular_test!delete" explain="modular_test删除" uniKey="modular_id" connect="web" file="/target/test-classes/cn/test/other/web_modular.sql.xml" is-open="false" name-space="" is-complex-build="true" is-convert-null="false" is-need-total="false" is-select="false">
+  <poperty index="modular_test!delete" explain="modular_test删除" uniKey="modular_id" connect="web" file="/target/test-classes/cn/test/other/web_modular.sql.xml" is-open="false" name-space="" is-complex-build="true" is-convert-null="false" is-need-total="false" result-format-type="0" is-select="false">
     <sql params="modular_id" is-select="false" tables="modular" fetch-zero-err="true" is-full-param="true">update modular set `status`=2 where modular_id=$[modular_id]</sql>
   </poperty>
-  <poperty index="log_config_file!select" explain="config_file_log查询" connect="web_R" file="/target/test-classes/cn/test/other/web_config_file.sql.xml" is-open="false" name-space="" is-complex-build="true" is-convert-null="false" is-need-total="false" is-select="true">
+  <poperty index="log_config_file!select" explain="config_file_log查询" connect="web_R" file="/target/test-classes/cn/test/other/web_config_file.sql.xml" is-open="false" name-space="" is-complex-build="true" is-convert-null="false" is-need-total="false" result-format-type="0" is-select="true">
     <sql is-select="true" tables="log_config_files" fetch-zero-err="true" is-full-param="true">select log_config_file_id,config_file_id,config_file_path,config_file_content,status,cuser,ctime from log_config_files where 9=9</sql>
     <result-formatter>
       <table-cache table="qd_jaas_user" targetKey="cuser" fields="name"></table-cache>
     </result-formatter>
   </poperty>
-  <poperty index="web_publish" explain="web_publish新增" connect="web" file="/target/test-classes/cn/test/other/web_publish.sql.xml" is-open="false" name-space="" is-complex-build="true" is-convert-null="false" is-need-total="false" is-select="false">
+  <poperty index="web_publish" explain="web_publish新增" connect="web" file="/target/test-classes/cn/test/other/web_publish.sql.xml" is-open="false" name-space="" is-complex-build="true" is-convert-null="false" is-need-total="false" result-format-type="0" is-select="false">
     <sql params="operation_json|uname|message|uname|message|uname|log_message|cuser|effect_file" is-select="false" tables="web_publish" fetch-zero-err="true" is-full-param="true">insert into web_publish(`operation_json`,`publish_desc`,`message`,`log_message`,`cuser`,`ctime`,`status`,`effect_file`) values('$[operation_json]',concat('[','$[uname]',' ',NOW(),']','$[message]'),concat('[','$[uname]',' ',NOW(),']','$[message]'),concat('[','$[uname]',' ',NOW(),']','$[log_message]'),'$[cuser]',now(),0,'$[effect_file]')</sql>
   </poperty>
-  <poperty index="modular_type_test!update" explain="modular_type_test修改" uniKey="modular_type_id" connect="web" afterRun="com.lelife.oa.formatter.IncludeFileReload" file="/target/test-classes/cn/test/other/web_modular_type.sql.xml" is-open="false" name-space="" is-complex-build="true" is-convert-null="false" is-need-total="false" is-select="false">
+  <poperty index="modular_type_test!update" explain="modular_type_test修改" uniKey="modular_type_id" connect="web" afterRun="com.lelife.oa.formatter.IncludeFileReload" file="/target/test-classes/cn/test/other/web_modular_type.sql.xml" is-open="false" name-space="" is-complex-build="true" is-convert-null="false" is-need-total="false" result-format-type="0" is-select="false">
     <param-formatter>
       <param key="uid" value="${user.uid}"></param>
     </param-formatter>
     <sql params="page_type_id|modular_type_id|modular_type|modular_type_name|modular_path|description|status|cuser|modular_type_id" is-select="false" tables="modular_type" fetch-zero-err="true" is-full-param="true">update modular_type set `page_type_id`=$[page_type_id], `modular_type_id`=$[modular_type_id],`modular_type`=$[modular_type],`modular_type_name`='$[modular_type_name]',`modular_path`='$[modular_path]',`description`='$[description]',`status`=$[status],`ctime`=NOW(),`cuser`=$[cuser] where modular_type_id=$[modular_type_id]</sql>
   </poperty>
-  <poperty index="web_file_uniqueness" explain="file防重复校验" connect="web_R" cacheAble="false" file="/target/test-classes/cn/test/other/web_core.sql.xml" is-open="false" name-space="" is-complex-build="true" is-convert-null="false" is-need-total="false" is-select="true">
+  <poperty index="web_file_uniqueness" explain="file防重复校验" connect="web_R" cacheAble="false" file="/target/test-classes/cn/test/other/web_core.sql.xml" is-open="false" name-space="" is-complex-build="true" is-convert-null="false" is-need-total="false" result-format-type="0" is-select="true">
     <sql is-select="true" tables="file" fetch-zero-err="true" is-full-param="true">select file_id from file where 9=9</sql>
   </poperty>
-  <poperty index="config_file_content_adv!update" explain="config_file_content_adv!update查询" connect="web" safe-args="*" file="/target/test-classes/cn/test/other/web_config_file.sql.xml" is-open="false" name-space="" is-complex-build="true" is-convert-null="false" is-need-total="false" is-select="false">
+  <poperty index="config_file_content_adv!update" explain="config_file_content_adv!update查询" connect="web" safe-args="*" file="/target/test-classes/cn/test/other/web_config_file.sql.xml" is-open="false" name-space="" is-complex-build="true" is-convert-null="false" is-need-total="false" result-format-type="0" is-select="false">
     <param-formatter>
       <param key="uid" value="${user.uid}"></param>
     </param-formatter>
     <sql params="config_file_content|uid|config_file_id" is-select="false" tables="config_files" fetch-zero-err="true" is-full-param="true">update config_files set `config_file_content`='$[config_file_content]',cuser=$[uid],ctime=NOW() where config_file_id=$[config_file_id]</sql>
     <sql params="config_file_id|config_file_content|uid" is-select="false" tables="log_config_files" fetch-zero-err="true" is-full-param="true">insert into log_config_files(`config_file_id`, `config_file_content`,`ctime`,`cuser`) values ('$[config_file_id]','$[config_file_content]',NOW(),$[uid])</sql>
   </poperty>
-  <poperty index="modular_content!select" explain="modular_content查询" connect="web_R" cacheAble="false" file="/target/test-classes/cn/test/other/web_modular.sql.xml" is-open="false" name-space="" is-complex-build="true" is-convert-null="false" is-need-total="false" is-select="true">
+  <poperty index="modular_content!select" explain="modular_content查询" connect="web_R" cacheAble="false" file="/target/test-classes/cn/test/other/web_modular.sql.xml" is-open="false" name-space="" is-complex-build="true" is-convert-null="false" is-need-total="false" result-format-type="0" is-select="true">
     <sql is-select="true" tables="modular|modular_type" fetch-zero-err="true" is-full-param="true">select m.`modular_id`,m.`modular_content`,m.`modular_type`, mt.`modular_path` from modular m left join modular_type mt on m.modular_type=mt.modular_type_id where 9=9</sql>
   </poperty>
-  <poperty index="file_push!insert" explain="线上file插入" connect="web_online" safe-args="*" file="/target/test-classes/cn/test/other/web_push.sql.xml" is-open="false" name-space="" is-complex-build="true" is-convert-null="false" is-need-total="false" is-select="false">
+  <poperty index="file_push!insert" explain="线上file插入" connect="web_online" safe-args="*" file="/target/test-classes/cn/test/other/web_push.sql.xml" is-open="false" name-space="" is-complex-build="true" is-convert-null="false" is-need-total="false" result-format-type="0" is-select="false">
     <sql params="FILE_NAME|FILE_PATH|FILE_TYPE|TARGET_PAGE|DESCRIPTION|STATUS|CTIME|CUSER|FILE_CONTENT|FILE_ORDER" is-select="false" tables="file" fetch-zero-err="true" is-full-param="true">INSERT INTO file(`file_name`,`file_path`,`file_type`,`target_page`,`description`,`status`,`ctime`,`cuser`,`file_content`,`file_order`) VALUES('$[FILE_NAME]','$[FILE_PATH]','$[FILE_TYPE]','$[TARGET_PAGE]','$[DESCRIPTION]','$[STATUS]','$[CTIME]','$[CUSER]', '$[FILE_CONTENT]','$[FILE_ORDER]')</sql>
   </poperty>
-  <poperty index="page_type_options!select" explain="下拉框查询" connect="web_R" cacheAble="false" file="/target/test-classes/cn/test/other/web_page_type.sql.xml" is-open="false" name-space="" is-complex-build="true" is-convert-null="false" is-need-total="false" is-select="true">
+  <poperty index="page_type_options!select" explain="下拉框查询" connect="web_R" cacheAble="false" file="/target/test-classes/cn/test/other/web_page_type.sql.xml" is-open="false" name-space="" is-complex-build="true" is-convert-null="false" is-need-total="false" result-format-type="0" is-select="true">
     <sql is-select="true" tables="page_type" fetch-zero-err="true" is-full-param="true">select `page_type_id`,`page_type_name`,`page_type_code`,`status` from page_type where 9=9</sql>
   </poperty>
-  <poperty index="modular_type_push!update" explain="线上modular_type内容修改" connect="web_online" safe-args="*" file="/target/test-classes/cn/test/other/web_push.sql.xml" is-open="false" name-space="" is-complex-build="true" is-convert-null="false" is-need-total="false" is-select="false">
+  <poperty index="modular_type_push!update" explain="线上modular_type内容修改" connect="web_online" safe-args="*" file="/target/test-classes/cn/test/other/web_push.sql.xml" is-open="false" name-space="" is-complex-build="true" is-convert-null="false" is-need-total="false" result-format-type="0" is-select="false">
     <sql params="MODULAR_TYPE_NAME|MODULAR_PATH|STATUS|CTIME|CUSER|DESCRIPTION|PAGE_TYPE_ID|MODULAR_TYPE_ID" is-select="false" tables="modular_type" fetch-zero-err="true" is-full-param="true">UPDATE modular_type SET `MODULAR_TYPE_NAME`='$[MODULAR_TYPE_NAME]',`MODULAR_PATH`='$[MODULAR_PATH]',`STATUS`='$[STATUS]',`CTIME`='$[CTIME]', `CUSER`='$[CUSER]',`DESCRIPTION`='$[DESCRIPTION]',`PAGE_TYPE_ID`='$[PAGE_TYPE_ID]' WHERE `MODULAR_TYPE_ID`='$[MODULAR_TYPE_ID]'</sql>
   </poperty>
-  <poperty index="url_redirect_oa!update" explain="url_redirect修改" connect="web" file="/target/test-classes/cn/test/other/url_redirect.sql.xml" is-open="false" name-space="" is-complex-build="true" is-convert-null="false" is-need-total="false" is-select="false">
+  <poperty index="url_redirect_oa!update" explain="url_redirect修改" connect="web" file="/target/test-classes/cn/test/other/url_redirect.sql.xml" is-open="false" name-space="" is-complex-build="true" is-convert-null="false" is-need-total="false" result-format-type="0" is-select="false">
     <param-formatter>
       <param key="uid" value="${user.uid}"></param>
     </param-formatter>
     <sql params="source_url|redirect_url|uid|url_redirect_id" is-select="false" tables="url_redirect" fetch-zero-err="true" is-full-param="true">update url_redirect set `source_url`='$[source_url]',`redirect_url`='$[redirect_url]',`ctime`=NOW(),`cuser`=$[uid] where `url_redirect_id`='$[url_redirect_id]'</sql>
   </poperty>
-  <poperty index="page_content!update" explain="page_content修改" connect="web" safe-args="*" beforeRun="com.lelife.oa.formatter.PageAuth" file="/target/test-classes/cn/test/other/web_page.sql.xml" is-open="false" name-space="" is-complex-build="true" is-convert-null="false" is-need-total="false" is-select="false">
+  <poperty index="page_content!update" explain="page_content修改" connect="web" safe-args="*" beforeRun="com.lelife.oa.formatter.PageAuth" file="/target/test-classes/cn/test/other/web_page.sql.xml" is-open="false" name-space="" is-complex-build="true" is-convert-null="false" is-need-total="false" result-format-type="0" is-select="false">
     <param-formatter>
       <param key="uid" value="${user.uid}"></param>
     </param-formatter>
     <sql params="page_content|uid|page_id" is-select="false" tables="page" fetch-zero-err="true" is-full-param="true">update page set `page_content`='$[page_content]' ,ctime=NOW(), cuser=$[uid] where page_id=$[page_id]</sql>
     <sql params="page_id|page_content|uid" is-select="false" tables="log_page" fetch-zero-err="true" is-full-param="true">insert into log_page (`page_id`,`page_content`,`ctime`,`cuser`,operation) values ($[page_id],'$[page_content]',NOW(),$[uid],3)</sql>
   </poperty>
-  <poperty index="users-add-action" connect="user-connect-rw" explain="users插入" file="/target/test-classes/cn/test/sql/qd_product_center.users.sql.xml" is-open="false" name-space="" is-complex-build="true" is-convert-null="false" is-need-total="false" is-select="false">
+  <poperty index="users-add-action" connect="user-connect-rw" explain="users插入" file="/target/test-classes/cn/test/sql/qd_product_center.users.sql.xml" is-open="false" name-space="" is-complex-build="true" is-convert-null="false" is-need-total="false" result-format-type="0" is-select="false">
     <sql repeat-concat="^" fetch-zero-err="true" is-full-param="false" params="utime|user_name|status|age|ctime|mobile" is-select="false" tables="users">insert into users(utime,user_name,status,age,ctime,mobile) value ($[utime],'$[user_name]',$[status],$[age],$[ctime],'$[mobile]')</sql>
   </poperty>
-  <poperty index="file_adv!select" explain="file_adv!select查询" connect="web_R" file="/target/test-classes/cn/test/other/web_core2.sql.xml" is-open="false" name-space="" is-complex-build="true" is-convert-null="false" is-need-total="false" is-select="true">
+  <poperty index="file_adv!select" explain="file_adv!select查询" connect="web_R" file="/target/test-classes/cn/test/other/web_core2.sql.xml" is-open="false" name-space="" is-complex-build="true" is-convert-null="false" is-need-total="false" result-format-type="0" is-select="true">
     <sql is-select="true" tables="file" fetch-zero-err="true" is-full-param="true">select file_id,file_name,file_path from file where 9=9 and status=1</sql>
   </poperty>
-  <poperty index="web_publish!check" explain="web_publish审核" connect="web" file="/target/test-classes/cn/test/other/web_publish.sql.xml" is-open="false" name-space="" is-complex-build="true" is-convert-null="false" is-need-total="false" is-select="false">
+  <poperty index="web_publish!check" explain="web_publish审核" connect="web" file="/target/test-classes/cn/test/other/web_publish.sql.xml" is-open="false" name-space="" is-complex-build="true" is-convert-null="false" is-need-total="false" result-format-type="0" is-select="false">
     <param-formatter>
       <param key="uid" value="${user.uid}"></param>
       <param key="uname" value="${user.name}"></param>
     </param-formatter>
     <sql params="uname|message|uname|log_message|status|uid|web_publish_id" is-select="false" tables="web_publish" fetch-zero-err="true" is-full-param="true">update web_publish set message=concat('[','$[uname]',' ',NOW(),']','$[message]'),log_message=concat('[','$[uname]',' ',NOW(),']','$[log_message]'),status='$[status]',checktime=now(),checkuser=$[uid] where web_publish_id='$[web_publish_id]'</sql>
   </poperty>
-  <poperty index="page_test!select" explain="page查询" connect="web_R" afterRun="com.lelife.oa.formatter.FormatPageParam" cacheAble="false" file="/target/test-classes/cn/test/other/web_page.sql.xml" is-open="false" name-space="" is-complex-build="true" is-convert-null="false" is-need-total="false" is-select="true">
+  <poperty index="page_test!select" explain="page查询" connect="web_R" afterRun="com.lelife.oa.formatter.FormatPageParam" cacheAble="false" file="/target/test-classes/cn/test/other/web_page.sql.xml" is-open="false" name-space="" is-complex-build="true" is-convert-null="false" is-need-total="false" result-format-type="0" is-select="true">
     <sql is-select="true" tables="page" fetch-zero-err="true" is-full-param="true">select `page_id`,`page_id` as id,`page_name`,`page_target`,`parent_id`,`parent_id` as _parentId,`page_template`,`page_url`,`page_level`,`description`,`ctime`,`cuser`,`page_display`,`page_breadcrumb`,`page_order`,`page_type` from page where 9=9</sql>
     <result-formatter>
       <table-cache table="qd_jaas_user" targetKey="cuser" fields="name"></table-cache>
@@ -439,84 +439,84 @@
       <key-value-formatter cacheIndex="page_type_options!select" cacheKey="page_type_id" cacheValue="page_type_code" targetKey="page_type" targetName="page_type_code"></key-value-formatter>
     </result-formatter>
   </poperty>
-  <poperty index="resource_logs!select" explain="resource_logs查询" connect="web" file="/target/test-classes/cn/test/other/resourse_logs.sql.xml" is-open="false" name-space="" is-complex-build="true" is-convert-null="false" is-need-total="false" is-select="true">
+  <poperty index="resource_logs!select" explain="resource_logs查询" connect="web" file="/target/test-classes/cn/test/other/resourse_logs.sql.xml" is-open="false" name-space="" is-complex-build="true" is-convert-null="false" is-need-total="false" result-format-type="0" is-select="true">
     <sql is-select="true" tables="resource_logs" fetch-zero-err="true" is-full-param="true">select * from resource_logs where 9=9 order by ctime desc</sql>
     <result-formatter>
       <date-formatter targetKey="ctime" style="yyyy-MM-dd HH:mm:ss"></date-formatter>
       <table-cache table="qd_jaas_user" targetKey="cuser" fields="name|create_user_name"></table-cache>
     </result-formatter>
   </poperty>
-  <poperty index="modular_Log_list!select" explain="modular_编辑状态查询" connect="web_R" file="/target/test-classes/cn/test/other/web_modular.sql.xml" is-open="false" name-space="" is-complex-build="true" is-convert-null="false" is-need-total="false" is-select="true">
+  <poperty index="modular_Log_list!select" explain="modular_编辑状态查询" connect="web_R" file="/target/test-classes/cn/test/other/web_modular.sql.xml" is-open="false" name-space="" is-complex-build="true" is-convert-null="false" is-need-total="false" result-format-type="0" is-select="true">
     <sql is-select="true" tables="log_modular" fetch-zero-err="true" is-full-param="true">select `modular_log_id`,`modular_name`,`modular_id`, `ctime`,`cuser`,`status` from log_modular where 9=9</sql>
     <result-formatter>
       <table-cache table="qd_jaas_user" targetKey="cuser" fields="name"></table-cache>
     </result-formatter>
   </poperty>
-  <poperty index="url_redirect_oa!detele" explain="url_redirect软删除" connect="web" file="/target/test-classes/cn/test/other/url_redirect.sql.xml" is-open="false" name-space="" is-complex-build="true" is-convert-null="false" is-need-total="false" is-select="false">
+  <poperty index="url_redirect_oa!detele" explain="url_redirect软删除" connect="web" file="/target/test-classes/cn/test/other/url_redirect.sql.xml" is-open="false" name-space="" is-complex-build="true" is-convert-null="false" is-need-total="false" result-format-type="0" is-select="false">
     <sql params="uid|url_redirect_id" is-select="false" tables="url_redirect" fetch-zero-err="true" is-full-param="true">update url_redirect set `status`=0,`ctime`=NOW(),`cuser`=$[uid] where `url_redirect_id`='$[url_redirect_id]'</sql>
   </poperty>
-  <poperty index="modular_test!select" explain="modular_test查询" connect="web_R" cacheAble="false" file="/target/test-classes/cn/test/other/web_modular.sql.xml" is-open="false" name-space="" is-complex-build="true" is-convert-null="false" is-need-total="false" is-select="true">
+  <poperty index="modular_test!select" explain="modular_test查询" connect="web_R" cacheAble="false" file="/target/test-classes/cn/test/other/web_modular.sql.xml" is-open="false" name-space="" is-complex-build="true" is-convert-null="false" is-need-total="false" result-format-type="0" is-select="true">
     <sql is-select="true" tables="modular|modular_type" fetch-zero-err="true" is-full-param="true">select m.`modular_id`,m.`modular_name`,m.`modular_type`,m.`modular_func`,m.`description`,m.`status`,m.`modular_description`,m.`page_type`,mt.`modular_type_name`,m.`modular_image`,m.`ctime`,m.`cuser` , m.`modular_edit_status`,m.`modular_editor` from modular m left join modular_type mt on m.modular_type=mt.modular_type_id where 9=9 order by m.`ctime` desc</sql>
     <result-formatter>
       <table-cache table="qd_jaas_user" targetKey="cuser" fields="name"></table-cache>
       <table-cache table="qd_jaas_user" targetKey="modular_editor" fields="name|editor"></table-cache>
     </result-formatter>
   </poperty>
-  <poperty index="file_push!update" explain="线上file内容修改" connect="web_online" safe-args="*" file="/target/test-classes/cn/test/other/web_push.sql.xml" is-open="false" name-space="" is-complex-build="true" is-convert-null="false" is-need-total="false" is-select="false">
+  <poperty index="file_push!update" explain="线上file内容修改" connect="web_online" safe-args="*" file="/target/test-classes/cn/test/other/web_push.sql.xml" is-open="false" name-space="" is-complex-build="true" is-convert-null="false" is-need-total="false" result-format-type="0" is-select="false">
     <sql params="FILE_NAME|FILE_PATH|FILE_TYPE|TARGET_PAGE|DESCRIPTION|STATUS|CTIME|CUSER|FILE_CONTENT|FILE_ORDER|FILE_ID" is-select="false" tables="file" fetch-zero-err="true" is-full-param="true">UPDATE file SET `FILE_NAME`='$[FILE_NAME]',`FILE_PATH`='$[FILE_PATH]',`FILE_TYPE`='$[FILE_TYPE]',`TARGET_PAGE`='$[TARGET_PAGE]', `DESCRIPTION`='$[DESCRIPTION]',`STATUS`='$[STATUS]',`CTIME`='$[CTIME]',`CUSER`='$[CUSER]',`FILE_CONTENT`='$[FILE_CONTENT]', `FILE_ORDER`='$[FILE_ORDER]' WHERE `FILE_ID`='$[FILE_ID]'</sql>
     <sql params="FILE_ID|LOG_CONTENT|LOGUSER" is-select="false" tables="log_file" fetch-zero-err="true" is-full-param="true">INSERT INTO log_file (`FILE_ID`,`FILE_CONTENT`,`CTIME`,`CUSER`,OPERATION) VALUES ('$[FILE_ID]','$[LOG_CONTENT]',NOW(),'$[LOGUSER]',3)</sql>
   </poperty>
-  <poperty index="page!select" explain="page查询" connect="web_R" file="/target/test-classes/cn/test/other/web_page.sql.xml" is-open="false" name-space="" is-complex-build="true" is-convert-null="false" is-need-total="false" is-select="true">
+  <poperty index="page!select" explain="page查询" connect="web_R" file="/target/test-classes/cn/test/other/web_page.sql.xml" is-open="false" name-space="" is-complex-build="true" is-convert-null="false" is-need-total="false" result-format-type="0" is-select="true">
     <sql is-select="true" tables="page" fetch-zero-err="true" is-full-param="true">select `page_id`,`page_id` as id,`page_name`,`parent_id`,`page_template`,`page_url`,`page_level`,`description`,`ctime`,`cuser`,`page_display`,`page_breadcrumb`,`page_order`,`page_type` from page where 9=9</sql>
     <result-formatter>
       <table-cache table="qd_jaas_user" targetKey="cuser" fields="name"></table-cache>
     </result-formatter>
   </poperty>
-  <poperty index="file_push!selectLocal" explain="查询本地file表内容" connect="web_R" file="/target/test-classes/cn/test/other/web_push.sql.xml" is-open="false" name-space="" is-complex-build="true" is-convert-null="false" is-need-total="false" is-select="true">
+  <poperty index="file_push!selectLocal" explain="查询本地file表内容" connect="web_R" file="/target/test-classes/cn/test/other/web_push.sql.xml" is-open="false" name-space="" is-complex-build="true" is-convert-null="false" is-need-total="false" result-format-type="0" is-select="true">
     <sql is-select="true" tables="file" fetch-zero-err="true" is-full-param="true">select * from file where status=1 and 9=9</sql>
   </poperty>
-  <poperty index="file_content!select" explain="file_test查询" connect="web_R" cacheAble="false" file="/target/test-classes/cn/test/other/web_file.sql.xml" is-open="false" name-space="" is-complex-build="true" is-convert-null="false" is-need-total="false" is-select="true">
+  <poperty index="file_content!select" explain="file_test查询" connect="web_R" cacheAble="false" file="/target/test-classes/cn/test/other/web_file.sql.xml" is-open="false" name-space="" is-complex-build="true" is-convert-null="false" is-need-total="false" result-format-type="0" is-select="true">
     <sql is-select="true" tables="file" fetch-zero-err="true" is-full-param="true">select `file_type`,`file_path`,`file_content`,`iscompress` from file where 9=9</sql>
   </poperty>
-  <poperty index="web_server_ip!insert" explain="web_server_for_publish!select查询" connect="web" file="/target/test-classes/cn/test/other/web_core2.sql.xml" is-open="false" name-space="" is-complex-build="true" is-convert-null="false" is-need-total="false" is-select="false">
+  <poperty index="web_server_ip!insert" explain="web_server_for_publish!select查询" connect="web" file="/target/test-classes/cn/test/other/web_core2.sql.xml" is-open="false" name-space="" is-complex-build="true" is-convert-null="false" is-need-total="false" result-format-type="0" is-select="false">
     <sql params="web_server_ip|web_server_port|web_server_desc|order_num" is-select="false" tables="web_server" fetch-zero-err="true" is-full-param="true">insert into web_server(`web_server_ip`,`web_server_port`,`web_server_desc`,`order_num`,`status`) values ('$[web_server_ip]','$[web_server_port]','$[web_server_desc]','$[order_num]',1)</sql>
   </poperty>
-  <poperty index="file_test!update" explain="file_test修改" uniKey="file_id" connect="web" cacheAble="false" afterRun="com.lelife.oa.formatter.IncludeFileReload" file="/target/test-classes/cn/test/other/web_file.sql.xml" is-open="false" name-space="" is-complex-build="true" is-convert-null="false" is-need-total="false" is-select="false">
+  <poperty index="file_test!update" explain="file_test修改" uniKey="file_id" connect="web" cacheAble="false" afterRun="com.lelife.oa.formatter.IncludeFileReload" file="/target/test-classes/cn/test/other/web_file.sql.xml" is-open="false" name-space="" is-complex-build="true" is-convert-null="false" is-need-total="false" result-format-type="0" is-select="false">
     <param-formatter>
       <param key="uid" value="${user.uid}"></param>
     </param-formatter>
     <sql params="file_name|description|isCompress|file_name|target_page|file_order|include_position|file_id" is-select="false" tables="file" fetch-zero-err="true" is-full-param="true">update file set `file_name`='$[file_name]',`description`='$[description]',`isCompress`='$[isCompress]',`ctime`=NOW(),`file_name`='$[file_name]',`target_page`='$[target_page]',`file_order`='$[file_order]',`include_position`='$[include_position]' where file_id=$[file_id]</sql>
   </poperty>
-  <poperty index="userCenter!select" explain="page查询" connect="web_R" file="/target/test-classes/cn/test/other/web_page.sql.xml" is-open="false" name-space="" is-complex-build="true" is-convert-null="false" is-need-total="false" is-select="true">
+  <poperty index="userCenter!select" explain="page查询" connect="web_R" file="/target/test-classes/cn/test/other/web_page.sql.xml" is-open="false" name-space="" is-complex-build="true" is-convert-null="false" is-need-total="false" result-format-type="0" is-select="true">
     <sql is-select="true" tables="page" fetch-zero-err="true" is-full-param="true">select `page_id`,`page_id` as id,`page_name`,`parent_id`,`page_template`,`page_url`,`page_level`,`description`,`ctime`,`cuser`,`page_display`,`page_breadcrumb`,`page_order`,`page_type`,`page_target` from page where 9=9</sql>
     <result-formatter>
       <table-cache table="qd_jaas_user" targetKey="cuser" fields="name"></table-cache>
     </result-formatter>
   </poperty>
-  <poperty index="include_file!select" explain="include_file查询" connect="web_R" cacheAble="false" file="/target/test-classes/cn/test/other/web_core.sql.xml" is-open="false" name-space="" is-complex-build="true" is-convert-null="false" is-need-total="false" is-select="true">
+  <poperty index="include_file!select" explain="include_file查询" connect="web_R" cacheAble="false" file="/target/test-classes/cn/test/other/web_core.sql.xml" is-open="false" name-space="" is-complex-build="true" is-convert-null="false" is-need-total="false" result-format-type="0" is-select="true">
     <sql is-select="true" tables="page|file" fetch-zero-err="true" is-full-param="true">select f.file_path,f.target_page, f.file_type, f.ctime,p.page_template from file f left join page p on f.target_page=p.page_id where 9=9</sql>
     <result-formatter>
       <date-formatter targetKey="ctime" style="yyyyMMdd"></date-formatter>
     </result-formatter>
   </poperty>
-  <poperty index="modular_content!update" explain="modular_content修改" connect="web" safe-args="*" beforeRun="com.lelife.oa.formatter.ModularAuth" file="/target/test-classes/cn/test/other/web_modular.sql.xml" is-open="false" name-space="" is-complex-build="true" is-convert-null="false" is-need-total="false" is-select="false">
+  <poperty index="modular_content!update" explain="modular_content修改" connect="web" safe-args="*" beforeRun="com.lelife.oa.formatter.ModularAuth" file="/target/test-classes/cn/test/other/web_modular.sql.xml" is-open="false" name-space="" is-complex-build="true" is-convert-null="false" is-need-total="false" result-format-type="0" is-select="false">
     <param-formatter>
       <param key="uid" value="${user.uid}"></param>
     </param-formatter>
     <sql params="modular_content|status|uid|modular_id" is-select="false" tables="modular" fetch-zero-err="true" is-full-param="true">update modular set `modular_content`='$[modular_content]',`status`=$[status], ctime=NOW(), cuser=$[uid] where modular_id=$[modular_id]</sql>
     <sql params="modular_id|modular_content|uid" is-select="false" tables="log_modular" fetch-zero-err="true" is-full-param="true">insert into log_modular (`modular_id`,`modular_content`,`ctime`,`cuser`,operation) values ($[modular_id],'$[modular_content]',NOW(),$[uid],3)</sql>
   </poperty>
-  <poperty index="products_left_test" connect="default" explain="products_log删除" file="/target/test-classes/cn/test/sql/demo_product_center.products_log.sql.xml" is-open="false" name-space="" is-complex-build="true" is-convert-null="false" is-need-total="false" is-select="true">
+  <poperty index="products_left_test" connect="default" explain="products_log删除" file="/target/test-classes/cn/test/sql/demo_product_center.products_log.sql.xml" is-open="false" name-space="" is-complex-build="true" is-convert-null="false" is-need-total="false" result-format-type="0" is-select="true">
     <sql is-select="true" tables="products_log|products" fetch-zero-err="true" is-full-param="true">select a.product_name,a.uid,a.price,b.action from products a,products_log b on a.pid=b.pid and 9=9</sql>
   </poperty>
-  <poperty index="file_test!delete" explain="file_test删除" uniKey="file_id" connect="web" afterRun="com.lelife.oa.formatter.IncludeFileReload" file="/target/test-classes/cn/test/other/web_file.sql.xml" is-open="false" name-space="" is-complex-build="true" is-convert-null="false" is-need-total="false" is-select="false">
+  <poperty index="file_test!delete" explain="file_test删除" uniKey="file_id" connect="web" afterRun="com.lelife.oa.formatter.IncludeFileReload" file="/target/test-classes/cn/test/other/web_file.sql.xml" is-open="false" name-space="" is-complex-build="true" is-convert-null="false" is-need-total="false" result-format-type="0" is-select="false">
     <sql params="file_id" is-select="false" tables="file" fetch-zero-err="true" is-full-param="true">update file set `status`=2 where file_id=$[file_id]</sql>
   </poperty>
-  <poperty index="modular_push!update" explain="线上modular内容修改" connect="web_online" safe-args="*" file="/target/test-classes/cn/test/other/web_push.sql.xml" is-open="false" name-space="" is-complex-build="true" is-convert-null="false" is-need-total="false" is-select="false">
+  <poperty index="modular_push!update" explain="线上modular内容修改" connect="web_online" safe-args="*" file="/target/test-classes/cn/test/other/web_push.sql.xml" is-open="false" name-space="" is-complex-build="true" is-convert-null="false" is-need-total="false" result-format-type="0" is-select="false">
     <sql params="MODULAR_NAME|MODULAR_TYPE|MODULAR_CONTENT|MODULAR_FUNC|MODULAR_IMAGE|DESCRIPTION|STATUS|CTIME|CUSER|MODULAR_DESCRIPTION|PAGE_TYPE|MODULAR_EDIT_STATUS|MODULAR_EDITOR|MODULAR_ID" is-select="false" tables="modular" fetch-zero-err="true" is-full-param="true">UPDATE modular SET `MODULAR_NAME`='$[MODULAR_NAME]',`MODULAR_TYPE`='$[MODULAR_TYPE]', `MODULAR_CONTENT`='$[MODULAR_CONTENT]',`MODULAR_FUNC`='$[MODULAR_FUNC]',`MODULAR_IMAGE`='$[MODULAR_IMAGE]', `DESCRIPTION`='$[DESCRIPTION]',`STATUS`='$[STATUS]',`CTIME`='$[CTIME]',`CUSER`='$[CUSER]', `MODULAR_DESCRIPTION`='$[MODULAR_DESCRIPTION]',`PAGE_TYPE`='$[PAGE_TYPE]',`MODULAR_EDIT_STATUS`='$[MODULAR_EDIT_STATUS]', `MODULAR_EDITOR`='$[MODULAR_EDITOR]' WHERE MODULAR_ID='$[MODULAR_ID]'</sql>
     <sql params="MODULAR_ID|LOG_CONTENT|LOGUSER" is-select="false" tables="log_modular" fetch-zero-err="true" is-full-param="true">INSERT INTO log_modular (`MODULAR_ID`,`MODULAR_CONTENT`,`CTIME`,`CUSER`,OPERATION) VALUES ('$[MODULAR_ID]','$[LOG_CONTENT]',NOW(),'$[LOGUSER]',3)</sql>
   </poperty>
-  <poperty index="file_test!selectAllFileByPageType" explain="file文件查询" connect="web_R" cacheAble="false" file="/target/test-classes/cn/test/other/matchFile.sql.xml" is-open="false" name-space="" is-complex-build="true" is-convert-null="false" is-need-total="false" is-select="true">
+  <poperty index="file_test!selectAllFileByPageType" explain="file文件查询" connect="web_R" cacheAble="false" file="/target/test-classes/cn/test/other/matchFile.sql.xml" is-open="false" name-space="" is-complex-build="true" is-convert-null="false" is-need-total="false" result-format-type="0" is-select="true">
     <sql is-select="true" tables="file" fetch-zero-err="true" is-full-param="true">select file_id,file_name,file_path,file_type from file where 9=9 and status=1</sql>
   </poperty>
 </sql-config-debug>

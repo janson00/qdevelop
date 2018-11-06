@@ -10,6 +10,7 @@ import com.alibaba.druid.pool.DruidDataSource;
 
 import cn.qdevelop.common.QLog;
 import cn.qdevelop.common.exception.QDevelopException;
+import cn.qdevelop.common.security.QBase64Utils;
 import cn.qdevelop.common.utils.QString;
 
 public class DruidConnect implements IConnect{
@@ -25,8 +26,14 @@ public class DruidConnect implements IConnect{
 			dataSource = new DruidDataSource();
 			dataSource.setUrl(config.elementText("driver-url").replaceAll("\t|\r|\n| ", ""));
 			dataSource.setDriverClassName(config.elementText("driver-class").replaceAll("\t|\r|\n| ", ""));
-			dataSource.setUsername(decodeInfo("user-name",config));        
-			dataSource.setPassword(decodeInfo("password",config));
+			dataSource.setUsername(decodeInfo("user-name",config)); 
+			String passwd = decodeInfo("password",config);
+			if(config.element("password").attributeValue("encode")!=null&&config.element("password").attributeValue("encode").equals("true")){
+				String s = QString.get32MD5((dataSource.getUsername()+config.attributeValue("index")));
+				String t = QBase64Utils.decode(passwd);
+				passwd = QBase64Utils.decode(t.substring(s.length()));
+			}
+			dataSource.setPassword(passwd);
 
 			int initSize = Integer.parseInt(getValue(config.elementText("init-idle").replaceAll("\t|\r|\n| ", ""),"1"));
 			int maxIdle = Integer.parseInt(getValue(config.elementText("max-idle").replaceAll("\t|\r|\n| ", ""),"1"));
@@ -34,9 +41,22 @@ public class DruidConnect implements IConnect{
 			dataSource.setMinIdle(Integer.parseInt(getValue(config.elementText("min-idle").replaceAll("\t|\r|\n| ", ""),"1")));
 			dataSource.setMaxActive(maxIdle);
 			dataSource.setMaxWait(Integer.parseInt(getValue(config.elementText("max-wait").replaceAll("\t|\r|\n| ", ""),"1")));
-			dataSource.setTimeBetweenEvictionRunsMillis(1000 * 60 * 5);
-			dataSource.setMinEvictableIdleTimeMillis(1000 * 60 * 5);
-
+			
+			
+			dataSource.setPoolPreparedStatements(true);
+			dataSource.setTimeBetweenEvictionRunsMillis(2000);
+			dataSource.setMinEvictableIdleTimeMillis(600000);
+			dataSource.setMaxEvictableIdleTimeMillis(900000);
+			dataSource.setKeepAlive(true);
+			dataSource.setMaxPoolPreparedStatementPerConnectionSize(100);
+			dataSource.setFilters("stat");
+//			//超过时间限制是否回收
+//			dataSource.setRemoveAbandoned(true);
+//			//超时时间；单位为秒。120秒=2分钟
+//			dataSource.setRemoveAbandonedTimeout(120);
+//			//关闭abanded连接时输出错误日志
+//			dataSource.setLogAbandoned(true);
+			
 			dataSource.setValidationQuery(config.elementText("test-query").replaceAll("\t|\r|\n", ""));
 			dataSource.setTestOnBorrow(Boolean.parseBoolean(getValue(config.elementText("test-borrow").replaceAll("\t|\r|\n| ", ""),"false"))); 
 			dataSource.setTestOnReturn(Boolean.parseBoolean(getValue(config.elementText("test-return").replaceAll("\t|\r|\n| ", ""),"false"))); 
@@ -57,6 +77,10 @@ public class DruidConnect implements IConnect{
 	@Override
 	public Connection getConnection() throws QDevelopException {
 		try {
+			if(dataSource.getActiveCount() > dataSource.getInitialSize()){
+				
+			}
+//			dataSource.get
 			return dataSource.getConnection();
 		} catch (SQLException e) {
 //			e.printStackTrace();

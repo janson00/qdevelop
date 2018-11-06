@@ -3,7 +3,7 @@
 <SQLConfig>
 	<property index="qd_auth_user_permit_relation_query_action" connect="qd_author_read" explain="qd_auth_user_permit_relation查询">
 		<!--<sql>select uid,up_id,permit_id from qd_auth_user_permit_relation where {DYNAMIC}</sql>-->
-		<sql>select uid,up_id,permit_id from qd_auth_user_permit_relation where 
+		<sql  is-full-param="false">select uid,up_id,permit_id from qd_auth_user_permit_relation where 
 			 up_id=$[up_id] and uid=$[uid] and permit_id=$[permit_id]
 			</sql>
 	</property>

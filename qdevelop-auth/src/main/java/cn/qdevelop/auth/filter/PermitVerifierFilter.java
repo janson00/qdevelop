@@ -17,6 +17,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.log4j.Logger;
 
 import cn.qdevelop.auth.bean.LoginInfo;
+import cn.qdevelop.auth.utils.AuthUtils;
 import cn.qdevelop.auth.utils.XMemcached;
 import cn.qdevelop.common.QLog;
 import cn.qdevelop.common.files.QProperties;
@@ -82,7 +83,10 @@ public abstract class PermitVerifierFilter implements Filter{
 			throws IOException, ServletException {
 		HttpServletRequest req = (HttpServletRequest)request;
 		String uri = (req.getRequestURI()).substring(req.getContextPath().length());
-		if((ignoreUrisReg!=null && ignoreUrisReg.matcher(uri).find()) || (ignoreConfPattern!=null && ignoreConfPattern.matcher(uri).find())){
+		if(AuthUtils.isDevEnv() 
+				|| (ignoreUrisReg!=null && ignoreUrisReg.matcher(uri).find()) 
+				|| (ignoreConfPattern!=null && ignoreConfPattern.matcher(uri).find())
+				){
 			chain.doFilter(request,response);
 			return;
 		}
