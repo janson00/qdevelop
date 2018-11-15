@@ -1,0 +1,113 @@
+<?xml version="1.0"?>
+<project
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd"
+	xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+	<modelVersion>4.0.0</modelVersion>
+
+	<groupId>cn.qdevelop</groupId>
+	<artifactId>qdevelop-id</artifactId>
+	<version>2.0</version>
+	<name>qdevelop-id</name>
+	<url>http://maven.apache.org</url>
+	
+	<!-- <repositories>
+		<repository>
+			<id>central</id>
+			阿里云maven私服，加速下载通用包
+			<url>http://maven.aliyun.com/nexus/content/groups/public</url>
+		</repository>
+
+		<repository>
+			<id>qdevelop</id>
+			<url>http://192.168.86.8:8081/nexus/content/repositories/qdevelop/</url>
+		</repository>
+		<repository>
+			<id>develop</id>
+			<url>http://192.168.86.8:8081/nexus/content/repositories/develop/</url>
+		</repository>
+		<repository> <id>qdevelop</id> <url>http://mvn.e-platform.cn/nexus/content/repositories/qdevelop</url> 
+			</repository>
+
+	</repositories> -->
+
+	<properties>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+	</properties>
+
+	<build>
+		<finalName>qdevelop-id-generate</finalName>
+		<resources>
+			<resource>
+				<directory>src/main/java</directory>
+				<includes>
+					<include>**/*.xml</include>
+					<include>**/*.properties</include>
+				</includes>
+			</resource>
+			<resource>
+				<directory>src/main/resources</directory>
+				<includes>
+					<include>**/*</include>
+				</includes>
+			</resource>
+		</resources>
+
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<version>2.3.2</version>
+				<configuration>
+					<source>1.7</source>
+					<target>1.7</target>
+					<encoding>UTF-8</encoding>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-dependency-plugin</artifactId>
+				<version>2.10</version>
+				<executions>
+					<execution>
+						<id>copy-dependencies</id>
+						<phase>package</phase>
+						<goals>
+							<goal>copy-dependencies</goal>
+						</goals>
+						<configuration>
+							<outputDirectory>${project.build.directory}/lib</outputDirectory>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-jar-plugin</artifactId>
+				<version>2.6</version>
+				<configuration>
+					<archive>
+						<manifest>
+							<addClasspath>true</addClasspath>
+							<classpathPrefix>lib/</classpathPrefix>
+							<mainClass>cn.qdevelop.plugin.idgenerate.Main</mainClass>
+						</manifest>
+					</archive>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
+
+	<dependencies>
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<version>3.8.1</version>
+			<scope>test</scope>
+		</dependency>
+		<!-- <dependency>
+			<groupId>cn.qdevelop</groupId>
+			<artifactId>qdevelop-common</artifactId>
+			<version>2.0.0</version>
+		</dependency> -->
+	</dependencies>
+</project>

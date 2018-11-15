@@ -1,0 +1,24 @@
+Thu Nov 15 11:35:00 CST 2018 : server start!
+Thu Nov 15 11:35:16 CST 2018 : /127.0.0.1:54030 coupon get from core  10
+Thu Nov 15 11:35:16 CST 2018 : /127.0.0.1:54035 product get from core  5
+Thu Nov 15 11:35:16 CST 2018 : /127.0.0.1:54036 product get from core  5
+Thu Nov 15 11:35:16 CST 2018 : /127.0.0.1:54037 coupon get from core  10
+Thu Nov 15 11:35:16 CST 2018 : /127.0.0.1:54038 coupon get from core  1000
+Thu Nov 15 11:35:16 CST 2018 : /127.0.0.1:54039 coupon roll back  10
+Thu Nov 15 11:35:30 CST 2018 : /127.0.0.1:54098 coupon get from temp  10
+Thu Nov 15 11:35:30 CST 2018 : /127.0.0.1:54099 product get from core  5
+Thu Nov 15 11:35:30 CST 2018 : /127.0.0.1:54100 product get from core  5
+Thu Nov 15 11:35:31 CST 2018 : /127.0.0.1:54101 coupon get from core  10
+Thu Nov 15 11:35:31 CST 2018 : /127.0.0.1:54102 coupon get from core  10
+Thu Nov 15 11:35:31 CST 2018 : /127.0.0.1:54103 product get from core  445
+Thu Nov 15 11:35:31 CST 2018 : /127.0.0.1:54104 product roll back  445
+Thu Nov 15 11:35:31 CST 2018 : /127.0.0.1:54105 coupon roll back  20
+Thu Nov 15 11:35:33 CST 2018 : /127.0.0.1:54116 coupon get from temp  10
+Thu Nov 15 11:35:33 CST 2018 : /127.0.0.1:54117 product get from temp  5
+Thu Nov 15 11:35:33 CST 2018 : /127.0.0.1:54118 product get from temp  5
+Thu Nov 15 11:35:33 CST 2018 : /127.0.0.1:54119 coupon get from temp  10
+Thu Nov 15 11:35:33 CST 2018 : /127.0.0.1:54120 coupon get from core  10
+Thu Nov 15 11:35:33 CST 2018 : /127.0.0.1:54121 product get from temp  435
+Thu Nov 15 11:35:33 CST 2018 : /127.0.0.1:54121 product get from core  10
+Thu Nov 15 11:35:33 CST 2018 : /127.0.0.1:54126 product roll back  445
+Thu Nov 15 11:35:33 CST 2018 : /127.0.0.1:54127 coupon roll back  20
