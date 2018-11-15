@@ -45,31 +45,24 @@ public class LeftJoinFormatter extends AbstractResultFormatter implements IResul
 
 	@Override
 	public void formatter(Map<String, Object> data) {
-		//		synchronized(conditions){
 		Object val = data.get(resultKey);
 		if(val!=null && conditions != null){
 			conditions.add(String.valueOf(val));
 		}
-		//		}
 	}
 
 	@Override
 	public void flush(IDBResult result)  throws QDevelopException{
 		if(result.getSize()==0||(conditions!=null&&conditions.size()==0))return;
-		//		lock.lock();
 		Connection conn = null;
 		try {
 			Map<String,Object> query = new HashMap<String,Object>();
 			query.put("index", formatterIndex);
 			StringBuilder sb = new StringBuilder();
-			//		conditions.toArray(a)
-			//		String [] c = conditions.toArray(new String[]{});
-			//			synchronized(conditions){
 			Iterator<String> itor = conditions.iterator();
 			while(itor.hasNext()){
 				sb.append("|").append(itor.next());
 			}
-			//			}
 			if(sb.length()==0)return;
 			query.put(formatterKey, sb.substring(1));
 			//		query.put("page", 1);
@@ -170,7 +163,6 @@ public class LeftJoinFormatter extends AbstractResultFormatter implements IResul
 			} catch (SQLException e) {
 				e.printStackTrace();
 			}
-			//				lock.unlock();
 		}
 	}
 
@@ -182,7 +174,6 @@ public class LeftJoinFormatter extends AbstractResultFormatter implements IResul
 	@Override
 	public void init() {
 		conditions = null;
-		// Collections.synchronizedSet(new HashSet<String>());
 		conditions = new HashSet<String>();
 	}
 }

@@ -43,13 +43,14 @@ public class DruidConnect implements IConnect{
 			dataSource.setMaxWait(Integer.parseInt(getValue(config.elementText("max-wait").replaceAll("\t|\r|\n| ", ""),"1")));
 			
 			
-			dataSource.setPoolPreparedStatements(true);
-			dataSource.setTimeBetweenEvictionRunsMillis(2000);
-			dataSource.setMinEvictableIdleTimeMillis(600000);
-			dataSource.setMaxEvictableIdleTimeMillis(900000);
-			dataSource.setKeepAlive(true);
-			dataSource.setMaxPoolPreparedStatementPerConnectionSize(100);
-			dataSource.setFilters("stat");
+//			dataSource.setPoolPreparedStatements(true);
+//			dataSource.setTimeBetweenEvictionRunsMillis(2000);
+//			dataSource.setMinEvictableIdleTimeMillis(600000);
+//			dataSource.setMaxEvictableIdleTimeMillis(900000);
+////			dataSource.setKeepAlive(true);
+//			dataSource.setMaxPoolPreparedStatementPerConnectionSize(100);
+//			dataSource.setFilters("stat");
+			
 //			//超过时间限制是否回收
 //			dataSource.setRemoveAbandoned(true);
 //			//超时时间；单位为秒。120秒=2分钟

@@ -1,8 +1,6 @@
 package cn.qdevelop.plugin.id.client;
 
-import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
@@ -20,7 +18,6 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import org.apache.log4j.Logger;
 
 import cn.qdevelop.common.QLog;
-import cn.qdevelop.common.files.QFileLoader;
 import cn.qdevelop.plugin.common.IDRequest;
 import cn.qdevelop.plugin.common.IDResponse;
 import cn.qdevelop.plugin.idgenerate.bean.ClientBufferBean;
@@ -342,24 +339,12 @@ public class IDClient {
 	}
 
 	private void init(){
-		try {
-			new QFileLoader(){
-				@Override
-				public void despose(InputStream is) {
-					try {
-						Properties prop = new Properties();
-						prop.load(is);
-						SERVER_IP = prop.getProperty("server_ip") == null ? "127.0.0.1" : prop.getProperty("server_ip");
-						SERVER_PORT = prop.getProperty("server_port") == null ? 65501 : Integer.parseInt(prop.getProperty("server_port"));
-					} catch (IOException e) {
-						e.printStackTrace();
-					}
-				}
-			}.loadFile("plugin-config/qdevelop-id-client.properties", this.getClass());
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
+		Properties prop = IDClientConfig.getInstance().loadProperties("plugin-config/qdevelop-id-client.properties", IDClient.class);
+		if(prop==null){
+			System.err.println("未找到ID生成器Server端配置文件【plugin-config/qdevelop-id-client.properties】");
 		}
-
+		SERVER_IP = prop.getProperty("server_ip") == null ? "127.0.0.1" : prop.getProperty("server_ip");
+		SERVER_PORT = prop.getProperty("server_port") == null ? 65500 : Integer.parseInt(prop.getProperty("server_port"));
 		Runtime.getRuntime().addShutdownHook(new Thread(){
 			public void run(){
 				IDClient.getInstance().shutdown();
@@ -369,7 +354,7 @@ public class IDClient {
 
 	public static void main(String[] args) {
 		try {
-			for(int i=0;i<10000;i++){
+			for(int i=0;i<10;i++){
 				//				String id = IDClient.getInstance().getRandomID();
 //				System.out.println(IDClient.getInstance().getRandomID());
 				System.out.println(IDClient.getInstance().getCouponID());

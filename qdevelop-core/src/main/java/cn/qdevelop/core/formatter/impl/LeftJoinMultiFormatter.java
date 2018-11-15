@@ -66,12 +66,10 @@ public class LeftJoinMultiFormatter extends AbstractResultFormatter implements I
 			Map<String,Object> query = new HashMap<String,Object>();
 			query.put("index", formatterIndex);
 			StringBuilder sb = new StringBuilder();
-			//		synchronized(conditions){
 			Iterator<String> itor = conditions.iterator();
 			while(itor.hasNext()){
 				sb.append("|").append(itor.next());
 			}
-			//		System.out.println(">>>>>>> "+sb.toString());
 			if(sb.length()==0)return;
 			query.put(formatterKey, sb.substring(1));
 			//		query.put("page", 1);
@@ -84,7 +82,6 @@ public class LeftJoinMultiFormatter extends AbstractResultFormatter implements I
 			int size  = formatterResult.getSize();
 			if(size==0)return;
 			DatabaseFactory.getInstance().formatterResult(formatterIndex, formatterResult);
-			//			System.out.println(JSONObject.toJSONString(formatterResult));	
 			HashMap<String,List<Map<String,Object>>> tmp = new HashMap<String,List<Map<String,Object>>>();
 			for(int i=0;i<size;i++){
 				Map<String,Object> data = formatterResult.getResult(i);
@@ -145,7 +142,6 @@ public class LeftJoinMultiFormatter extends AbstractResultFormatter implements I
 				e.printStackTrace();
 			}
 		}
-		//		}
 	}
 
 	public void testAdd(String val){
