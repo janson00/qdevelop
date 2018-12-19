@@ -66,8 +66,8 @@ public class SQLConfigLoader extends ConcurrentHashMap<String,Element>{
 		errIndexInfo = new ArrayList<String>();
 		
 		long s = System.currentTimeMillis();
-		loadConfigFromJars();
 		loadConfigFromProject();
+		loadConfigFromJars();
 		storeDebugXML();
 		System.out.println("SQLConfigLoader load all *.sql.xml count:"+this.size()+" use:"+(System.currentTimeMillis()-s)+"ms");
 		if(isExistIndex){
@@ -78,6 +78,15 @@ public class SQLConfigLoader extends ConcurrentHashMap<String,Element>{
 //			System.exit(0);
 		}
 		//		System.out.println(tablesIndex);
+	}
+	
+	/**
+	 * 热加载本地配置文件
+	 */
+	public void hotLoadConfig(){
+		loadConfigFromProject();
+		loadConfigFromJars();
+		storeDebugXML();
 	}
 
 	/**
@@ -130,21 +139,7 @@ public class SQLConfigLoader extends ConcurrentHashMap<String,Element>{
 		}.searchProjectFiles("*.sql.xml$");
 	}
 
-	/**
-	 * 热加载本地配置文件
-	 */
-	public void hotLoadConfig(){
-		new SearchFileFromProject(){
-			@Override
-			protected void disposeFile(File f) {
-				hotLoadConfigFile(f);
-			}
 
-			@Override
-			protected void disposeFileDirectory(File f) {
-			}
-		}.searchProjectFiles("*.sql.xml$");
-	}
 
 	private static int projectIndex = 0;
 

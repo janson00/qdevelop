@@ -107,7 +107,7 @@ public abstract class PermitVerifierFilter implements Filter{
 				li = null;
 			}
 		}else{
-			QServiceUitls.setCookie((HttpServletResponse)response, "sid", java.util.UUID.randomUUID().toString(), 60*60*24*365);
+			QServiceUitls.setCookie(req,(HttpServletResponse)response, "sid", java.util.UUID.randomUUID().toString(), 60*60*24*365);
 		}
 
 		HttpServletResponse res = (HttpServletResponse)response;
@@ -116,7 +116,7 @@ public abstract class PermitVerifierFilter implements Filter{
 					.append(req.getContextPath())
 					.append(loginUrl.startsWith("/")?loginUrl:"/"+loginUrl)
 					.append("?from=")
-					.append(URLEncoder.encode(uri+(req.getQueryString()==null?"":"?"+req.getQueryString()), "utf-8"));
+					.append(URLEncoder.encode(req.getRequestURI()+(req.getQueryString()==null?"":"?"+req.getQueryString()), "utf-8"));
 			res.sendRedirect(sb.toString());
 		}else{
 			res.setCharacterEncoding("utf-8");

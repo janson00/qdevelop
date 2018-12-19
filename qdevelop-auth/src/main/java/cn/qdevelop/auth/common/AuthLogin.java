@@ -8,6 +8,7 @@ import java.util.Map;
 
 import javax.servlet.annotation.WebInitParam;
 import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.HttpServletRequest;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
@@ -42,8 +43,17 @@ public class AuthLogin extends APIControl{
 
 	@Override
 	protected String execute(Map<String, String> args, IOutput output) {
+		HttpServletRequest request = this.getRequest();
+		String localhosts = new StringBuilder().append(request.getServerName())
+				.append(request.getServerPort()==80?"":":")
+				.append(request.getServerPort()==80?"":request.getServerPort())
+				.append(request.getContextPath()).append("/")
+				.toString(); 
+//		System.out.println(localhosts);
+		
 		Connection conn = null;
 		try {
+			
 			conn = DatabaseFactory.getInstance().getConnectByQuery("checkLoginAction");
 			//验证登陆信息
 			IDBResult result = DatabaseFactory.getInstance().queryDatabase(new DBArgs("checkLoginAction")
@@ -61,7 +71,7 @@ public class AuthLogin extends APIControl{
 			li.setLoginName(result.getString(0, "login_name"));
 			li.setSysName("admin");
 			li.setUserName(result.getString(0, "user_name"));
-			li.setIp(QServiceUitls.getUserIP(getRequest()));
+			li.setIp(QServiceUitls.getUserIP(request));
 			li.setUid(result.getInteger(0, "uid"));
 			
 			String  extra = result.getString(0, "extra_info");
@@ -92,19 +102,28 @@ public class AuthLogin extends APIControl{
 					.put("permit_id", li.getPermitId() )
 					.put("uid", li.getUid())
 					,conn);
-
+			
+			
+			
+					//res.getContextPath();
+			
 			for(int i=0;i<result.getSize();i++){
 				String url = result.getString(i, "permit_link");
 				if(url!=null && url.length()==0){
 					url = result.getString(i, "link");
 				}
 				if(url!=null && url.length() > 0){
-					li.addMenuPermit(AuthUtils.relaceDynamicValue(url), result.getLong(i, "permit"));
+					String uri = AuthUtils.relaceDynamicValue(url);
+					if(uri.indexOf(localhosts)>-1){
+						uri = uri.substring(uri.indexOf(localhosts)+localhosts.length());
+					}
+//					System.out.println(uri);
+					li.addMenuPermit(uri, result.getLong(i, "permit"));
 				}
 			}
 
 			//存入memcached做验证使用
-			String sid = QServiceUitls.getCookie("sid", this.getRequest());
+			String sid = QServiceUitls.getCookie("sid", request);
 
 			if(sid!=null){
 				XMemcached.getInstance().add(sid, li, XMemcached.EXP_30Min);

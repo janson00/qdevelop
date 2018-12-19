@@ -7,7 +7,7 @@ public class SysPermitFilter extends PermitVerifierFilter{
 
 	@Override
 	protected String getLoginUrl() {
-		return "/sys/login/login.html";
+		return "/sys/login/login.htmlx";
 	}
 
 	@Override

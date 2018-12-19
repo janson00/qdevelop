@@ -51,7 +51,7 @@ public class ThirdValidService extends APIControl{
 		String sid = QServiceUitls.getCookie("sid", request);
 		if(sid == null ){
 			sid = java.util.UUID.randomUUID().toString();
-			QServiceUitls.setCookie(this.getResponse(), "sid", sid , 60*60*24*365);
+			QServiceUitls.setCookie(request,this.getResponse(), "sid", sid , 60*60*24*365);
 			output.setErrMsg("请先登陆后再次访问。");
 			output.setTag(503);
 			return null;

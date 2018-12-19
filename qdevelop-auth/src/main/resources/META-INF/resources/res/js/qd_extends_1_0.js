@@ -14,6 +14,34 @@
 }(jQuery));
 
 $(function () {
+	$.fn.setValue = function(value,readOnly){
+		var _thisType = $(this).attr('type')||this[0].type;
+		console.log($(this).attr('id')+' : '+_thisType);
+		if(_thisType == 'radio' || _thisType == 'checkbox'){
+			$(this).removeAttr('checked');
+			var checkValue = ';'+value+';';
+			if(value!=null&&checkValue.indexOf(';'+$(this).val()+';') > -1){
+				$(this).click();
+			};
+		}else if(_thisType=="select-one"||_thisType=="select-multiple"){
+			var select = this[0];
+			if(value == null){
+				select.options[0].selected = true; 
+			}
+			var checkValue = ';'+value+';';
+			for(var i = 0;i<select.options.length;i++){
+				if(checkValue.indexOf(';'+select.options[i].value+';')>-1){
+					select.options[i].selected = true;
+				}else{
+					select.options[i].selected = false;
+				}
+			}
+		}else{
+			$(this).val(value==null?"":value);
+		}
+		$(this).change();
+	}
+	
 	$.fn.easyForm  = function(options,params){
 		if(typeof options == "string"){
 			$.fn.easyForm.method[options](this,params);
@@ -636,43 +664,44 @@ $.fn.easyGrid = function(_opts){
 					formatParam.format[_thisType](this,_dValue);
 				}else{formatParam.format[_thisId](this,_dValue);};
 			}else{
-				if(_dValue!=null){
-					if($(this).is('.combo-f')){
-						if($(this).combo('options').multiple)
-							$(this).combo('setValues',typeof _dValue == 'object'?_dValue:_dValue.split(","));
-						else
-							$(this).combo('setValue',_dValue);
-					}if($(this).is('.combobox-f')){
-						if($(this).combobox('options').multiple)
-							$(this).combobox('setValues',typeof _dValue == 'object'?_dValue:_dValue.split(","));
-						else
-							$(this).combobox('setValue',_dValue);
-					}else if($(this).is('.combotree-f')){			
-						if($(this).combotree('options').multiple)
-							$(this).combotree('setValues',typeof _dValue == 'object'?_dValue:_dValue.split(","));
-						else
-							$(this).combotree('setValue',_dValue);
-					}else if($(this).is('.datebox-f')){						
-						$(this).datebox('setValue',_dValue);
-					}else if($(this).is('.datetimebox-f')){
-						$(this).datetimebox('setValue',_dValue);
-					}else if($(this).is('.easyui-numberbox')){
-						$(this).numberbox('setValue',_dValue);
-					}else{						
-						if(_thisType == 'radio' || _thisType == 'checkbox'){
-							var checkValue = ';'+_dValue+';';
-							if(_dValue!=null&&checkValue.indexOf(';'+this.value+';') > -1)
-								$(this).attr('checked','checked');	
-						}else if(_thisType=="select-one"||_thisType=="select-multiple"){
-							var checkValue = ';'+_dValue+';';
-							if(_dValue!=null)setMultiSelectValue($(this),checkValue);				
-						}else {
-							if(typeof _dValue =='number' ||( typeof _dValue =='string' && _dValue.toUpperCase()!='NULL'))$(this).val(_dValue);
-						}
-					}
-				}else{
-					$(this).val('');
-				}
+				$(this).setValue(_dValue,false);
+//				if(_dValue!=null){
+//					if($(this).is('.combo-f')){
+//						if($(this).combo('options').multiple)
+//							$(this).combo('setValues',typeof _dValue == 'object'?_dValue:_dValue.split(","));
+//						else
+//							$(this).combo('setValue',_dValue);
+//					}if($(this).is('.combobox-f')){
+//						if($(this).combobox('options').multiple)
+//							$(this).combobox('setValues',typeof _dValue == 'object'?_dValue:_dValue.split(","));
+//						else
+//							$(this).combobox('setValue',_dValue);
+//					}else if($(this).is('.combotree-f')){			
+//						if($(this).combotree('options').multiple)
+//							$(this).combotree('setValues',typeof _dValue == 'object'?_dValue:_dValue.split(","));
+//						else
+//							$(this).combotree('setValue',_dValue);
+//					}else if($(this).is('.datebox-f')){						
+//						$(this).datebox('setValue',_dValue);
+//					}else if($(this).is('.datetimebox-f')){
+//						$(this).datetimebox('setValue',_dValue);
+//					}else if($(this).is('.easyui-numberbox')){
+//						$(this).numberbox('setValue',_dValue);
+//					}else{						
+//						if(_thisType == 'radio' || _thisType == 'checkbox'){
+//							var checkValue = ';'+_dValue+';';
+//							if(_dValue!=null&&checkValue.indexOf(';'+this.value+';') > -1)
+//								$(this).attr('checked','checked');	
+//						}else if(_thisType=="select-one"||_thisType=="select-multiple"){
+//							var checkValue = ';'+_dValue+';';
+//							if(_dValue!=null)setMultiSelectValue($(this),checkValue);				
+//						}else {
+//							if(typeof _dValue =='number' ||( typeof _dValue =='string' && _dValue.toUpperCase()!='NULL'))$(this).val(_dValue);
+//						}
+//					}
+//				}else{
+//					$(this).val('');
+//				}
 			};
 			if(!formatParam.isFormOnly)multiKey.push(key);			
 		});

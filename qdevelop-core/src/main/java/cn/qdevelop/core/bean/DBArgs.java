@@ -16,6 +16,10 @@ public class DBArgs extends HashMap<String, Object>{
 	public DBArgs(String sqlIndex){
 		this.put("index", sqlIndex);
 	}
+	
+	public DBArgs(Map<String,?> map){
+		super.putAll(map);
+	}
 
 	/**
 	 * 
@@ -52,7 +56,7 @@ public class DBArgs extends HashMap<String, Object>{
 	 * @param args
 	 * @return
 	 */
-	public DBArgs putMap(Map<String, Object> args){
+	public DBArgs putMap(Map<String, ?> args){
 		super.putAll(args);
 		return this;
 	}
@@ -63,7 +67,7 @@ public class DBArgs extends HashMap<String, Object>{
 	 * @param fileds
 	 * @return
 	 */
-	public DBArgs putMap(Map<String, Object> args,String[] fileds){
+	public DBArgs putMap(Map<String, ?> args,String[] fileds){
 		for(String key : fileds){
 			super.put(key, args.get(key));
 		}
@@ -121,6 +125,45 @@ public class DBArgs extends HashMap<String, Object>{
 		}
 		return this;
 	} 
+	
+	
+	public Integer getInteger(String key){
+		Object v = this.get(key);
+		if( v == null){
+			return null;
+		}
+		if(v.getClass().equals(Integer.class)){
+			return (Integer)v; 
+		}else{
+			return Integer.parseInt(String.valueOf(v));
+		}
+	}
+	
+	public String getString(String key){
+		Object v = this.get(key);
+		if( v == null){
+			return null;
+		}
+		if(v.getClass().equals(String.class)){
+			return (String)v; 
+		}else{
+			return String.valueOf(v);
+		}
+	}
+	
+	public Double getDouble(String key){
+		Object v = this.get(key);
+		if( v == null){
+			return null;
+		}
+		if(v.getClass().equals(Double.class)){
+			return (Double)v; 
+		}else{
+			return Double.parseDouble(String.valueOf(v));
+		}
+	}
+	
+	
 	
 //	public static void main(String[] args) {
 //		DBArgs a = new DBArgs().putHttpParametters("username=admin&passwd=f88bdb3ce001485116bff776be5b8687&age=");

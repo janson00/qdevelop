@@ -126,13 +126,13 @@
     <!-- /.sidebar -->
   </aside>
   <!-- jQuery 2.2.3 -->
-  <script src="http://res.qdevelop.cn/AdminLTE/plugins/jQuery/jquery-2.2.3.min.js"></script>
+  <script src="<%=request.getContextPath()%>/AdminLTE/plugins/jQuery/jquery-2.2.3.min.js"></script>
   <script type="text/javascript"> 
    var domain='<%=request.getContextPath()%>';
    $(function () {
    		$('#safeLoginOut').click(function(){
    			if(confirm('是否确定退出登陆？')){
-   				$.ajax({url:domain+'/sys/auth/loginout'
+   				$.ajax({url:'<%=request.getContextPath()%>/sys/auth/loginout'
    					,success : function(r) {
    					window.location.reload();
    				}});
@@ -151,21 +151,24 @@
 			url:'<%=request.getContextPath()%>/sys/auth/menu',
 			success : function(r) {
 				if (r.tag == 0) {
+					var localPath = window.location.pathname;
 					var rb = r.data.result;
 					var html = '<li class="header">系统功能主菜单</li>';
 					for (var i = 0; i < rb.length; i++) {
-						html += '<li class="treeview '+(i==0?"active":"")+'"><a href="#"><i class="fa '+rb[i]['menu_icon']+'"></i> <span>'+rb[i]['menu_name']+'</span>'
+						html += '<li class="treeview"><a href="#"><i class="fa '+rb[i]['menu_icon']+'"></i> <span>'+rb[i]['menu_name']+'</span>'
 					          +'<span class="pull-right-container"><i class="fa fa-angle-left pull-right"></i></span>'
 					          +'</a><ul class="treeview-menu">';
 				          if(typeof rb[i]['childs'] != 'undefined'){
 				        	  var child = rb[i]['childs'];
 				        	  for (var j = 0; j < child.length; j++) {
-				        		  html += '<li><a href="'+child[j]['menu_link']+'"><i class="fa fa-circle-o"></i> '+child[j]['menu_name']+'</a></li>';
+				        		  html += '<li '+(child[j]['menu_link'].indexOf(localPath)>-1?"id='targetUrl'":"")
+				        		  +'><a href="'+child[j]['menu_link']+'"><i class="fa fa-circle-o"></i> '+child[j]['menu_name']+'</a></li>';
 				        	  }
 				          }
 				          html += '</ul></li>'     
 					}
 					$('#main_menu').html(html);
+					$('#targetUrl').parent().prev().click();
 				}else{
 					alert(r.errMsg);
 				}

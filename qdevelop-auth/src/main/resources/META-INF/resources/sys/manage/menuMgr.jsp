@@ -151,6 +151,7 @@
 				{"title":'状态',"field":'status',"type":'select',options:qd_auth_status}
     		]
     	,onShow:function(formBody,rowData){
+    		//$('#sys_name',formBody).attr('');
     		//alert(1);
     		$.ajax({
 				url:'<%=request.getContextPath()%>/rest/cn/qdevelop/auth/adb/qd_auth_menu_simple',
@@ -161,7 +162,7 @@
 						var parent_id_select = $('#parent_id',formBody).get(0);
 						parent_id_select.options.add(new Option('根菜单','0'));
 						var rb = r.data.result;
-						console.log(parent_id_select)
+					//	console.log(parent_id_select)
 						for (var i = 0; i < rb.length; i++) {
 							parent_id_select.options.add(new Option(rb[i]['menu_name'],rb[i]['menu_id']));
 						}

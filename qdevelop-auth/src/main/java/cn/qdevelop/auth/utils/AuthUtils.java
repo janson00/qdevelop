@@ -8,7 +8,7 @@ import cn.qdevelop.common.files.QSource;
 
 public class AuthUtils {
 	
-	public static final Pattern formatUri = Pattern.compile("^\\/+|^(http|https):\\/\\/|(\\?|#).+$",Pattern.CASE_INSENSITIVE);
+	public static final Pattern formatUri = Pattern.compile("^\\/+|^(http|https):\\/\\/|(\\?|#)(.+)?$",Pattern.CASE_INSENSITIVE);
 	public static final Pattern formatUriClean = Pattern.compile("\\/+");
 
 	private static Properties qdevelop_menu_dict = QSource.getInstance().loadProperties("plugin-config/qdevelop_auth.properties", AuthLogin.class) ;
@@ -47,6 +47,6 @@ public class AuthUtils {
 	}
 	
 	public static void main(String[] args) {
-		System.out.println(relaceDynamicValue("{SVR_HOSTS}/html/main.html"));
+		System.out.println(formatUri.matcher("{SVR_HOSTS}/html/main.html#").replaceAll(""));
 	}
 }

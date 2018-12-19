@@ -47,11 +47,20 @@ public class QServiceUitls {
 
 		return val;
 	}
+	
+	private static Pattern isDomain = Pattern.compile("^.+\\..+\\..+$"); 
 
-	public static void setCookie(HttpServletResponse response,String key,String value,int maxAge){
+	public static void setCookie(HttpServletRequest request,HttpServletResponse response,String key,String value,int maxAge){
 		Cookie cookie = new Cookie(key,value);
 		cookie.setMaxAge(maxAge);
 		cookie.setPath("/");
+		String domain = request.getServerName();
+		if(isDomain.matcher(domain).find()){
+			domain = domain.substring(domain.indexOf(".")+1);
+		}
+		System.out.println("cookie domain >>> "+request.getServerName()+" ---> "+domain);
+		cookie.setDomain(domain);
+		
 		response.addCookie(cookie);
 	}
 
