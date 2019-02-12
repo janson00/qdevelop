@@ -135,10 +135,10 @@ public class FormatterLoader{
 	}
 	
 	
-	public static void main(String[] args) {
-		int s = FormatterLoader.getInstance().resultFormatterCollections.size();
-		FormatterLoader.getInstance().getResultFormatter("prop-formatter");
-		System.out.println(s);
-	}
+//	public static void main(String[] args) {
+//		int s = FormatterLoader.getInstance().resultFormatterCollections.size();
+//		FormatterLoader.getInstance().getResultFormatter("prop-formatter");
+//		System.out.println(s);
+//	}
 
 }

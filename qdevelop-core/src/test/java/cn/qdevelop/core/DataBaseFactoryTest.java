@@ -29,7 +29,7 @@ public class DataBaseFactoryTest extends TestCase {
 		ConnectFactory.close(conn);
 	}
 	
-	public void stestQuery(){
+	public void testQuery(){
 		Map<String,Object> query = new HashMap<String,Object>();
 		query.put("index", "users-search-action");
 		query.put("status", "1");

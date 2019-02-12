@@ -14,7 +14,7 @@
     <param-formatter>
       <param key="uid" value="${user.uid}"></param>
     </param-formatter>
-    <sql params="page_name|description|uid|page_display|page_breadcrumb|page_order|page_type|page_target|page_id" is-select="false" tables="page" fetch-zero-err="true" is-full-param="true">update page set `page_name`='$[page_name]',`description`='$[description]',`cuser`=$[uid],`page_display`='$[page_display]',`page_breadcrumb`='$[page_breadcrumb]',`page_order`='$[page_order]',`page_type`='$[page_type]',`page_target`='$[page_target]' where page_id=$[page_id]</sql>
+    <sql params="page_name|description|uid|page_display|page_breadcrumb|page_order|page_type|page_target|page_id" is-select="false" tables="page" fetch-zero-err="true" is-full-param="true" str-param="|uid|">update page set `page_name`='$[page_name]',`description`='$[description]',`cuser`=$[uid],`page_display`='$[page_display]',`page_breadcrumb`='$[page_breadcrumb]',`page_order`='$[page_order]',`page_type`='$[page_type]',`page_target`='$[page_target]' where page_id=$[page_id]</sql>
   </poperty>
   <poperty index="modular_type_test!selectType" explain="modular_type_test下拉选项" connect="web_R" file="/target/test-classes/cn/test/other/web_modular_type.sql.xml" is-open="false" name-space="" is-complex-build="true" is-convert-null="false" is-need-total="false" result-format-type="0" is-select="true">
     <sql is-select="true" tables="modular_type" fetch-zero-err="true" is-full-param="true">select `modular_type_id`,`modular_type_name` from modular_type where 9=9</sql>
@@ -29,7 +29,7 @@
     <param-formatter>
       <param key="uid" value="${user.uid}"></param>
     </param-formatter>
-    <sql params="editStatus|uid|modular_id" is-select="false" tables="modular" fetch-zero-err="true" is-full-param="true">update modular set `modular_edit_status`=$[editStatus], `modular_editor`=$[uid] where modular_id=$[modular_id]</sql>
+    <sql params="editStatus|uid|modular_id" is-select="false" tables="modular" fetch-zero-err="true" is-full-param="true" str-param="|uid|editStatus|">update modular set `modular_edit_status`=$[editStatus], `modular_editor`=$[uid] where modular_id=$[modular_id]</sql>
   </poperty>
   <poperty index="users-query-action" connect="user-connect-rw" explain="users查询" file="/target/test-classes/cn/test/sql/qd_product_center.users.sql.xml" is-open="false" name-space="" is-complex-build="true" is-convert-null="false" is-need-total="false" result-format-type="0" is-select="true">
     <sql params="uid|utime|user_name|status|age|ctime|mobile" is-select="true" tables="users" fetch-zero-err="true" is-full-param="true">select uid,utime,user_name,status,age,ctime,mobile from users where uid=$[uid] and utime=$[utime] and user_name='$[user_name]' and status=$[status] and age=$[age] and ctime=$[ctime] and mobile='$[mobile]'</sql>
@@ -53,7 +53,7 @@
     <param-formatter>
       <param key="uid" value="${user.uid}"></param>
     </param-formatter>
-    <sql fullParamOnly="true" params="file_id" is-select="false" tables="file_page_relation" fetch-zero-err="true" is-full-param="true">delete from file_page_relation where resource_file=$[file_id] and target_page in (select page_type_code as target_page from page_type)</sql>
+    <sql fullParamOnly="true" params="file_id" is-select="false" tables="file_page_relation" fetch-zero-err="true" is-full-param="true" str-param="|file_id|">delete from file_page_relation where resource_file=$[file_id] and target_page in (select page_type_code as target_page from page_type)</sql>
     <sql repeat="pageId" fullParamOnly="true" params="file_id|pageId|uid" repeat-concat="^" is-select="false" tables="file_page_relation" fetch-zero-err="true" is-full-param="true">insert into file_page_relation(resource_file,target_page,include_type,include_file_type,ctime,cuser) values($[file_id],'$[pageId]',0,1,NOW(),$[uid])</sql>
   </poperty>
   <poperty index="config_file_adv!select" explain="config_file查询" connect="web_R" file="/target/test-classes/cn/test/other/web_config_file.sql.xml" is-open="false" name-space="" is-complex-build="true" is-convert-null="false" is-need-total="false" result-format-type="0" is-select="true">
@@ -114,7 +114,7 @@
     </result-formatter>
   </poperty>
   <poperty index="users-search-action" connect="user-connect-rw" is-complex-build="true" explain="users查询" file="/target/test-classes/cn/test/sql/qd_product_center.users.sql.xml" is-open="false" name-space="" is-convert-null="false" is-need-total="false" result-format-type="0" is-select="true">
-    <sql params="status|mySelf" is-select="true" tables="users" fetch-zero-err="true" is-full-param="true">select * from users usr where usr.status=$[status] and $[mySelf] and 9=9</sql>
+    <sql str-param="|status|mySelf|" params="status|mySelf" is-select="true" tables="users" fetch-zero-err="true" is-full-param="true">select * from users usr where usr.status=$[status] and $[mySelf] and 9=9</sql>
   </poperty>
   <poperty index="page_test!delete" explain="page删除" connect="web" afterRun="com.lelife.oa.formatter.ClearPageCache" file="/target/test-classes/cn/test/other/web_page.sql.xml" is-open="false" name-space="" is-complex-build="true" is-convert-null="false" is-need-total="false" result-format-type="0" is-select="false">
     <sql params="page_id" is-select="false" tables="page" fetch-zero-err="true" is-full-param="true">update page set status=2 where page_id=$[page_id]</sql>
@@ -141,6 +141,12 @@
       <param key="uid" value="${user.uid}"></param>
     </param-formatter>
     <sql params="source_url|redirect_url|uid" is-select="false" tables="url_redirect" fetch-zero-err="true" is-full-param="true">insert into url_redirect(`source_url`,`redirect_url`,`status`,`ctime`,`cuser`) values ('$[source_url]','$[redirect_url]',1,NOW(),$[uid])</sql>
+  </poperty>
+  <poperty index="QueryDataParametterUpdate" connect="user-connect-rw" is-complex-build="true" explain="users查询" file="/target/test-classes/cn/qdevelop/test/core/utils/test.sql.xml" is-open="false" name-space="" is-convert-null="false" is-need-total="false" result-format-type="0" is-select="false">
+    <param-formatter>
+      <query-data-parametter data-index="QueryDataParametterQuery" columns="user_name as digit,mobile as bitsite" where-key="uid"></query-data-parametter>
+    </param-formatter>
+    <sql params="digit|bitsite" is-select="false" tables="test_table" fetch-zero-err="true" is-full-param="true">insert into test_table(digit,bitsite) value('$[digit]','$[bitsite]')</sql>
   </poperty>
   <poperty index="page_type!delete" explain="page_type删除" uniKey="page_type_id" connect="web" file="/target/test-classes/cn/test/other/web_page_type.sql.xml" is-open="false" name-space="" is-complex-build="true" is-convert-null="false" is-need-total="false" result-format-type="0" is-select="false">
     <sql params="page_type_id" is-select="false" tables="page_type" fetch-zero-err="true" is-full-param="true">update page_type set `status`=2 where page_type_id='$[page_type_id]'</sql>
@@ -230,16 +236,16 @@
       <param key="uid" value="${user.uid}"></param>
       <param key="uname" value="${user.name}"></param>
     </param-formatter>
-    <sql params="uname|message|uname|log_message|status|uid|web_publish_id" is-select="false" tables="web_publish" fetch-zero-err="true" is-full-param="true">update web_publish set message=concat('[','$[uname]',' ',NOW(),']','$[message]'),log_message=concat('[','$[uname]',' ',NOW(),']','$[log_message]'),status='$[status]',ctime=now(),cuser=$[uid] where web_publish_id='$[web_publish_id]'</sql>
+    <sql params="uname|message|uname|log_message|status|uid|web_publish_id" is-select="false" tables="web_publish" fetch-zero-err="true" is-full-param="true" str-param="|uid|message|uname|log_message|">update web_publish set message=concat('[','$[uname]',' ',NOW(),']','$[message]'),log_message=concat('[','$[uname]',' ',NOW(),']','$[log_message]'),status='$[status]',ctime=now(),cuser=$[uid] where web_publish_id='$[web_publish_id]'</sql>
   </poperty>
   <poperty index="modular_test!selectModels" explain="modular查询，通过函数名称" safeArgs="modular_func" connect="web_R" file="/target/test-classes/cn/test/other/matchFile.sql.xml" is-open="false" name-space="" is-complex-build="true" is-convert-null="false" is-need-total="false" result-format-type="0" is-select="true">
-    <sql params="modular_func" is-select="true" tables="modular" fetch-zero-err="true" is-full-param="true">select `modular_id`,`modular_name`,`modular_type`,`modular_func`,`status`,`modular_edit_status` from modular where modular_func in ($[modular_func]) and status=1</sql>
+    <sql params="modular_func" is-select="true" tables="modular" fetch-zero-err="true" is-full-param="true" str-param="|modular_func|">select `modular_id`,`modular_name`,`modular_type`,`modular_func`,`status`,`modular_edit_status` from modular where modular_func in ($[modular_func]) and status=1</sql>
   </poperty>
   <poperty index="modular_type_push!selectOnline" explain="查询线上modular_type表内容" connect="web_online" file="/target/test-classes/cn/test/other/web_push.sql.xml" is-open="false" name-space="" is-complex-build="true" is-convert-null="false" is-need-total="false" result-format-type="0" is-select="true">
     <sql is-select="true" tables="modular_type" fetch-zero-err="true" is-full-param="true">select * from modular_type where status=1 and 9=9</sql>
   </poperty>
   <poperty index="products-query-action" connect="default" explain="products查询" file="/target/test-classes/cn/test/sql/qd_product_center.products.sql.xml" is-open="false" name-space="" is-complex-build="true" is-convert-null="false" is-need-total="false" result-format-type="0" is-select="true">
-    <sql params="pid|dg|phone|price|store|status|product_name|ctime" is-select="true" tables="products" fetch-zero-err="true" is-full-param="true">select dg,phone,price,store,status,product_name,pid,ctime from products where pid=$[pid] and dg=$[dg] and phone='$[phone]' and price=$[price] and store=$[store] and status=$[status] and product_name='$[product_name]' and ctime=$[ctime]</sql>
+    <sql params="pid|dg|phone|price|store|status|product_name|ctime" is-select="true" tables="products" fetch-zero-err="true" is-full-param="true" str-param="|ctime|">select dg,phone,price,store,status,product_name,pid,ctime from products where pid=$[pid] and dg=$[dg] and phone='$[phone]' and price=$[price] and store=$[store] and status=$[status] and product_name='$[product_name]' and unix_time(ctime,'%y-%m-%d')=$[ctime]</sql>
   </poperty>
   <poperty index="file_test!selectByFileId" explain="file内容查询" connect="web_R" cacheAble="false" file="/target/test-classes/cn/test/other/matchFile.sql.xml" is-open="false" name-space="" is-complex-build="true" is-convert-null="false" is-need-total="false" result-format-type="0" is-select="true">
     <sql is-select="true" tables="file" fetch-zero-err="true" is-full-param="true">select file_id,file_path,file_content from file where 9=9</sql>
@@ -259,7 +265,7 @@
     <param-formatter>
       <param key="uid" value="${user.uid}"></param>
     </param-formatter>
-    <sql fullParamOnly="true" params="file_id" is-select="false" tables="file_page_relation" fetch-zero-err="true" is-full-param="true">delete from file_page_relation where resource_file=$[file_id] and target_page not in(select page_type_code as target_page from page_type)</sql>
+    <sql fullParamOnly="true" params="file_id" is-select="false" tables="file_page_relation" fetch-zero-err="true" is-full-param="true" str-param="|file_id|">delete from file_page_relation where resource_file=$[file_id] and target_page not in(select page_type_code as target_page from page_type)</sql>
     <sql repeat="pageId" fullParamOnly="true" params="file_id|pageId|uid" repeat-concat="^" is-select="false" tables="file_page_relation" fetch-zero-err="true" is-full-param="true">insert into file_page_relation(resource_file,target_page,include_type,include_file_type,ctime,cuser) values($[file_id],$[pageId],1,1,NOW(),$[uid])</sql>
   </poperty>
   <poperty index="ad_rules!select" explain="ad_rule查询" connect="web_R" file="/target/test-classes/cn/test/other/web_show.sql.xml" is-open="false" name-space="" is-complex-build="true" is-convert-null="false" is-need-total="false" result-format-type="0" is-select="true">
@@ -302,7 +308,7 @@
     <param-formatter>
       <param key="uid" value="${user.uid}"></param>
     </param-formatter>
-    <sql params="file_content|uid|file_id" is-select="false" tables="file" fetch-zero-err="true" is-full-param="true">update file set `file_content`='$[file_content]', ctime=NOW(), cuser=$[uid] where file_id=$[file_id]</sql>
+    <sql params="file_content|uid|file_id" is-select="false" tables="file" fetch-zero-err="true" is-full-param="true" str-param="|uid|">update file set `file_content`='$[file_content]', ctime=NOW(), cuser=$[uid] where file_id=$[file_id]</sql>
     <sql params="file_id|file_content|uid" is-select="false" tables="log_file" fetch-zero-err="true" is-full-param="true">insert into log_file (`file_id`,`file_content`,`ctime`,`cuser`,operation) values ($[file_id],'$[file_content]',NOW(),$[uid],3)</sql>
   </poperty>
   <poperty index="config_file_adv!insert" explain="config_file_adv!insert查询" connect="web" safe-args="*" beforeRun="com.lelife.oa.formatter.CreateConfigFile" file="/target/test-classes/cn/test/other/web_config_file.sql.xml" is-open="false" name-space="" is-complex-build="true" is-convert-null="false" is-need-total="false" result-format-type="0" is-select="false">
@@ -320,6 +326,9 @@
       <date-formatter targetKey="ctime" style="yyyy-MM-dd HH:mm:ss"></date-formatter>
       <table-cache table="qd_jaas_user" targetKey="cuser" fields="name"></table-cache>
     </result-formatter>
+  </poperty>
+  <poperty index="QueryDataParametterQuery" connect="user-connect-rw" is-complex-build="true" explain="users查询" file="/target/test-classes/cn/qdevelop/test/core/utils/test.sql.xml" is-open="false" name-space="" is-convert-null="false" is-need-total="false" result-format-type="0" is-select="true">
+    <sql is-select="true" tables="users" fetch-zero-err="true" is-full-param="true">select * from users usr where 9=9</sql>
   </poperty>
   <poperty index="file_test!select" explain="file_test查询" connect="web_R" file="/target/test-classes/cn/test/other/web_file.sql.xml" is-open="false" name-space="" is-complex-build="true" is-convert-null="false" is-need-total="false" result-format-type="0" is-select="true">
     <sql is-select="true" tables="file" fetch-zero-err="true" is-full-param="true">select `file_id`,`file_name`,`file_path`,`file_type`,`target_page`,`file_order`,`description`,`isCompress`,`status`,`ctime`,`cuser` from file where 9=9 and status=1</sql>
@@ -350,7 +359,7 @@
     <sql params="page_type_name|page_type_code|description|uid" is-select="false" tables="page_type" fetch-zero-err="true" is-full-param="true">insert into page_type(`page_type_name`,`page_type_code`,`description`,`status`,`ctime`,`cuser`) values ('$[page_type_name]','$[page_type_code]','$[description]',1,NOW(),$[uid])</sql>
   </poperty>
   <poperty index="web_auth_select" explain="web_auth_select" connect="default" file="/target/test-classes/cn/test/other/web_core.sql.xml" is-open="false" name-space="" is-complex-build="true" is-convert-null="false" is-need-total="false" result-format-type="0" is-select="true">
-    <sql params="sid|menu_id" is-select="true" tables="qd_s_menu" fetch-zero-err="true" is-full-param="true">select id from qd_s_menu where sid regexp '$[sid]' and id=$[menu_id];</sql>
+    <sql params="sid|menu_id" is-select="true" tables="qd_s_menu" fetch-zero-err="true" is-full-param="true" str-param="|menu_id|sid|">select id from qd_s_menu where sid regexp '$[sid]' and id=$[menu_id];</sql>
   </poperty>
   <poperty index="page_test!insert" explain="page插入" connect="web" beforeRun="com.lelife.oa.formatter.CreateHtml" afterRun="com.lelife.oa.formatter.ClearPageCache" safe-args="*" file="/target/test-classes/cn/test/other/web_page.sql.xml" is-open="false" name-space="" is-complex-build="true" is-convert-null="false" is-need-total="false" result-format-type="0" is-select="false">
     <param-formatter>
@@ -390,7 +399,7 @@
     <param-formatter>
       <param key="uid" value="${user.uid}"></param>
     </param-formatter>
-    <sql params="config_file_content|uid|config_file_id" is-select="false" tables="config_files" fetch-zero-err="true" is-full-param="true">update config_files set `config_file_content`='$[config_file_content]',cuser=$[uid],ctime=NOW() where config_file_id=$[config_file_id]</sql>
+    <sql params="config_file_content|uid|config_file_id" is-select="false" tables="config_files" fetch-zero-err="true" is-full-param="true" str-param="|uid|">update config_files set `config_file_content`='$[config_file_content]',cuser=$[uid],ctime=NOW() where config_file_id=$[config_file_id]</sql>
     <sql params="config_file_id|config_file_content|uid" is-select="false" tables="log_config_files" fetch-zero-err="true" is-full-param="true">insert into log_config_files(`config_file_id`, `config_file_content`,`ctime`,`cuser`) values ('$[config_file_id]','$[config_file_content]',NOW(),$[uid])</sql>
   </poperty>
   <poperty index="modular_content!select" explain="modular_content查询" connect="web_R" cacheAble="false" file="/target/test-classes/cn/test/other/web_modular.sql.xml" is-open="false" name-space="" is-complex-build="true" is-convert-null="false" is-need-total="false" result-format-type="0" is-select="true">
@@ -409,13 +418,13 @@
     <param-formatter>
       <param key="uid" value="${user.uid}"></param>
     </param-formatter>
-    <sql params="source_url|redirect_url|uid|url_redirect_id" is-select="false" tables="url_redirect" fetch-zero-err="true" is-full-param="true">update url_redirect set `source_url`='$[source_url]',`redirect_url`='$[redirect_url]',`ctime`=NOW(),`cuser`=$[uid] where `url_redirect_id`='$[url_redirect_id]'</sql>
+    <sql params="source_url|redirect_url|uid|url_redirect_id" is-select="false" tables="url_redirect" fetch-zero-err="true" is-full-param="true" str-param="|uid|">update url_redirect set `source_url`='$[source_url]',`redirect_url`='$[redirect_url]',`ctime`=NOW(),`cuser`=$[uid] where `url_redirect_id`='$[url_redirect_id]'</sql>
   </poperty>
   <poperty index="page_content!update" explain="page_content修改" connect="web" safe-args="*" beforeRun="com.lelife.oa.formatter.PageAuth" file="/target/test-classes/cn/test/other/web_page.sql.xml" is-open="false" name-space="" is-complex-build="true" is-convert-null="false" is-need-total="false" result-format-type="0" is-select="false">
     <param-formatter>
       <param key="uid" value="${user.uid}"></param>
     </param-formatter>
-    <sql params="page_content|uid|page_id" is-select="false" tables="page" fetch-zero-err="true" is-full-param="true">update page set `page_content`='$[page_content]' ,ctime=NOW(), cuser=$[uid] where page_id=$[page_id]</sql>
+    <sql params="page_content|uid|page_id" is-select="false" tables="page" fetch-zero-err="true" is-full-param="true" str-param="|uid|">update page set `page_content`='$[page_content]' ,ctime=NOW(), cuser=$[uid] where page_id=$[page_id]</sql>
     <sql params="page_id|page_content|uid" is-select="false" tables="log_page" fetch-zero-err="true" is-full-param="true">insert into log_page (`page_id`,`page_content`,`ctime`,`cuser`,operation) values ($[page_id],'$[page_content]',NOW(),$[uid],3)</sql>
   </poperty>
   <poperty index="users-add-action" connect="user-connect-rw" explain="users插入" file="/target/test-classes/cn/test/sql/qd_product_center.users.sql.xml" is-open="false" name-space="" is-complex-build="true" is-convert-null="false" is-need-total="false" result-format-type="0" is-select="false">
@@ -429,7 +438,7 @@
       <param key="uid" value="${user.uid}"></param>
       <param key="uname" value="${user.name}"></param>
     </param-formatter>
-    <sql params="uname|message|uname|log_message|status|uid|web_publish_id" is-select="false" tables="web_publish" fetch-zero-err="true" is-full-param="true">update web_publish set message=concat('[','$[uname]',' ',NOW(),']','$[message]'),log_message=concat('[','$[uname]',' ',NOW(),']','$[log_message]'),status='$[status]',checktime=now(),checkuser=$[uid] where web_publish_id='$[web_publish_id]'</sql>
+    <sql params="uname|message|uname|log_message|status|uid|web_publish_id" is-select="false" tables="web_publish" fetch-zero-err="true" is-full-param="true" str-param="|uid|message|uname|log_message|">update web_publish set message=concat('[','$[uname]',' ',NOW(),']','$[message]'),log_message=concat('[','$[uname]',' ',NOW(),']','$[log_message]'),status='$[status]',checktime=now(),checkuser=$[uid] where web_publish_id='$[web_publish_id]'</sql>
   </poperty>
   <poperty index="page_test!select" explain="page查询" connect="web_R" afterRun="com.lelife.oa.formatter.FormatPageParam" cacheAble="false" file="/target/test-classes/cn/test/other/web_page.sql.xml" is-open="false" name-space="" is-complex-build="true" is-convert-null="false" is-need-total="false" result-format-type="0" is-select="true">
     <sql is-select="true" tables="page" fetch-zero-err="true" is-full-param="true">select `page_id`,`page_id` as id,`page_name`,`page_target`,`parent_id`,`parent_id` as _parentId,`page_template`,`page_url`,`page_level`,`description`,`ctime`,`cuser`,`page_display`,`page_breadcrumb`,`page_order`,`page_type` from page where 9=9</sql>
@@ -453,7 +462,7 @@
     </result-formatter>
   </poperty>
   <poperty index="url_redirect_oa!detele" explain="url_redirect软删除" connect="web" file="/target/test-classes/cn/test/other/url_redirect.sql.xml" is-open="false" name-space="" is-complex-build="true" is-convert-null="false" is-need-total="false" result-format-type="0" is-select="false">
-    <sql params="uid|url_redirect_id" is-select="false" tables="url_redirect" fetch-zero-err="true" is-full-param="true">update url_redirect set `status`=0,`ctime`=NOW(),`cuser`=$[uid] where `url_redirect_id`='$[url_redirect_id]'</sql>
+    <sql params="uid|url_redirect_id" is-select="false" tables="url_redirect" fetch-zero-err="true" is-full-param="true" str-param="|uid|">update url_redirect set `status`=0,`ctime`=NOW(),`cuser`=$[uid] where `url_redirect_id`='$[url_redirect_id]'</sql>
   </poperty>
   <poperty index="modular_test!select" explain="modular_test查询" connect="web_R" cacheAble="false" file="/target/test-classes/cn/test/other/web_modular.sql.xml" is-open="false" name-space="" is-complex-build="true" is-convert-null="false" is-need-total="false" result-format-type="0" is-select="true">
     <sql is-select="true" tables="modular|modular_type" fetch-zero-err="true" is-full-param="true">select m.`modular_id`,m.`modular_name`,m.`modular_type`,m.`modular_func`,m.`description`,m.`status`,m.`modular_description`,m.`page_type`,mt.`modular_type_name`,m.`modular_image`,m.`ctime`,m.`cuser` , m.`modular_edit_status`,m.`modular_editor` from modular m left join modular_type mt on m.modular_type=mt.modular_type_id where 9=9 order by m.`ctime` desc</sql>
@@ -503,7 +512,7 @@
     <param-formatter>
       <param key="uid" value="${user.uid}"></param>
     </param-formatter>
-    <sql params="modular_content|status|uid|modular_id" is-select="false" tables="modular" fetch-zero-err="true" is-full-param="true">update modular set `modular_content`='$[modular_content]',`status`=$[status], ctime=NOW(), cuser=$[uid] where modular_id=$[modular_id]</sql>
+    <sql params="modular_content|status|uid|modular_id" is-select="false" tables="modular" fetch-zero-err="true" is-full-param="true" str-param="|uid|">update modular set `modular_content`='$[modular_content]',`status`=$[status], ctime=NOW(), cuser=$[uid] where modular_id=$[modular_id]</sql>
     <sql params="modular_id|modular_content|uid" is-select="false" tables="log_modular" fetch-zero-err="true" is-full-param="true">insert into log_modular (`modular_id`,`modular_content`,`ctime`,`cuser`,operation) values ($[modular_id],'$[modular_content]',NOW(),$[uid],3)</sql>
   </poperty>
   <poperty index="products_left_test" connect="default" explain="products_log删除" file="/target/test-classes/cn/test/sql/demo_product_center.products_log.sql.xml" is-open="false" name-space="" is-complex-build="true" is-convert-null="false" is-need-total="false" result-format-type="0" is-select="true">

@@ -34,14 +34,14 @@ public class QSourceTest
         return new TestSuite( QSourceTest.class );
     }
 
-    /**
-     * Rigourous Test :-)
-     */
-    public void testGetProjectName()
-    {
-    	assertEquals(QSource.getProjectName(), "qd.core");
-    }
-    
+//    /**
+//     * Rigourous Test :-)
+//     */
+//    public void testGetProjectName()
+//    {
+//    	assertEquals(QSource.getProjectName(), "qd.core");
+//    }
+//    
     
     public void testSearchAllFiles(){
     	new SearchFileFromProject(){

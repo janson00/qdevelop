@@ -6,7 +6,9 @@ import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.Iterator;
 
 import cn.qdevelop.common.exception.QDevelopException;
@@ -92,7 +94,8 @@ public class QDevelopHelper {
 //		System.out.println(insertSQL);
 //		System.out.println(updateSQL);
 //		System.out.println(deleteSQL);
-
+		SimpleDateFormat sdf = new SimpleDateFormat("yyMMddHHmmss");
+		String random = sdf.format(new Date());
 		OutputStreamWriter fw=null;
 		File store  = new File(cn+"."+tableName+".sql.xml"); 
 		try {
@@ -115,7 +118,7 @@ public class QDevelopHelper {
 //			fw.write("\r\n");fw.write("	</property>-->");
 //			fw.write("\r\n");
 			
-			fw.write("\r\n");fw.write("	<property index=\""+tableName+"_query_action\" connect=\""+connName+"\" explain=\""+tableName+"查询\">");
+			fw.write("\r\n");fw.write("	<property index=\""+tableName+"_select_"+random+"\" connect=\""+connName+"\" explain=\""+tableName+"查询\">");
 			if(formatter.size()>0){
 				fw.write("\r\n");fw.write("		<!--");
 				fw.write("\r\n");fw.write("		<formatter>");
@@ -130,7 +133,7 @@ public class QDevelopHelper {
 			fw.write("\r\n");fw.write("	</property>");
 			fw.write("\r\n");
 			
-			fw.write("\r\n");fw.write("	<property index=\""+tableName+"_add_action\" connect=\""+connName+"\" explain=\""+tableName+"插入\">");
+			fw.write("\r\n");fw.write("	<property index=\""+tableName+"_insert_"+random+"\" connect=\""+connName+"\" explain=\""+tableName+"插入\">");
 			fw.write("\r\n");fw.write("		<sql repeat=\"\"  repeat-concat=\"^\" fetch-zero-err=\"true\" is-full-param=\"false\">");
 			fw.write("\r\n");fw.write("			"+insertSQL.toString());
 			fw.write("\r\n");fw.write("		</sql>");
@@ -140,7 +143,7 @@ public class QDevelopHelper {
 			}
 			fw.write("\r\n");fw.write("	</property>");
 			fw.write("\r\n");
-			fw.write("\r\n");fw.write("	<property index=\""+tableName+"_store_action\" connect=\""+connName+"\" explain=\""+tableName+"修改\">");
+			fw.write("\r\n");fw.write("	<property index=\""+tableName+"_update_"+random+"\" connect=\""+connName+"\" explain=\""+tableName+"修改\">");
 			fw.write("\r\n");fw.write("		<sql  repeat=\"\"  repeat-concat=\"^\" fetch-zero-err=\"true\" is-full-param=\"false\">");
 			fw.write("\r\n");fw.write("			"+updateSQL.toString());
 			fw.write("\r\n");fw.write("		</sql>");
@@ -148,7 +151,7 @@ public class QDevelopHelper {
 			fw.write("\r\n");fw.write("	</property>");
 			fw.write("\r\n");
 			fw.write("\r\n");fw.write("	<!--");
-			fw.write("\r\n");fw.write("	<property index=\""+tableName+"_remove_action\" connect=\""+connName+"\" explain=\""+tableName+"删除\">");
+			fw.write("\r\n");fw.write("	<property index=\""+tableName+"_delete_"+random+"\" connect=\""+connName+"\" explain=\""+tableName+"删除\">");
 			fw.write("\r\n");fw.write("		<sql  repeat=\"\" repeat-concat=\"^\" fetch-zero-err=\"true\">");
 			fw.write("\r\n");fw.write("			"+deleteSQL.toString());
 			fw.write("\r\n");fw.write("		</sql>");

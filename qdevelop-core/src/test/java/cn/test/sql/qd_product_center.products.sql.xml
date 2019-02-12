@@ -21,7 +21,7 @@
 			price=$[price]
 			and store=$[store] and status=$[status] and
 			product_name='$[product_name]'
-			and ctime=$[ctime]
+			and unix_time(ctime,'%y-%m-%d')=$[ctime]
 		</sql>
 	</property>
 

@@ -7,7 +7,7 @@
 			HH:mm:ss"/> <prop-formatter result-key="status" prop-key="users_status_dict"/> 
 			<prop-formatter result-key="age" prop-key="users_age_dict"/> <date-formatter 
 			result-key="ctime" date-style="yyyy-MM-dd HH:mm:ss"/> </formatter> -->
-		<sql>select * from users usr
+		<sql str-param="status">select * from users usr
 			where usr.status = $[status] and $[mySelf]
 			and {DYNAMIC}
 

@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.regex.Matcher;
@@ -42,7 +43,7 @@ public class SQLConfigLoader extends ConcurrentHashMap<String,Element>{
 	private static HashSet<String> tablesIndex;
 	
 	private	String is_full_param = "true",is_complex_build="true",is_convert_null="false",is_need_total = "false",fetch_zero_err = "true",result_format_type = "0";
-
+//	private static Map<String,String> zIndexCache;
 
 	public SQLConfigLoader(){
 		cleanSplit = Pattern.compile("[0-9a-zA-Z\\_]+");
@@ -54,6 +55,9 @@ public class SQLConfigLoader extends ConcurrentHashMap<String,Element>{
 		clearJarPrefix = Pattern.compile("^.+\\.jar\\!");
 		tablesIndex = new HashSet<String>();
 		projectIndex = QSource.getProjectPath().length();
+		isInsert = Pattern.compile("^insert ",Pattern.CASE_INSENSITIVE);
+		
+//		zIndexCache = new ConcurrentHashMap<String,String>();
 		
 		is_full_param = QProperties.getInstance().getValue("sqlconfig_is_full_param", "true");
 		is_complex_build = QProperties.getInstance().getValue("sqlconfig_is_complex_build", "true");
@@ -95,6 +99,12 @@ public class SQLConfigLoader extends ConcurrentHashMap<String,Element>{
 	 * @return
 	 */
 	public Element getSQLConfig(String index){
+//		if(index == null){
+//			return null;
+//		}
+//		if(index.length() == 32){//当index为32位时可能是加密index，做一下index转换
+//			index = zIndexCache.get(index) == null ? index : zIndexCache.get(index);
+//		}
 		return this.get(index);
 	}
 
@@ -300,6 +310,8 @@ public class SQLConfigLoader extends ConcurrentHashMap<String,Element>{
 			if(sql.attributeValue("is-full-param")==null){
 				sql.addAttribute("is-full-param", is_full_param);
 			}
+			
+			initCasePreBuildSQL(sql);
 		}
 //		if(property.attributeValue("is-master")==null){
 //			property.addAttribute("is-master", isSelect?"false":"true");
@@ -321,8 +333,12 @@ public class SQLConfigLoader extends ConcurrentHashMap<String,Element>{
 			property.addAttribute("result-format-type", result_format_type);
 		}
 		property.addAttribute("is-select", isSelect.toString());
-
-
+		
+		//增加加密Key访问
+//		String zIndex = QString.get32MD5(property.attributeValue("index"));
+//		property.addAttribute("zIndex", zIndex);
+//		zIndexCache.put(zIndex, property.attributeValue("index"));
+		
 		//兼容历史配置
 		Element resultFormatter = property.element("formatter");
 		if(resultFormatter!=null){
@@ -453,5 +469,47 @@ public class SQLConfigLoader extends ConcurrentHashMap<String,Element>{
 		for(String t : ts){
 			tablesIndex.add(t+"@"+connect);
 		}
+	}
+	private static Pattern isInsert = null;
+	private static Map<String,Pattern> patternSelectCache = null;
+	
+	public final static String caseNonPreBuilderName = "str-param";
+	private void initCasePreBuildSQL(Element sql){
+		String params = sql.attributeValue("params");
+		if(params == null || params.length() == 0){
+			return;
+		}
+		if(patternSelectCache == null){
+			patternSelectCache = new ConcurrentHashMap<String,Pattern>();
+		}
+		String[] param = params.split("\\|");
+		HashSet<String> temp = new HashSet<String>(); 
+		String sqlStr = sql.getText();
+		for(String key : param){
+			Pattern caseReg = patternSelectCache.get(key);
+			if(caseReg == null){
+				caseReg = Pattern.compile("`?([0-9a-zA-Z]+\\.)?\\b("+key+")\\b`? ?= ?'?\\$\\[\\b("+key+")\\b\\]'?",Pattern.CASE_INSENSITIVE);
+				patternSelectCache.put(key, caseReg);
+			}
+			if(!isInsert.matcher(sqlStr).find() && !caseReg.matcher(sqlStr).find() ){
+				temp.add(key);
+			}
+		}
+		if(temp.size()>0||sql.attributeValue(caseNonPreBuilderName)!=null){
+			if(sql.attributeValue(caseNonPreBuilderName)!=null){
+				String[] t = sql.attributeValue(caseNonPreBuilderName).split("\\|");
+				for(int i=0;i<t.length;i++){
+					temp.add(t[i]);
+				}
+			}
+			StringBuffer sb = new StringBuffer();
+			Iterator<String> itor = temp.iterator();
+			while(itor.hasNext()){
+				sb.append("|").append(itor.next());
+			}
+			sql.addAttribute(caseNonPreBuilderName, sb.append("|").toString());
+		}
+		temp.clear();
+		temp=null;
 	}
 }

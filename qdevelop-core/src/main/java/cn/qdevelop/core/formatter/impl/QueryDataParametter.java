@@ -18,12 +18,12 @@ import cn.qdevelop.core.standard.IDBResult;
  */
 public class QueryDataParametter extends AbstractParamFormatter{
 
-	String index;
+	String dataIndex;
 	String[] whereArgs;
 	String[] columns;
 	@Override
 	public void initFormatter(Element conf) throws QDevelopException {
-		 index = conf.attributeValue("index");
+		 dataIndex = conf.attributeValue("data-index");
 		 whereArgs = conf.attributeValue("where-key").split(",");
 		 columns = conf.attributeValue("columns").split(",");
 	}
@@ -36,7 +36,7 @@ public class QueryDataParametter extends AbstractParamFormatter{
 	@Override
 	public Map<String, Object> formatter(Map<String,  Object> query) {
 		HashMap<String,Object> args = new HashMap<String,Object>();
-		args.put("index", index);
+		args.put("index", dataIndex);
 		for(String key : whereArgs){
 			args.put(key, query.get(key));
 		}

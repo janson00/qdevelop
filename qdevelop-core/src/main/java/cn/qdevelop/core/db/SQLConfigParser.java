@@ -258,7 +258,7 @@ public class SQLConfigParser {
 						for(int i=0;i<args.length;i++){
 							data.put(args[i], tmp[i]);
 						}
-						UpdateBean ub = getUpdateBean(data,sqlStr,params,dbsb,isFullParam);
+						UpdateBean ub = getUpdateBean(data,sqlStr,params,sql.attributeValue(SQLConfigLoader.caseNonPreBuilderName),dbsb,isFullParam);
 						ub.setIndex(index);
 						ub.setConnName(connName);
 						ub.setFetchZeroError(fetchZeroErr);
@@ -267,7 +267,7 @@ public class SQLConfigParser {
 					}
 				}else{
 					HashMap<String,Object> data = new HashMap<String,Object>(query);
-					UpdateBean ub = getUpdateBean(data,sqlStr,params,dbsb,isFullParam);
+					UpdateBean ub = getUpdateBean(data,sqlStr,params,sql.attributeValue(SQLConfigLoader.caseNonPreBuilderName),dbsb,isFullParam);
 					ub.setIndex(index);
 					ub.setConnName(connName);
 					ub.setFetchZeroError(fetchZeroErr);
@@ -286,8 +286,10 @@ public class SQLConfigParser {
 			throw new QDevelopException(1001,"获取更新SQL报错",e);
 		}
 	}
-
-	private UpdateBean getUpdateBean(HashMap<String,Object> data,String sql,String[] params,DBStrutsBean dbsb,boolean isFullParam) throws QDevelopException{
+	
+	
+	
+	private UpdateBean getUpdateBean(HashMap<String,Object> data,String sql,String[] params,String strParam,DBStrutsBean dbsb,boolean isFullParam) throws QDevelopException{
 		UpdateBean ub = new UpdateBean();
 		ub.setDbsb(dbsb);
 		ub.setInsert(sql.substring(0, 6).equalsIgnoreCase("insert"));
@@ -306,7 +308,7 @@ public class SQLConfigParser {
 						continue;
 					}
 				}
-				if(dbsb.get(arg)!=null){
+				if(isCasePreBuildSQL( arg, dbsb.get(arg),strParam)){
 					columns.add(arg);
 					values.add(val);
 					preparedSql = preparedSql.replaceAll("'?\\$\\["+arg+"\\]'?", "?");
@@ -367,7 +369,7 @@ public class SQLConfigParser {
 				paramsTemp.clear();
 			}
 
-			reBuildPreparedSql(dbQuery,query,params==null?new String[]{}:params);
+			reBuildPreparedSql(dbQuery,query,params==null?new String[]{}:params,sql.attributeValue(SQLConfigLoader.caseNonPreBuilderName));
 
 			/**
 			 *  设置分页信息
@@ -423,7 +425,7 @@ public class SQLConfigParser {
 	//动态替换正则，提升一丢丢效率
 	private static final Map<String,Pattern> patternCache = new ConcurrentHashMap<String,Pattern>();
 
-	private void reBuildPreparedSql(DBQueryBean dbQuery ,Map<String,?> query,String[] params) throws QDevelopException{
+	private void reBuildPreparedSql(DBQueryBean dbQuery ,Map<String,?> query,String[] params,String strParam) throws QDevelopException{
 		Map<String, DBStrutsLeaf> tableStruts = dbQuery.getTableStruts() ;
 		ArrayList<String> columns = new ArrayList<String>();
 		ArrayList<Object> values = new ArrayList<Object>();
@@ -432,7 +434,7 @@ public class SQLConfigParser {
 
 		for(String key : params){
 			String val = String.valueOf(query.get(key));
-			boolean isDBColumn = tableStruts!=null && tableStruts.get(clearColumnName.matcher(key).replaceAll(""))!=null && !isFunctionValue.matcher(val).find();
+			boolean isDBColumn = tableStruts!=null && tableStruts.get(clearColumnName.matcher(key).replaceAll(""))!=null && !isFunctionValue.matcher(val).find() && isCasePreBuildSQL(key,dbQuery.getTableStruts().get(key),strParam);
 			String columnKey = getSQLkey(key,sqlModel);
 			//	XXX	
 			if(columnKey.length()>0 && dbQuery.isComplexBuild() && isComplexValue.matcher(val).find() && !isFunctionValue.matcher(val).find()){
@@ -686,18 +688,31 @@ public class SQLConfigParser {
 		}else if(isSelect.matcher(sqlTemplate).find()){
 			Pattern clear = patternSelectCache.get(argsName);
 			if(clear == null){
-				clear = Pattern.compile("(and|,)?( +)?([0-9a-zA-Z]+\\.)?\\b("+argsName+")\\b ?= ?'?\\$\\[\\b("+argsName+")\\b\\]'?",Pattern.CASE_INSENSITIVE);
+				clear = Pattern.compile("(and|or|,)?( +)?`?([0-9a-zA-Z]+\\.)?\\b("+argsName+")\\b`? ?= ?'?\\$\\[\\b("+argsName+")\\b\\]'?",Pattern.CASE_INSENSITIVE);
 				patternSelectCache.put(argsName, clear);
 			}
 			return clearWhere.matcher(clear.matcher(sqlTemplate).replaceAll(" ")).replaceAll("where ");
 		}else{
 			Pattern clear = patternSelectCache.get(argsName);
 			if(clear == null){
-				clear = Pattern.compile("(and|,)?( +)?\\b("+argsName+")\\b ?= ?'?\\$\\[\\b("+argsName+")\\b\\]'?",Pattern.CASE_INSENSITIVE);
+				clear = Pattern.compile("(and|or|,)?( +)?`?\\b("+argsName+")\\b`? ?= ?'?\\$\\[\\b("+argsName+")\\b\\]'?",Pattern.CASE_INSENSITIVE);
 				patternSelectCache.put(argsName, clear);
 			}
 			return new StringBuffer().append(clearSet.matcher(clear.matcher(whereSubfix.matcher(sqlTemplate).replaceAll("")).replaceAll(" ")).replaceAll("set "))
 					.append(" where ").append(wherePrefix.matcher(sqlTemplate).replaceAll("")).toString();
 		}
 	}
+	
+	/**
+	 * 判断sql参数中的参数是否需要进行预编译处理
+	 * @param key
+	 * @param dbsl
+	 * @param strParam
+	 * @return
+	 */
+	private boolean isCasePreBuildSQL(String key,DBStrutsLeaf dbsl,String strParam){
+		if(dbsl == null) return false;
+		return strParam==null || strParam.indexOf(append("|",key,"|")) == -1;
+	}
+	
 }

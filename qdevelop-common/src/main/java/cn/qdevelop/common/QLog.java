@@ -7,6 +7,9 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.InetAddress;
+import java.net.NetworkInterface;
+import java.util.Enumeration;
 import java.util.Iterator;
 import java.util.Properties;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -102,14 +105,23 @@ public class QLog {
 			}
 		}.searchProjectFiles("log4j.properties");
 
+		
 		String projectName = QSource.getProjectName();
+		
 		Iterator<?> itor = props.keySet().iterator();
 		while(itor.hasNext()){
 			String key = (String)itor.next();
 			String value = props.getProperty(key);
-			if(isArgs.matcher(value).find()){
-				props.setProperty(key, isArgs.matcher(value).replaceAll(projectName));
+			
+			if(value.indexOf("{SYSNAME}") > -1){
+				value = value.replace("{SYSNAME}", projectName);//isArgs.matcher(value).replaceAll(projectName));
 			}
+			if(value.indexOf("{SYSIP}") > -1){
+				value =  value.replace("{SYSIP}", getLocalIp());
+			}
+			props.setProperty(key, value);
+			
+//			System.out.println(key+" = "+props.getProperty(key));
 		}
 
 		/**如果是开发环境，尽量输出相信的日志信息在控制台，否则就直接在项目固定目录中输出**/
@@ -126,7 +138,7 @@ public class QLog {
 		}
 		PropertyConfigurator.configure(props);
 		isInit.set(true);
-		System.out.println("init QLog used: "+(System.currentTimeMillis()-start)+" store: "+props.getProperty("log4j.appender.sqlExcute.file"));
+		System.out.println("init QLog used: "+(System.currentTimeMillis()-start)+"ms store: "+props.getProperty("log4j.appender.sqlExcute.file"));
 	}
 	
 	
@@ -138,4 +150,29 @@ public class QLog {
 		}
 		return true;
 	}
+	
+	private static Pattern isIP = Pattern.compile("^[0-9]+?\\.[0-9]+?\\.[0-9]+?\\.[0-9]+?$");
+	public static String getLocalIp(){
+		Enumeration<NetworkInterface> netInterfaces = null;
+		try {
+			netInterfaces = NetworkInterface.getNetworkInterfaces();
+			while (netInterfaces.hasMoreElements()) {
+				NetworkInterface ni = netInterfaces.nextElement();
+				Enumeration<InetAddress> ips = ni.getInetAddresses();
+				while (ips.hasMoreElements()) {
+					String ip = ips.nextElement().getHostAddress();
+					if(isIP.matcher(ip).find() && !ip.equals("127.0.0.1")){
+						return ip;
+					}
+				}
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return "127.0.0.1";
+	}
+	
+//	public static void main(String[] args) {
+//		System.out.println(getLocalIp());
+//	}
 }

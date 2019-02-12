@@ -188,18 +188,17 @@ public class DatabaseImpl {
 				StringBuffer _sql = new StringBuffer();
 				_sql.append(isCaseBatchInsertHeadClean.matcher(ub.getPreparedSql()).replaceAll("")).append(" values ");
 				String insertModule = isCaseBatchInsertLastClean.matcher(ub.getPreparedSql()).replaceAll("");
-				for(int i=0;i<MAX_SPLIT;i++){
-					_sql.append(i==0?"":",").append(insertModule);
+				for(int i=0;i < MAX_SPLIT;i++){
+					_sql.append( i==0 ? "" : "," ).append(insertModule);
 				}
 				pstmt = conn.prepareStatement(_sql.toString());
-				int pages = (int)(values.size()/MAX_SPLIT);
+				int pages = (int)(values.size() / MAX_SPLIT);
 				for(int i=0;i<pages;i++){
-					for(int j=0;j<MAX_SPLIT;j++){
-						setValue(ub.getPreparedSql(),ub.getDbsb(),pstmt,ub.getColumns(),values.get(MAX_SPLIT*i+j),j*ub.getColumns().length+1);
-						//						System.out.println(pages+" : "+(MAX_SPLIT*i+j)+" vals "+(j*ub.getColumns().length+1));
+					for(int j=0;j < MAX_SPLIT;j++){
+						setValue( ub.getPreparedSql() , ub.getDbsb() , pstmt , ub.getColumns() , values.get(MAX_SPLIT*i+j) , j*ub.getColumns().length+1 );
 					}
 					pstmt.addBatch();
-					if(++idx%500==0){
+					if( ++idx % 500 == 0 ){
 						pstmt.executeBatch();
 						size += pstmt.getUpdateCount();
 						System.out.println("singleInsertBatchUpdate:["+size+"] +1");
@@ -207,7 +206,7 @@ public class DatabaseImpl {
 				}
 				pstmt.executeBatch();
 				size += pstmt.getUpdateCount();
-				int left = values.size()%MAX_SPLIT;
+				int left = values.size() % MAX_SPLIT;
 				if(left > 0){
 					_sql = new StringBuffer();
 					_sql.append(isCaseBatchInsertHeadClean.matcher(ub.getPreparedSql()).replaceAll("")).append(" values ");
@@ -217,7 +216,7 @@ public class DatabaseImpl {
 					}
 					pstmt = conn.prepareStatement(_sql.toString());
 					for(int j=0;j<left;j++){
-						setValue(ub.getPreparedSql(),ub.getDbsb(),pstmt,ub.getColumns(),values.get(pages*MAX_SPLIT+j),j*ub.getColumns().length+1);
+						setValue( ub.getPreparedSql() , ub.getDbsb() , pstmt , ub.getColumns() , values.get(pages*MAX_SPLIT+j) , j*ub.getColumns().length+1);
 					}
 					pstmt.addBatch();
 					pstmt.executeBatch();
@@ -450,7 +449,7 @@ public class DatabaseImpl {
 								throw new QDevelopException(1001,QString.append("参数",columns[i]," = '",v,"' "," 为非",sl.getColumnTypeName(),"错误"));
 							}
 							if(v.length() == 19){
-								val = new java.sql.Date(new SimpleDateFormat("yyyy-MM-dd hh:mm:ss").parse(v).getTime());
+								val = new java.sql.Date(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(v).getTime());
 							}else if(v.length() == 10){
 								val = new java.sql.Date(new SimpleDateFormat("yyyy-MM-dd").parse(v).getTime());
 							}
@@ -467,7 +466,7 @@ public class DatabaseImpl {
 								throw new QDevelopException(1001,QString.append("参数",columns[i]," = '",v,"' "," 为非",sl.getColumnTypeName(),"错误"));
 							}
 							if(v.length() == 19){
-								val1 = new java.sql.Timestamp(new SimpleDateFormat("yyyy-MM-dd hh:mm:ss").parse(v).getTime());
+								val1 = new java.sql.Timestamp(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(v).getTime());
 							}else if(v.length() == 10){
 								val1 = new java.sql.Timestamp(new SimpleDateFormat("yyyy-MM-dd").parse(v).getTime());
 							}

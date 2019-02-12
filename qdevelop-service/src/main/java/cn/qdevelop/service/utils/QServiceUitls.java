@@ -58,7 +58,7 @@ public class QServiceUitls {
 		if(isDomain.matcher(domain).find()){
 			domain = domain.substring(domain.indexOf(".")+1);
 		}
-		System.out.println("cookie domain >>> "+request.getServerName()+" ---> "+domain);
+//		System.out.println("cookie domain >>> "+request.getServerName()+" ---> "+domain);
 		cookie.setDomain(domain);
 		
 		response.addCookie(cookie);
