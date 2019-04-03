@@ -3,7 +3,6 @@ package cn.qdevelop.core.utils;
 import java.io.File;
 import java.io.InputStream;
 
-import cn.qdevelop.common.files.QSource;
 import cn.qdevelop.common.files.SearchFileFromJars;
 import cn.qdevelop.common.files.SearchFileFromProject;
 import junit.framework.Test;

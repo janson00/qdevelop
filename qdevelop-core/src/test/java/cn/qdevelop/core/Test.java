@@ -19,7 +19,6 @@ public class Test {
 			//	            System.out.println("以行为单位读取文件内容，一次读一整行：");
 			reader = new BufferedReader(new FileReader(file));
 			String tempString = null;
-			int line = 1;
 			int start = -1;
 			// 一次读入一行，直到读入null为文件结束
 			while ((tempString = reader.readLine()) != null) {
@@ -39,8 +38,6 @@ public class Test {
 						start++;
 					}
 				}
-
-				line++;
 			}
 			reader.close();
 		} catch (IOException e) {
@@ -56,14 +53,13 @@ public class Test {
 		FileOutputStream out = null;
 		  out = new FileOutputStream(new File("/Users/janson/tmp/qa.csv"));  
 		Pattern clean = Pattern.compile("A：|A:| ");
-		int tIndex = -1;ArrayList<String> answer=null;String title = null;
+		ArrayList<String> answer=null;String title = null;
 		for(int i = 0;i<content.size();i++){
 			
 			String cc = content.get(i);
 //			out.write(cc.getBytes());
 //			out.write("\n".getBytes());
 			if(cc.endsWith("？")||cc.endsWith("?")){
-				tIndex = 0;
 				System.out.println(cc);
 				title = cc;
 				if(answer!=null){

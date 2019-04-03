@@ -1,7 +1,6 @@
 package cn.qdevelop.core.db;
 
 import cn.qdevelop.core.formatter.impl.KeyValueFormatter;
-import cn.qdevelop.core.standard.IResultFormatter;
 import junit.framework.TestCase;
 
 public class TestFormatter  extends TestCase{

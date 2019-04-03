@@ -2,7 +2,6 @@ package cn.qdevelop.core.db;
 
 import java.sql.Connection;
 import java.util.HashMap;
-import java.util.regex.Pattern;
 
 import cn.qdevelop.common.exception.QDevelopException;
 import cn.qdevelop.core.DatabaseFactory;
@@ -22,7 +21,7 @@ public class TestMysql {
 		} catch (QDevelopException e) {
 			e.printStackTrace();
 		}finally{
-			DatabaseFactory.getInstance().closeConnection(conn);
+			DatabaseFactory.closeConnection(conn);
 		}
 	}
 	

@@ -115,7 +115,7 @@ public class TestSQLConfig  extends TestCase{
 			for(int i=0;i<qb.getPreparedColumns().length;i++){
 				System.out.println("param\t "+qb.getPreparedColumns()[i]+" : "+qb.getPreparedValues()[i]);
 			}
-			DatabaseFactory.getInstance().closeConnection(conn);
+			DatabaseFactory.closeConnection(conn);
 		} catch (QDevelopException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

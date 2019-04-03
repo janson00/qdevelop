@@ -29,6 +29,7 @@ public class ConnectTest extends TestCase{
 		}
 	}
 	
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public void testDatabaseFactoryConnect(){
 		try {
 			Connection con = DatabaseFactory.getInstance().getConnectByQuery("default");
