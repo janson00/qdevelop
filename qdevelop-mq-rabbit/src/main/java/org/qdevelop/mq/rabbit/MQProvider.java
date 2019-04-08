@@ -82,6 +82,24 @@ public class MQProvider  extends ConcurrentLinkedQueue<MQBean>{
 			}
 		}
 	}
+	
+	public void publishString(String queueName,String msg){
+		super.offer(new MQBean(queueName,msg.getBytes()));
+		if(!isRunning.get()){
+			new Thread(){
+				public void run(){
+					aync();
+				}
+			}.start();
+		}
+		if(count.getAndIncrement() > 100000){//高并发请求发送状态下，会导致内存暴增，同步缓冲1秒，提高整体并发
+			try {
+				Thread.sleep(1000);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+		}
+	}
 
 	private byte[] toByte(Serializable obj){
 		byte[] bytes = null; 

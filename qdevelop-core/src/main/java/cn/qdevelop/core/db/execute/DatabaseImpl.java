@@ -224,10 +224,11 @@ public class DatabaseImpl {
 				}
 			}else{
 				pstmt = conn.prepareStatement(ub.getPreparedSql());
+				log.info("["+ub.getIndex()+"] "+values.size()+" "+ub.getFullSql());
 				for(int i=0;i<values.size();i++){
 					ub.setValues(values.get(i));
 					setValue(ub.getPreparedSql(),ub.getDbsb(),pstmt,ub.getColumns(),ub.getValues());
-					log.info("["+ub.getIndex()+"] "+ub.getFullSql());
+//					log.info("["+ub.getIndex()+"] "+ub.getFullSql());
 					pstmt.addBatch();
 					if(++idx%1000==0){
 						pstmt.executeBatch();

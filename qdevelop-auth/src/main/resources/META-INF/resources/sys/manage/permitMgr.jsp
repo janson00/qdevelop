@@ -53,15 +53,16 @@
 		            	</div>
 		            	<div class="form-group row">
 		            		<div class="col-sm-6">
-			            	<select id="otherRule" multiple="multiple" class="form-control" size="10">
-			            		<option>aaa</option>
-			            		<option>bbb</option>
-			            	</select>
-			            	</div><div class="col-sm-6">
-			            	<select  id="selectedRule" multiple="multiple" class="form-control" size="10">
-			            		<option>ccc</option>
-			            		<option>ddd</option>
-			            	</select>
+				            	<select id="otherRule" multiple="multiple" class="form-control" size="10">
+				            		<option>aaa</option>
+				            		<option>bbb</option>
+				            	</select>
+			            	</div>
+			            	<div class="col-sm-6">
+				            	<select  id="selectedRule" multiple="multiple" class="form-control" size="10">
+				            		<option>ccc</option>
+				            		<option>ddd</option>
+				            	</select>
 			            	</div>
 		            	</div>
 		            	<div class="form-group row" style="font-color:#fa0733;text-align:center;">

@@ -82,6 +82,8 @@ public class MQCustomer {
 			Connection connection = factory.newConnection();
 			final Channel channel = connection.createChannel();
 			channel.queueDeclare(customer.getQueueName(), true, false, false, null);
+			int availProcessors = Runtime.getRuntime().availableProcessors();
+			channel.basicQos(availProcessors);
 			channel.basicConsume(customer.getQueueName(),false,new QueueingConsumer(channel){
 				public void handleDelivery(String consumerTag,Envelope envelope,
 						AMQP.BasicProperties properties,byte[] body){
@@ -91,21 +93,20 @@ public class MQCustomer {
 					}else{
 						vals = toSerializable(body);
 					}
-					
-					if(customer.handleDelivery(consumerTag, envelope, properties, vals)){
-						try {
+					try {
+						if(customer.handleDelivery(consumerTag, envelope, properties, vals)){
 							channel.basicAck(envelope.getDeliveryTag(), false);
-						} catch (IOException e) {
-							e.printStackTrace();
+						}else{
+							channel.basicReject(envelope.getDeliveryTag(), true);
 						}
-					}else{
+					} catch (Exception e1) {
 						try {
 							channel.basicReject(envelope.getDeliveryTag(), true);
 						} catch (IOException e) {
 							e.printStackTrace();
 						}
+						log.error(e1);
 					}
-
 				}
 			});
 			collection.add(connection);

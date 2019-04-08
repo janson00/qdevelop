@@ -132,5 +132,6 @@
 		<module>qdevelop-redis</module>
 		<module>qdevelop-words</module>
 		<module>qdevelop-auth</module>
-	</modules>
+<!-- 		<module>qdevelop-etl</module>
+ -->	</modules>
 </project>

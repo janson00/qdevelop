@@ -1,8 +1,11 @@
 package cn.qdevelop.service;
 
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -106,7 +109,7 @@ public abstract class UploadControl extends HttpServlet  implements IService{
 				if(parts != null){
 					for(Part part : parts){
 						String fileName = this.getFileName(part.getHeader("Content-Disposition"));
-						System.out.println(fileName);
+//						System.out.println(fileName);
 						if(null!=fileName && !(fileName).trim().equals("")){
 							String[] allowType = setFileAllowType();
 							if(allowType!=null){
@@ -126,8 +129,9 @@ public abstract class UploadControl extends HttpServlet  implements IService{
 							String storeName = getUploadFileSaveName(fileName,QServiceUitls.getCookie("sid",request),STORE_ROOT);
 							if(disposeFile(part.getInputStream(),fileName,storeName,part.getSize())){
 								checkPath(storeName,STORE_ROOT);
-								part.write(STORE_ROOT+storeName);
 								log.info("store file: "+STORE_ROOT+storeName);
+								//part.write(STORE_ROOT+storeName);
+								writeTo(STORE_ROOT+storeName,part.getInputStream());
 							}
 							storeNames.add(storeName);
 							part.delete();
@@ -142,6 +146,17 @@ public abstract class UploadControl extends HttpServlet  implements IService{
 		httpServletResponse.remove();
 		httpServletRequest.remove();
 	}
+	
+	 private void writeTo(String fileName, InputStream in) throws IOException, FileNotFoundException {
+	        OutputStream out = new FileOutputStream(fileName);
+	        byte[] buffer = new byte[1024];
+	        int length = -1;
+	        while ((length = in.read(buffer)) != -1) {
+	            out.write(buffer, 0, length);
+	        }
+	        in.close();
+	        out.close();
+	    }
 
 	private String getFileName(String header) {
 		/**
